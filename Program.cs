@@ -6,6 +6,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 builder.Services.AddScoped<ChemicalSDS.Services.SdsWizardService>();
 builder.Services.AddScoped<ChemicalSDS.Services.ChemicalListService>();
+builder.Services.AddScoped<ChemicalSDS.Services.ChemicalDeletionService>();
 builder.Services.AddScoped<ChemicalSDS.Services.UserAuthService>();
 builder.Services.AddSingleton<ChemicalSDS.Services.SdsPdfGenerator>();
 

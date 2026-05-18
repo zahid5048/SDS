@@ -42,6 +42,12 @@
                 <span>All Chemicals</span>
             </a>
         </div>
+        <div class="@ItemClass("Home", "Deleted")">
+            <a asp-controller="Home" asp-action="Deleted">
+                <i class="fas fa-trash-restore"></i>
+                <span>Deleted</span>
+            </a>
+        </div>
 
         @if (isAdmin)
         {

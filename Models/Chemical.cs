@@ -146,5 +146,10 @@ namespace ChemicalSDS.Models
         public string? Unit { get; set; } = "Liters";
         public string? StorageLocation { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.Now;
+
+        // Soft delete
+        public bool IsDeleted { get; set; }
+        public DateTime? DeletedAt { get; set; }
+        public string? DeletedBy { get; set; }
     }
 }

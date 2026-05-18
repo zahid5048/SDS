@@ -1,28 +1,61 @@
 @model ChemicalSDS.Models.DashboardViewModel
 @{
     var action = Model.ListAction;
+    var isTrash = Model.IsDeletedView;
+    var colSpan = isTrash ? 6 : 7;
 }
 
-<div class="dash-table-card">
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show mb-3" role="alert">
+        <i class="fas fa-check-circle me-2"></i>@TempData["Success"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger alert-dismissible fade show mb-3" role="alert">
+        <i class="fas fa-exclamation-circle me-2"></i>@TempData["Error"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+
+<div class="dash-table-card @(isTrash ? "dash-table-trash" : "")">
     <div class="dash-table-header">
         <div>
-            <h4 class="dash-table-title"><i class="fas fa-flask"></i> All Chemicals</h4>
-            <p class="dash-table-sub">
-                @if (Model.FilteredCount == 0)
-                {
-                    <text>No records found</text>
-                }
-                else
-                {
-                    <text>Showing @Model.ShowingFrom–@Model.ShowingTo of @Model.FilteredCount</text>
-                    @if (!string.IsNullOrEmpty(Model.Search))
+            @if (isTrash)
+            {
+                <h4 class="dash-table-title"><i class="fas fa-trash-restore"></i> Deleted Chemicals</h4>
+                <p class="dash-table-sub">Restore or permanently remove records</p>
+            }
+            else
+            {
+                <h4 class="dash-table-title"><i class="fas fa-flask"></i> All Chemicals</h4>
+                <p class="dash-table-sub">
+                    @if (Model.FilteredCount == 0)
                     {
-                        <text> (filtered from @Model.TotalChemicals total)</text>
+                        <text>No records found</text>
                     }
-                }
-            </p>
+                    else
+                    {
+                        <text>Showing @Model.ShowingFrom–@Model.ShowingTo of @Model.FilteredCount</text>
+                        @if (!string.IsNullOrEmpty(Model.Search))
+                        {
+                            <text> (filtered from @Model.TotalChemicals total)</text>
+                        }
+                    }
+                </p>
+            }
         </div>
-        <span class="dash-count-badge">@Model.FilteredCount records</span>
+        <div class="d-flex align-items-center gap-2 flex-wrap">
+            @if (!isTrash)
+            {
+                <a asp-action="Deleted" class="btn btn-sm btn-outline-trash">
+                    <i class="fas fa-trash-alt"></i> Deleted items
+                </a>
+            }
+            <span class="dash-count-badge">@Model.FilteredCount records</span>
+        </div>
     </div>
 
     <div class="dash-table-toolbar">
@@ -34,7 +67,7 @@
             <div class="dash-search-box">
                 <i class="fas fa-search"></i>
                 <input type="text" name="search" value="@Model.Search" class="form-control live-search-input"
-                       placeholder="Live search — type name, CAS, signal, storage..." autocomplete="off" />
+                       placeholder="Live search — name, CAS, signal, storage..." autocomplete="off" />
                 <span class="search-hint d-none"><i class="fas fa-circle-notch fa-spin"></i></span>
             </div>
             @if (!string.IsNullOrEmpty(Model.Search))
@@ -81,13 +114,26 @@
                             CAS <i class="fas @Model.SortIcon("cas")"></i>
                         </a>
                     </th>
-                    <th>
-                        <a class="sort-link @(Model.IsSorted("status") ? "active" : "")"
-                           asp-action="@action" asp-route-search="@Model.Search" asp-route-page="1"
-                           asp-route-pageSize="@Model.PageSize" asp-route-sortBy="status" asp-route-sortDir="@Model.NextSortDir("status")">
-                            Status <i class="fas @Model.SortIcon("status")"></i>
-                        </a>
-                    </th>
+                    @if (isTrash)
+                    {
+                        <th>
+                            <a class="sort-link @(Model.IsSorted("deleted") ? "active" : "")"
+                               asp-action="@action" asp-route-search="@Model.Search" asp-route-page="1"
+                               asp-route-pageSize="@Model.PageSize" asp-route-sortBy="deleted" asp-route-sortDir="@Model.NextSortDir("deleted")">
+                                Deleted <i class="fas @Model.SortIcon("deleted")"></i>
+                            </a>
+                        </th>
+                    }
+                    else
+                    {
+                        <th>
+                            <a class="sort-link @(Model.IsSorted("status") ? "active" : "")"
+                               asp-action="@action" asp-route-search="@Model.Search" asp-route-page="1"
+                               asp-route-pageSize="@Model.PageSize" asp-route-sortBy="status" asp-route-sortDir="@Model.NextSortDir("status")">
+                                Status <i class="fas @Model.SortIcon("status")"></i>
+                            </a>
+                        </th>
+                    }
                     <th>
                         <a class="sort-link @(Model.IsSorted("signal") ? "active" : "")"
                            asp-action="@action" asp-route-search="@Model.Search" asp-route-page="1"
@@ -95,20 +141,23 @@
                             Signal <i class="fas @Model.SortIcon("signal")"></i>
                         </a>
                     </th>
-                    <th>
-                        <a class="sort-link @(Model.IsSorted("flash") ? "active" : "")"
-                           asp-action="@action" asp-route-search="@Model.Search" asp-route-page="1"
-                           asp-route-pageSize="@Model.PageSize" asp-route-sortBy="flash" asp-route-sortDir="@Model.NextSortDir("flash")">
-                            Flash Point <i class="fas @Model.SortIcon("flash")"></i>
-                        </a>
-                    </th>
-                    <th>
-                        <a class="sort-link @(Model.IsSorted("storage") ? "active" : "")"
-                           asp-action="@action" asp-route-search="@Model.Search" asp-route-page="1"
-                           asp-route-pageSize="@Model.PageSize" asp-route-sortBy="storage" asp-route-sortDir="@Model.NextSortDir("storage")">
-                            Storage <i class="fas @Model.SortIcon("storage")"></i>
-                        </a>
-                    </th>
+                    @if (!isTrash)
+                    {
+                        <th>
+                            <a class="sort-link @(Model.IsSorted("flash") ? "active" : "")"
+                               asp-action="@action" asp-route-search="@Model.Search" asp-route-page="1"
+                               asp-route-pageSize="@Model.PageSize" asp-route-sortBy="flash" asp-route-sortDir="@Model.NextSortDir("flash")">
+                                Flash Point <i class="fas @Model.SortIcon("flash")"></i>
+                            </a>
+                        </th>
+                        <th>
+                            <a class="sort-link @(Model.IsSorted("storage") ? "active" : "")"
+                               asp-action="@action" asp-route-search="@Model.Search" asp-route-page="1"
+                               asp-route-pageSize="@Model.PageSize" asp-route-sortBy="storage" asp-route-sortDir="@Model.NextSortDir("storage")">
+                                Storage <i class="fas @Model.SortIcon("storage")"></i>
+                            </a>
+                        </th>
+                    }
                     <th class="text-end">Actions</th>
                 </tr>
             </thead>
@@ -120,7 +169,7 @@
                         var progress = chemical.IsDraft
                             ? (int)Math.Round(chemical.LastCompletedSection / 16.0 * 100)
                             : 100;
-                        <tr>
+                        <tr class="@(isTrash ? "row-deleted" : "")">
                             <td>
                                 <div class="chem-name-cell">
                                     <span class="chem-avatar"><i class="fas fa-vial"></i></span>
@@ -131,19 +180,32 @@
                                 </div>
                             </td>
                             <td><code class="cas-code">@(chemical.CASNumber ?? "—")</code></td>
-                            <td>
-                                @if (chemical.IsDraft)
-                                {
-                                    <div class="sds-progress-wrap">
-                                        <div class="sds-progress-bar" style="width: @(progress)%"></div>
-                                    </div>
-                                    <small class="text-muted">@chemical.LastCompletedSection/16</small>
-                                }
-                                else
-                                {
-                                    <span class="status-badge status-complete"><i class="fas fa-check"></i> Complete</span>
-                                }
-                            </td>
+                            @if (isTrash)
+                            {
+                                <td class="small">
+                                    <div class="text-muted">@(chemical.DeletedAt?.ToLocalTime().ToString("dd MMM yyyy HH:mm") ?? "—")</div>
+                                    @if (!string.IsNullOrEmpty(chemical.DeletedBy))
+                                    {
+                                        <div class="deleted-by"><i class="fas fa-user"></i> @chemical.DeletedBy</div>
+                                    }
+                                </td>
+                            }
+                            else
+                            {
+                                <td>
+                                    @if (chemical.IsDraft)
+                                    {
+                                        <div class="sds-progress-wrap">
+                                            <div class="sds-progress-bar" style="width: @(progress)%"></div>
+                                        </div>
+                                        <small class="text-muted">@chemical.LastCompletedSection/16</small>
+                                    }
+                                    else
+                                    {
+                                        <span class="status-badge status-complete"><i class="fas fa-check"></i> Complete</span>
+                                    }
+                                </td>
+                            }
                             <td>
                                 @if (chemical.SignalWord == "Danger")
                                 {
@@ -154,18 +216,52 @@
                                     <span class="signal-tag signal-warning"><i class="fas fa-exclamation-triangle"></i> @(chemical.SignalWord ?? "Warning")</span>
                                 }
                             </td>
-                            <td class="text-muted small">@(chemical.FlashPoint ?? "—")</td>
-                            <td class="text-muted small">@(chemical.StorageLocation ?? "—")</td>
+                            @if (!isTrash)
+                            {
+                                <td class="text-muted small">@(chemical.FlashPoint ?? "—")</td>
+                                <td class="text-muted small">@(chemical.StorageLocation ?? "—")</td>
+                            }
                             <td>
                                 <div class="action-group">
-                                    @if (chemical.IsDraft)
+                                    @if (isTrash)
                                     {
-                                        <a asp-controller="SdsWizard" asp-action="Step" asp-route-id="@chemical.Id" asp-route-step="@(Math.Min(chemical.LastCompletedSection + 1, 16))" class="action-btn btn-continue" title="Continue"><i class="fas fa-play"></i></a>
+                                        <form asp-action="Restore" method="post" class="d-inline"
+                                              onsubmit="return confirm('Restore this chemical to the active list?');">
+                                            @Html.AntiForgeryToken()
+                                            <input type="hidden" name="id" value="@chemical.Id" />
+                                            <button type="submit" class="action-btn btn-restore" title="Restore">
+                                                <i class="fas fa-undo"></i>
+                                            </button>
+                                        </form>
+                                        <form asp-action="PermanentDelete" method="post" class="d-inline"
+                                              onsubmit="return confirm('Permanently delete? This cannot be undone.');">
+                                            @Html.AntiForgeryToken()
+                                            <input type="hidden" name="id" value="@chemical.Id" />
+                                            <button type="submit" class="action-btn btn-delete" title="Delete forever">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </form>
                                     }
-                                    <a asp-action="SDSDetails" asp-route-id="@chemical.Id" class="action-btn btn-view" title="View"><i class="fas fa-eye"></i></a>
-                                    <a asp-action="DownloadSdsPdf" asp-route-id="@chemical.Id" class="action-btn btn-pdf" title="PDF"><i class="fas fa-file-pdf"></i></a>
-                                    <a asp-controller="SdsWizard" asp-action="Step" asp-route-id="@chemical.Id" asp-route-step="1" class="action-btn btn-edit" title="Edit"><i class="fas fa-pen"></i></a>
-                                    <a asp-action="Emergency" asp-route-id="@chemical.Id" class="action-btn btn-emergency" title="Emergency"><i class="fas fa-bolt"></i></a>
+                                    else
+                                    {
+                                        @if (chemical.IsDraft)
+                                        {
+                                            <a asp-controller="SdsWizard" asp-action="Step" asp-route-id="@chemical.Id" asp-route-step="@(Math.Min(chemical.LastCompletedSection + 1, 16))" class="action-btn btn-continue" title="Continue"><i class="fas fa-play"></i></a>
+                                        }
+                                        <a asp-action="SDSDetails" asp-route-id="@chemical.Id" class="action-btn btn-view" title="View"><i class="fas fa-eye"></i></a>
+                                        <a asp-action="DownloadSdsPdf" asp-route-id="@chemical.Id" class="action-btn btn-pdf" title="PDF"><i class="fas fa-file-pdf"></i></a>
+                                        <a asp-controller="SdsWizard" asp-action="Step" asp-route-id="@chemical.Id" asp-route-step="1" class="action-btn btn-edit" title="Edit"><i class="fas fa-pen"></i></a>
+                                        <a asp-action="Emergency" asp-route-id="@chemical.Id" class="action-btn btn-emergency" title="Emergency"><i class="fas fa-bolt"></i></a>
+                                        <form asp-action="SoftDelete" method="post" class="d-inline"
+                                              onsubmit="return confirm('Move this chemical to deleted? You can restore it later.');">
+                                            @Html.AntiForgeryToken()
+                                            <input type="hidden" name="id" value="@chemical.Id" />
+                                            <input type="hidden" name="returnAction" value="@action" />
+                                            <button type="submit" class="action-btn btn-soft-delete" title="Delete">
+                                                <i class="fas fa-trash-alt"></i>
+                                            </button>
+                                        </form>
+                                    }
                                 </div>
                             </td>
                         </tr>
@@ -174,15 +270,22 @@
                 else
                 {
                     <tr>
-                        <td colspan="7" class="text-center py-5 text-muted">
-                            <i class="fas fa-search fa-2x mb-2 d-block opacity-50"></i>
-                            @if (!string.IsNullOrEmpty(Model.Search))
+                        <td colspan="@colSpan" class="text-center py-5 text-muted">
+                            @if (isTrash)
                             {
+                                <i class="fas fa-trash-restore fa-2x mb-2 d-block opacity-50"></i>
+                                <text>No deleted chemicals.</text>
+                                <br /><a asp-action="Reports" class="mt-2 d-inline-block">Back to active list</a>
+                            }
+                            else if (!string.IsNullOrEmpty(Model.Search))
+                            {
+                                <i class="fas fa-search fa-2x mb-2 d-block opacity-50"></i>
                                 <text>No chemicals match "<strong>@Model.Search</strong>".</text>
                                 <br /><a asp-action="@action" asp-route-pageSize="@Model.PageSize" asp-route-sortBy="@Model.SortBy" asp-route-sortDir="@Model.SortDir" class="mt-2 d-inline-block">Clear search</a>
                             }
                             else
                             {
+                                <i class="fas fa-flask fa-2x mb-2 d-block opacity-50"></i>
                                 <text>No chemicals yet.</text>
                                 <br /><a asp-controller="SdsWizard" asp-action="Step" asp-route-step="1">Add your first SDS</a>
                             }

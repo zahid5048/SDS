@@ -4,6 +4,9 @@ namespace ChemicalSDS.Models
     {
         public string ListAction { get; set; } = "Dashboard";
 
+        /// <summary>True when showing the deleted-chemicals (recycle bin) list.</summary>
+        public bool IsDeletedView => ListAction == "Deleted";
+
         public List<Chemical> Chemicals { get; set; } = [];
 
         public string? Search { get; set; }

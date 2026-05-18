@@ -869,6 +869,66 @@ body.app-body {
     color: #b91c1c;
 }
 
+.action-btn.btn-soft-delete {
+    background: #fff5f5;
+    color: #dc2626;
+    border: none;
+    cursor: pointer;
+}
+
+.action-btn.btn-soft-delete:hover {
+    background: #fee2e2;
+    color: #b91c1c;
+}
+
+.action-btn.btn-restore {
+    background: #e8f5e9;
+    color: var(--fg-dark);
+    border: none;
+    cursor: pointer;
+}
+
+.action-btn.btn-restore:hover {
+    background: #c8e6c9;
+    color: var(--fg-dark);
+}
+
+.btn-outline-trash {
+    border-color: #e0e0e0;
+    color: #666;
+    font-size: 0.82rem;
+    font-weight: 600;
+    border-radius: 8px;
+}
+
+.btn-outline-trash:hover {
+    background: #fff5f5;
+    border-color: #fecaca;
+    color: #dc2626;
+}
+
+.dash-table-trash {
+    border-color: #fecaca;
+}
+
+.dash-table-trash .dash-table-header {
+    background: linear-gradient(180deg, #fffbfb 0%, #fff 100%);
+}
+
+.row-deleted {
+    background: #fafafa;
+}
+
+.row-deleted .chem-avatar {
+    opacity: 0.65;
+}
+
+.deleted-by {
+    font-size: 0.72rem;
+    color: #8aa394;
+    margin-top: 2px;
+}
+
 /* Legacy compat */
 .stat-card, .chemicals-section, .content-card {
     background: #fff;
