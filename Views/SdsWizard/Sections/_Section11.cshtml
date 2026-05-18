@@ -1,0 +1,11 @@
+@model ChemicalSDS.Models.Chemical
+<h3 class="sds-section-title"><i class="fas fa-skull-crossbones"></i> Section 11. Toxicological information</h3>
+<div class="row sds-field-grid g-3">
+    <div class="col-12"><label asp-for="AcuteToxicity" class="form-label">Acute toxicity</label><textarea asp-for="AcuteToxicity" class="form-control" rows="3"></textarea></div>
+    <div class="col-12"><label asp-for="IrritationCorrosion" class="form-label">Irritation/Corrosion</label><textarea asp-for="IrritationCorrosion" class="form-control" rows="3"></textarea></div>
+    <div class="col-md-4"><label asp-for="Carcinogenicity" class="form-label">Carcinogenicity</label><textarea asp-for="Carcinogenicity" class="form-control" rows="2"></textarea></div>
+    <div class="col-md-4"><label asp-for="Mutagenicity" class="form-label">Mutagenicity</label><textarea asp-for="Mutagenicity" class="form-control" rows="2"></textarea></div>
+    <div class="col-md-4"><label asp-for="Teratogenicity" class="form-label">Teratogenicity</label><textarea asp-for="Teratogenicity" class="form-control" rows="2"></textarea></div>
+    <div class="col-12"><label asp-for="RoutesOfExposure" class="form-label">Routes of exposure</label><textarea asp-for="RoutesOfExposure" class="form-control" rows="2"></textarea></div>
+    <div class="col-12"><label asp-for="ChronicHealthEffects" class="form-label">Chronic health effects</label><textarea asp-for="ChronicHealthEffects" class="form-control" rows="2"></textarea></div>
+</div>

@@ -1,0 +1,130 @@
+@model List<ChemicalSDS.Models.User>
+@{
+    ViewData["Title"] = "Users";
+}
+
+<div class="dash-page-intro mb-4">
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+        <div>
+            <h2 class="dash-intro-title"><i class="fas fa-users me-2"></i> User Management</h2>
+            <p class="dash-intro-sub mb-0">Create accounts so staff can sign in to the SDS system</p>
+        </div>
+        <a asp-action="Create" class="btn btn-dash-primary">
+            <i class="fas fa-user-plus"></i> Add New User
+        </a>
+    </div>
+</div>
+
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <i class="fas fa-check-circle me-2"></i>@TempData["Success"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <i class="fas fa-exclamation-circle me-2"></i>@TempData["Error"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+
+<div class="dash-table-card">
+    <div class="dash-table-header">
+        <div>
+            <h4 class="dash-table-title"><i class="fas fa-id-card"></i> All Users</h4>
+            <p class="dash-table-sub">@Model.Count account(s) registered</p>
+        </div>
+        <span class="dash-count-badge">@Model.Count users</span>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table dash-table mb-0">
+            <thead>
+                <tr>
+                    <th>User</th>
+                    <th>Email</th>
+                    <th>Role</th>
+                    <th>Status</th>
+                    <th>Last login</th>
+                    <th>Created</th>
+                    <th class="text-end">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.Any())
+                {
+                    @foreach (var user in Model)
+                    {
+                        <tr>
+                            <td>
+                                <div class="chem-name-cell">
+                                    <span class="chem-avatar user-avatar"><i class="fas fa-user"></i></span>
+                                    <div>
+                                        <strong>@user.Username</strong>
+                                        <small>@user.FullName</small>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="text-muted small">@user.Email</td>
+                            <td>
+                                @switch (user.Role)
+                                {
+                                    case "Admin":
+                                        <span class="role-badge role-admin">Admin</span>
+                                        break;
+                                    case "Manager":
+                                        <span class="role-badge role-manager">Manager</span>
+                                        break;
+                                    default:
+                                        <span class="role-badge role-user">User</span>
+                                        break;
+                                }
+                            </td>
+                            <td>
+                                @if (user.IsActive)
+                                {
+                                    <span class="status-badge status-complete">Active</span>
+                                }
+                                else
+                                {
+                                    <span class="status-badge status-inactive">Inactive</span>
+                                }
+                            </td>
+                            <td class="text-muted small">@(user.LastLoginDate?.ToLocalTime().ToString("dd MMM yyyy HH:mm") ?? "Never")</td>
+                            <td class="text-muted small">@user.CreatedAt.ToLocalTime().ToString("dd MMM yyyy")</td>
+                            <td>
+                                <div class="action-group">
+                                    <a asp-action="Edit" asp-route-id="@user.Id" class="action-btn btn-edit" title="Edit">
+                                        <i class="fas fa-pen"></i>
+                                    </a>
+                                    @if (user.Username != "admin")
+                                    {
+                                        <form asp-action="Delete" asp-route-id="@user.Id" method="post" class="d-inline"
+                                              onsubmit="return confirm('Delete user @user.Username?');">
+                                            @Html.AntiForgeryToken()
+                                            <button type="submit" class="action-btn btn-delete" title="Delete">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </form>
+                                    }
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="7" class="text-center py-5 text-muted">
+                            <i class="fas fa-users fa-2x mb-2 d-block opacity-50"></i>
+                            No users yet.
+                            <br /><a asp-action="Create" class="mt-2 d-inline-block">Add the first user</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

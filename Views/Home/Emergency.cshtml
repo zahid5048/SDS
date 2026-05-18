@@ -1,0 +1,58 @@
+﻿@model ChemicalSDS.Models.Chemical
+@{
+    ViewData["Title"] = $"EMERGENCY - {Model.ChemicalName}";
+}
+
+<div class="alert alert-danger text-center mb-4">
+    <h1 class="h3 mb-2">EMERGENCY PROCEDURES</h1>
+    <h2 class="h5">Chemical: @Model.ChemicalName</h2>
+    <p class="mb-0">CAS: @Model.CASNumber | Flash Point: @Model.FlashPoint</p>
+</div>
+
+<div class="row g-3">
+    <div class="col-md-4">
+        <div class="card border-danger h-100">
+            <div class="card-header bg-danger text-white"><h3 class="h5 mb-0">FIRE</h3></div>
+            <div class="card-body">
+                <p><strong>Extinguisher:</strong> @Model.SuitableExtinguishingMedia</p>
+                <button type="button" class="btn btn-danger w-100" onclick="alert('FIRE: 1. Evacuate 2. Call 911 3. Use CO2/Dry chemical')">FIRE ACTION</button>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card border-warning h-100">
+            <div class="card-header bg-warning"><h3 class="h5 mb-0">SPILL</h3></div>
+            <div class="card-body">
+                <p>Use spark-proof tools. Absorb with inert material.</p>
+                <button type="button" class="btn btn-warning w-100" onclick="alert('SPILL: 1. Evacuate 2. No sparks 3. Absorb with sand')">SPILL ACTION</button>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card border-info h-100">
+            <div class="card-header bg-info text-white"><h3 class="h5 mb-0">FIRST AID</h3></div>
+            <div class="card-body">
+                <p><strong>Eyes:</strong> Flush 10-15 minutes</p>
+                <button type="button" class="btn btn-info w-100" onclick="alert('FIRST AID: Eyes: Flush 15 min. Skin: Wash. Get medical help')">FIRST AID</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card mt-4 bg-dark text-white">
+    <div class="card-body text-center">
+        <h4 class="h5">EMERGENCY CONTACTS</h4>
+        <p class="mb-1">Medical/Fire: 911 | Poison Control: 1-800-222-1222</p>
+        <p class="mb-0">Supplier: @Model.EmergencyPhone</p>
+    </div>
+</div>
+
+<div class="text-center mt-4">
+    <a asp-action="SDSDetails" asp-route-id="@Model.Id" class="btn btn-primary me-2">
+        <i class="fas fa-file-alt"></i> View Full SDS
+    </a>
+    <a asp-action="Dashboard" class="btn btn-outline-secondary">
+        <i class="fas fa-arrow-left"></i> Dashboard
+    </a>
+</div>
+

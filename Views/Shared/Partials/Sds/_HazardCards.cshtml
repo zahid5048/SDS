@@ -1,0 +1,53 @@
+@model ChemicalSDS.Models.Chemical
+@{
+    string Nfpa(int index, string fallback) =>
+        Model.NFPARatings?.Split(',', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries) is { Length: > 0 } parts
+            && index < parts.Length
+            && parts[index].Split(':', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries) is { Length: > 1 } kv
+            ? kv[1].Trim()
+            : fallback;
+
+    var flamm = Nfpa(0, "4");
+    var health = Nfpa(1, "1");
+    var react = Nfpa(2, "0");
+    var signalClass = Model.SignalWord == "Danger" ? "signal-danger" : "signal-warning";
+}
+
+<div class="row g-3 mb-4 sds-hero-row">
+    <div class="col-lg-4">
+        <div class="sds-card sds-nfpa-card">
+            <div class="sds-card-head">
+                <i class="fas fa-diamond"></i> NFPA Hazard Diamond
+            </div>
+            <div class="sds-card-body text-center">
+                <div class="nfpa-stack">
+                    <div class="nfpa nfpa-red" title="Flammability">@flamm</div>
+                    <span class="nfpa-label">Flammability</span>
+                    <div class="nfpa nfpa-blue" title="Health">@health</div>
+                    <span class="nfpa-label">Health</span>
+                    <div class="nfpa nfpa-yellow" title="Reactivity">@react</div>
+                    <span class="nfpa-label">Reactivity</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-8">
+        <div class="sds-card sds-hazard-card h-100">
+            <div class="sds-card-head">
+                <i class="fas fa-exclamation-triangle"></i> Quick Hazard Summary
+            </div>
+            <div class="sds-card-body">
+                <div class="signal-banner @signalClass">
+                    <i class="fas fa-exclamation-circle"></i>
+                    <strong>@Model.SignalWord</strong>
+                </div>
+                <p class="hazard-text">@Model.HazardStatements</p>
+                <div class="hazard-meta">
+                    <span><i class="fas fa-fire-alt"></i> <strong>Flash Point:</strong> @(Model.FlashPoint ?? "—")</span>
+                    <span><i class="fas fa-barcode"></i> <strong>CAS:</strong> @(Model.CASNumber ?? "—")</span>
+                    <span><i class="fas fa-tag"></i> <strong>Class:</strong> @(Model.Classification ?? "—")</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

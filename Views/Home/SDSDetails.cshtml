@@ -1,0 +1,255 @@
+﻿@model ChemicalSDS.Models.Chemical
+@{
+    ViewData["Title"] = $"{Model.ProductIdentifier} - Safety Data Sheet";
+    var product = Model.ProductIdentifier ?? Model.ChemicalName ?? "Chemical";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/sds.css" asp-append-version="true" />
+}
+
+@section Scripts {
+    <script>
+        document.querySelectorAll('.sds-sec-pill').forEach(pill => {
+            pill.addEventListener('click', (e) => {
+                const id = pill.getAttribute('href')?.slice(1);
+                const target = id ? document.getElementById(id) : null;
+                if (target) {
+                    e.preventDefault();
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    history.replaceState(null, '', '#' + id);
+                }
+                document.querySelectorAll('.sds-sec-pill').forEach(p => p.classList.remove('active'));
+                pill.classList.add('active');
+            });
+        });
+
+        if (location.hash) {
+            const el = document.querySelector(location.hash);
+            if (el) setTimeout(() => el.scrollIntoView({ behavior: 'smooth', block: 'start' }), 100);
+        }
+
+        const observer = new IntersectionObserver(entries => {
+            entries.forEach(e => {
+                if (e.isIntersecting) {
+                    const id = e.target.id.replace('sec', '');
+                    document.querySelectorAll('.sds-sec-pill').forEach(p => {
+                        p.classList.toggle('active', p.dataset.section === id);
+                    });
+                }
+            });
+        }, { rootMargin: '-15% 0px -55% 0px' });
+        document.querySelectorAll('.sds-section[id]').forEach(s => observer.observe(s));
+    </script>
+}
+
+<div class="sds-page-header">
+    <div class="sds-page-header-top">
+        <div>
+            <h1 class="sds-doc-title"><i class="fas fa-file-medical"></i> @product</h1>
+            <p class="sds-doc-sub">Safety Data Sheet &mdash; 16 Sections | C.I.W.C&amp;E, DGJW Govt of Punjab</p>
+        </div>
+        <div class="sds-toolbar-actions">
+            <a asp-action="DownloadSdsPdf" asp-route-id="@Model.Id" class="btn btn-download-pdf btn-sm">
+                <i class="fas fa-file-pdf"></i> Download PDF
+            </a>
+            <a asp-controller="SdsWizard" asp-action="Step" asp-route-id="@Model.Id" asp-route-step="1" class="btn btn-outline-success btn-sm">
+                <i class="fas fa-pen"></i> Edit
+            </a>
+            <a asp-action="Emergency" asp-route-id="@Model.Id" class="btn btn-danger btn-sm">
+                <i class="fas fa-exclamation-circle"></i> Emergency
+            </a>
+            <a asp-action="Dashboard" class="btn btn-outline-secondary btn-sm">
+                <i class="fas fa-arrow-left"></i> Dashboard
+            </a>
+        </div>
+    </div>
+    <partial name="Partials/Sds/_SectionNav" />
+</div>
+
+<partial name="Partials/Sds/_HazardCards" model="Model" />
+
+<div class="sds-sections">
+    <div id="sec1" class="sds-section">
+        <div class="section-header"><h4><i class="fas fa-id-card"></i> Section 1: Identification</h4></div>
+        <div class="section-body">
+            <table class="table table-bordered mb-0">
+                <tr><th>GHS Product Identifier</th><td>@Model.ProductIdentifier</td></tr>
+                <tr><th>Chemical Name</th><td>@Model.ChemicalName</td></tr>
+                <tr><th>Other Means of Identification</th><td>@Model.OtherMeansOfId</td></tr>
+                <tr><th>Product Type</th><td>@Model.ProductType</td></tr>
+                <tr><th>Product Use</th><td>@Model.ProductUse</td></tr>
+                <tr><th>Synonym</th><td>@Model.Synonym</td></tr>
+                <tr><th>SDS #</th><td>@Model.SDSNumber</td></tr>
+                <tr><th>Supplier Details</th><td>@Html.Raw(Model.SupplierDetails?.Replace("\n", "<br/>"))</td></tr>
+                <tr><th>24-Hour Telephone</th><td>@Model.EmergencyPhone</td></tr>
+            </table>
+        </div>
+    </div>
+
+    <div id="sec2" class="sds-section">
+        <div class="section-header"><h4><i class="fas fa-exclamation-triangle"></i> Section 2: Hazards Identification</h4></div>
+        <div class="section-body">
+            <p><strong>OSHA/HCS Status:</strong> @Model.OSHASstatus</p>
+            <p><strong>Classification:</strong> @Model.Classification</p>
+            <p><strong>Signal Word:</strong> <span class="badge @(Model.SignalWord == "Danger" ? "bg-danger" : "bg-warning text-dark")">@Model.SignalWord</span></p>
+            <p><strong>Hazard Statements:</strong></p>
+            <p>@Html.Raw(Model.HazardStatements?.Replace("\n", "<br/>"))</p>
+            <p><strong>Precautionary — General:</strong> @Model.PrecautionaryGeneral</p>
+            <p><strong>Precautionary — Prevention:</strong> @Model.PrecautionaryPrevention</p>
+            <p><strong>Precautionary — Response:</strong> @Model.PrecautionaryResponse</p>
+            <p><strong>Precautionary — Storage:</strong> @Model.PrecautionaryStorage</p>
+            <p><strong>Precautionary — Disposal:</strong> @Model.PrecautionaryDisposal</p>
+            @if (!string.IsNullOrEmpty(Model.HazardsNotOtherwiseClassified))
+            {
+                <p><strong>Hazards Not Otherwise Classified:</strong> @Model.HazardsNotOtherwiseClassified</p>
+            }
+        </div>
+    </div>
+
+    <div id="sec3" class="sds-section">
+        <div class="section-header"><h4><i class="fas fa-flask"></i> Section 3: Composition / Ingredients</h4></div>
+        <div class="section-body">
+            <table class="table table-bordered mb-0">
+                <tr><th>Substance/Mixture</th><td>@Model.SubstanceMixture</td></tr>
+                <tr><th>Ingredient Name</th><td>@Model.IngredientName</td></tr>
+                <tr><th>CAS Number</th><td>@Model.CASNumber</td></tr>
+                <tr><th>Percentage</th><td>@Model.Percentage</td></tr>
+            </table>
+        </div>
+    </div>
+
+    <div id="sec4" class="sds-section">
+        <div class="section-header"><h4><i class="fas fa-kit-medical"></i> Section 4: First Aid Measures</h4></div>
+        <div class="section-body">
+            <p><strong>Eye Contact:</strong> @Model.EyeContactFirstAid</p>
+            <p><strong>Inhalation:</strong> @Model.InhalationFirstAid</p>
+            <p><strong>Skin Contact:</strong> @Model.SkinContactFirstAid</p>
+            <p><strong>Ingestion:</strong> @Model.IngestionFirstAid</p>
+        </div>
+    </div>
+
+    <div id="sec5" class="sds-section">
+        <div class="section-header"><h4><i class="fas fa-fire"></i> Section 5: Fire-Fighting Measures</h4></div>
+        <div class="section-body">
+            <p><strong>Suitable Extinguishing Media:</strong> @Model.SuitableExtinguishingMedia</p>
+            <p><strong>Unsuitable Extinguishing Media:</strong> @Model.UnsuitableExtinguishingMedia</p>
+            <p><strong>Specific Hazards:</strong> @Model.SpecificHazards</p>
+            <p><strong>Flash Point:</strong> @Model.FlashPoint</p>
+            <p><strong>Auto-ignition Temperature:</strong> @Model.AutoIgnitionTemp</p>
+            <p><strong>Explosive Limits:</strong> @Model.LowerExplosiveLimit — @Model.UpperExplosiveLimit</p>
+        </div>
+    </div>
+
+    <div id="sec6" class="sds-section">
+        <div class="section-header"><h4><i class="fas fa-biohazard"></i> Section 6: Accidental Release</h4></div>
+        <div class="section-body">
+            <p><strong>Small Spill:</strong> @Model.SmallSpillMethods</p>
+            <p><strong>Large Spill:</strong> @Model.LargeSpillMethods</p>
+        </div>
+    </div>
+
+    <div id="sec7" class="sds-section">
+        <div class="section-header"><h4><i class="fas fa-warehouse"></i> Section 7: Handling and Storage</h4></div>
+        <div class="section-body">
+            @if (!string.IsNullOrEmpty(Model.HandlingPrecautions)) { <p><strong>Handling:</strong> @Model.HandlingPrecautions</p> }
+            <p><strong>Storage Requirements:</strong> @Model.SafeStorageConditions</p>
+            <p><strong>Incompatible Materials:</strong> @Model.IncompatibleMaterials</p>
+        </div>
+    </div>
+
+    <div id="sec8" class="sds-section">
+        <div class="section-header"><h4><i class="fas fa-hard-hat"></i> Section 8: Exposure Controls / PPE</h4></div>
+        <div class="section-body">
+            @if (!string.IsNullOrEmpty(Model.OccupationalExposureLimits)) { <p><strong>Exposure Limits:</strong> @Model.OccupationalExposureLimits</p> }
+            @if (!string.IsNullOrEmpty(Model.ExposureControls)) { <p><strong>Engineering Controls:</strong> @Model.ExposureControls</p> }
+            <p><strong>Eye Protection:</strong> @Model.EyeProtection</p>
+            <p><strong>Hand Protection:</strong> @Model.HandProtection</p>
+            <p><strong>Body Protection:</strong> @Model.BodyProtection</p>
+            <p><strong>Respiratory Protection:</strong> @Model.RespiratoryProtection</p>
+        </div>
+    </div>
+
+    <div id="sec9" class="sds-section">
+        <div class="section-header"><h4><i class="fas fa-atom"></i> Section 9: Physical and Chemical Properties</h4></div>
+        <div class="section-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <p><strong>Physical State:</strong> @Model.PhysicalState</p>
+                    <p><strong>Color:</strong> @Model.Color</p>
+                    <p><strong>Odor:</strong> @Model.Odor</p>
+                    <p><strong>Melting Point:</strong> @Model.MeltingPoint</p>
+                    <p><strong>Boiling Point:</strong> @Model.BoilingPoint</p>
+                </div>
+                <div class="col-md-6">
+                    <p><strong>Vapor Pressure:</strong> @Model.VaporPressure</p>
+                    <p><strong>Vapor Density:</strong> @Model.VaporDensity</p>
+                    <p><strong>Relative Density:</strong> @Model.RelativeDensity</p>
+                    <p><strong>Solubility:</strong> @Model.Solubility</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="sec10" class="sds-section">
+        <div class="section-header"><h4><i class="fas fa-shield-alt"></i> Section 10: Stability and Reactivity</h4></div>
+        <div class="section-body">
+            <p><strong>Chemical Stability:</strong> @Model.ChemicalStability</p>
+            <p><strong>Conditions to Avoid:</strong> @Model.ConditionsToAvoid</p>
+            <p><strong>Hazardous Decomposition:</strong> @Model.HazardousDecomposition</p>
+        </div>
+    </div>
+
+    <div id="sec11" class="sds-section">
+        <div class="section-header"><h4><i class="fas fa-skull-crossbones"></i> Section 11: Toxicological Information</h4></div>
+        <div class="section-body">
+            <p><strong>Acute Toxicity:</strong> @Model.AcuteToxicity</p>
+            <p><strong>Irritation/Corrosion:</strong> @Model.IrritationCorrosion</p>
+            <p><strong>Carcinogenicity:</strong> @Model.Carcinogenicity</p>
+        </div>
+    </div>
+
+    <div id="sec12" class="sds-section">
+        <div class="section-header"><h4><i class="fas fa-leaf"></i> Section 12: Ecological Information</h4></div>
+        <div class="section-body">
+            <p><strong>Ecotoxicity:</strong> @Model.Ecotoxicity</p>
+            <p><strong>Bioaccumulative Potential:</strong> @Model.BioaccumulativePotential</p>
+        </div>
+    </div>
+
+    <div id="sec13" class="sds-section">
+        <div class="section-header"><h4><i class="fas fa-trash"></i> Section 13: Disposal Considerations</h4></div>
+        <div class="section-body"><p>@Model.DisposalMethods</p></div>
+    </div>
+
+    <div id="sec14" class="sds-section">
+        <div class="section-header"><h4><i class="fas fa-truck"></i> Section 14: Transport Information</h4></div>
+        <div class="section-body">
+            <p><strong>UN Number:</strong> @Model.UNNumber</p>
+            <p><strong>UN Proper Shipping Name:</strong> @Model.UNProperShippingName</p>
+            <p><strong>Transport Hazard Class:</strong> @Model.TransportHazardClass</p>
+            <p><strong>Packing Group:</strong> @Model.PackingGroup</p>
+        </div>
+    </div>
+
+    <div id="sec15" class="sds-section">
+        <div class="section-header"><h4><i class="fas fa-gavel"></i> Section 15: Regulatory Information</h4></div>
+        <div class="section-body">
+            <p><strong>U.S. Federal Regulations:</strong> @Model.USFederalRegulations</p>
+            <p><strong>State Regulations:</strong> @Model.StateRegulations</p>
+            <p><strong>Inventory List:</strong> @Model.InventoryList</p>
+        </div>
+    </div>
+
+    <div id="sec16" class="sds-section mb-4">
+        <div class="section-header"><h4><i class="fas fa-info-circle"></i> Section 16: Other Information</h4></div>
+        <div class="section-body">
+            <p><strong>HMIS Ratings:</strong> @Model.HMISRatings</p>
+            <p><strong>NFPA Ratings:</strong> @Model.NFPARatings</p>
+            <p><strong>Version:</strong> @Model.Version</p>
+            <p><strong>Date of Revision:</strong> @Model.DateOfRevision</p>
+            <p><strong>Notice to Reader:</strong> @Model.NoticeToReader</p>
+        </div>
+    </div>
+</div>
+

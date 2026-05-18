@@ -1,0 +1,59 @@
+@model (int CurrentStep, int? ChemicalId, int LastCompletedSection)
+
+@{
+    var (currentStep, chemicalId, lastCompleted) = Model;
+    var total = SdsWizardStep.Total;
+    var progressPercent = total > 1
+        ? (double)(currentStep - 1) / (total - 1) * 100
+        : 0;
+}
+
+<div class="sds-stepper-wrap">
+    <div class="sds-stepper-meta">
+        <span class="sds-stepper-badge">
+            <i class="fas fa-leaf"></i> Punjab SDS Progress
+        </span>
+        <span class="sds-stepper-count">Section <strong>@currentStep</strong> of @total</span>
+    </div>
+
+    <div class="sds-stepper-body">
+        <div class="sds-stepper-rail" aria-hidden="true">
+            <div class="sds-stepper-track"></div>
+            <div class="sds-stepper-fill" style="width: @(progressPercent.ToString("0.##", System.Globalization.CultureInfo.InvariantCulture))%"></div>
+        </div>
+
+        <nav class="sds-stepper" aria-label="SDS sections progress">
+            @for (var i = 1; i <= total; i++)
+            {
+                var css = "sds-step";
+                if (i == currentStep) css += " active";
+                else if (i < currentStep || i <= lastCompleted) css += " completed";
+                else if (chemicalId == null || i > lastCompleted + 1) css += " disabled";
+
+                var canNavigate = chemicalId.HasValue && i <= lastCompleted + 1 && i != currentStep;
+                var title = SdsWizardStep.GetTitle(i);
+                var showCheck = i < currentStep;
+
+                <div class="sds-step-item">
+                    @if (canNavigate)
+                    {
+                        <a class="@css"
+                           asp-controller="SdsWizard"
+                           asp-action="Step"
+                           asp-route-id="@chemicalId"
+                           asp-route-step="@i"
+                           title="@title">
+                            @if (showCheck) { <i class="fas fa-check sds-step-check"></i> } else { @i }
+                        </a>
+                    }
+                    else
+                    {
+                        <span class="@css" title="@title">
+                            @if (showCheck) { <i class="fas fa-check sds-step-check"></i> } else { @i }
+                        </span>
+                    }
+                </div>
+            }
+        </nav>
+    </div>
+</div>

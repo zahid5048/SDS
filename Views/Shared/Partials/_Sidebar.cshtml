@@ -1,0 +1,68 @@
+﻿@{
+    var currentAction = ViewContext.RouteData.Values["action"]?.ToString() ?? "";
+    var currentController = ViewContext.RouteData.Values["controller"]?.ToString() ?? "";
+    var sessionRole = Context.Session.GetString("Role") ?? "";
+    var isAdmin = string.Equals(sessionRole, "Admin", StringComparison.OrdinalIgnoreCase);
+
+    bool IsActive(string controller, string action) =>
+        string.Equals(currentController, controller, StringComparison.OrdinalIgnoreCase) &&
+        string.Equals(currentAction, action, StringComparison.OrdinalIgnoreCase);
+
+    string ItemClass(string controller, string action) =>
+        IsActive(controller, action) ? "nav-item active" : "nav-item";
+
+    string ControllerItemClass(string controller) =>
+        string.Equals(currentController, controller, StringComparison.OrdinalIgnoreCase)
+            ? "nav-item active" : "nav-item";
+}
+
+<aside class="app-sidebar" id="appSidebar">
+    <div class="sidebar-header">
+        <h3><i class="fas fa-flask me-1"></i> C.I.W.C&amp;E</h3>
+        <p>DGJW Govt of Punjab</p>
+    </div>
+
+    <nav class="sidebar-nav" aria-label="Main navigation">
+        <div class="nav-section-title">Main</div>
+        <div class="@ItemClass("Home", "Dashboard")">
+            <a asp-controller="Home" asp-action="Dashboard">
+                <i class="fas fa-tachometer-alt"></i>
+                <span>Dashboard</span>
+            </a>
+        </div>
+        <div class="@ItemClass("SdsWizard", "Step")">
+            <a asp-controller="SdsWizard" asp-action="Step" asp-route-step="1">
+                <i class="fas fa-plus-circle"></i>
+                <span>Add New SDS</span>
+            </a>
+        </div>
+        <div class="@ItemClass("Home", "Reports")">
+            <a asp-controller="Home" asp-action="Reports">
+                <i class="fas fa-list"></i>
+                <span>All Chemicals</span>
+            </a>
+        </div>
+
+        @if (isAdmin)
+        {
+            <div class="@ControllerItemClass("Users")">
+                <a asp-controller="Users" asp-action="Index">
+                    <i class="fas fa-users"></i>
+                    <span>Users</span>
+                </a>
+            </div>
+        }
+
+        <div class="nav-section-title">Account</div>
+        <div class="nav-item logout-item">
+            <a asp-controller="Account" asp-action="Logout">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Logout</span>
+            </a>
+        </div>
+    </nav>
+
+    <div class="sidebar-footer">
+        Chemical SDS System v1.0
+    </div>
+</aside>

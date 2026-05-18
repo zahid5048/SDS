@@ -1,0 +1,213 @@
+@model ChemicalSDS.Models.Chemical
+@{
+    ViewData["Title"] = $"{Model.ProductIdentifier} - Safety Data Sheet";
+    ViewBag.PageTitle = "Safety Data Sheet";
+    ViewBag.PageIcon = "fa-file-alt";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="card mb-4">
+    <div class="card-header bg-dark text-white">
+        <h3 class="mb-0">📄 @Model.ProductIdentifier (@Model.CASNumber)</h3>
+    </div>
+    <div class="card-body">
+        <div class="alert alert-danger">
+            <strong>⚠️ Signal Word: @Model.SignalWord</strong> | 
+            <strong>🔥 Flash Point:</strong> @Model.FlashPoint |
+            <strong>📍 Storage:</strong> @Model.StorageLocation
+        </div>
+
+        <!-- Navigation to Sections -->
+        <div class="row g-1 mb-4">
+            <div class="col"><a href="#sec1" class="btn btn-sm btn-outline-primary w-100">Sec 1</a></div>
+            <div class="col"><a href="#sec2" class="btn btn-sm btn-outline-danger w-100">Sec 2</a></div>
+            <div class="col"><a href="#sec3" class="btn btn-sm btn-outline-info w-100">Sec 3</a></div>
+            <div class="col"><a href="#sec4" class="btn btn-sm btn-outline-success w-100">Sec 4</a></div>
+            <div class="col"><a href="#sec5" class="btn btn-sm btn-outline-danger w-100">Sec 5</a></div>
+            <div class="col"><a href="#sec6" class="btn btn-sm btn-outline-warning w-100">Sec 6</a></div>
+            <div class="col"><a href="#sec7" class="btn btn-sm btn-outline-primary w-100">Sec 7</a></div>
+            <div class="col"><a href="#sec8" class="btn btn-sm btn-outline-secondary w-100">Sec 8</a></div>
+            <div class="col"><a href="#sec9" class="btn btn-sm btn-outline-info w-100">Sec 9</a></div>
+            <div class="col"><a href="#sec10" class="btn btn-sm btn-outline-dark w-100">Sec 10</a></div>
+            <div class="col"><a href="#sec11" class="btn btn-sm btn-outline-danger w-100">Sec 11</a></div>
+            <div class="col"><a href="#sec12" class="btn btn-sm btn-outline-success w-100">Sec 12</a></div>
+            <div class="col"><a href="#sec13" class="btn btn-sm btn-outline-warning w-100">Sec 13</a></div>
+            <div class="col"><a href="#sec14" class="btn btn-sm btn-outline-primary w-100">Sec 14</a></div>
+            <div class="col"><a href="#sec15" class="btn btn-sm btn-outline-secondary w-100">Sec 15</a></div>
+            <div class="col"><a href="#sec16" class="btn btn-sm btn-outline-info w-100">Sec 16</a></div>
+        </div>
+
+        <!-- Section 1 -->
+        <div id="sec1" class="card mb-3">
+            <div class="card-header bg-primary text-white"><h4>📋 Section 1: Identification</h4></div>
+            <div class="card-body">
+                <table class="table table-bordered">
+                    <tr><th style="width:200px">GHS Product Identifier</th><td>@Model.ProductIdentifier</td></tr>
+                    <tr><th>Chemical Name</th><td>@Model.ChemicalName</td></tr>
+                    <tr><th>Other Means of ID</th><td>@Model.OtherMeansOfId</td></tr>
+                    <tr><th>Product Type</th><td>@Model.ProductType</td></tr>
+                    <tr><th>Product Use</th><td>@Model.ProductUse</td></tr>
+                    <tr><th>SDS #</th><td>@Model.SDSNumber</td></tr>
+                    <tr><th>Supplier Details</th><td>@Html.Raw(Model.SupplierDetails?.Replace("\n", "<br/>"))</td></tr>
+                    <tr><th>Emergency Phone</th><td>@Model.EmergencyPhone</td></tr>
+                </table>
+            </div>
+        </div>
+
+        <!-- Section 2 -->
+        <div id="sec2" class="card mb-3">
+            <div class="card-header bg-danger text-white"><h4>⚠️ Section 2: Hazards Identification</h4></div>
+            <div class="card-body">
+                <p><strong>Signal Word:</strong> <span class="badge bg-danger">@Model.SignalWord</span></p>
+                <p><strong>Hazard Statements:</strong><br/>@Html.Raw(Model.HazardStatements?.Replace("\n", "<br/>"))</p>
+                <p><strong>Precautionary Statements:</strong></p>
+                <ul>
+                    <li><strong>General:</strong> @Model.PrecautionaryGeneral</li>
+                    <li><strong>Prevention:</strong> @Model.PrecautionaryPrevention</li>
+                    <li><strong>Response:</strong> @Model.PrecautionaryResponse</li>
+                    <li><strong>Storage:</strong> @Model.PrecautionaryStorage</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Section 3 -->
+        <div id="sec3" class="card mb-3">
+            <div class="card-header bg-info text-white"><h4>🧪 Section 3: Composition</h4></div>
+            <div class="card-body">
+                <table class="table">
+                    <tr><th>Ingredient</th><td>@Model.IngredientName</td></tr>
+                    <tr><th>CAS Number</th><td>@Model.CASNumber</td></tr>
+                    <tr><th>Percentage</th><td>@Model.Percentage</td></tr>
+                </table>
+            </div>
+        </div>
+
+        <!-- Section 4 -->
+        <div id="sec4" class="card mb-3">
+            <div class="card-header bg-success text-white"><h4>🩺 Section 4: First Aid</h4></div>
+            <div class="card-body">
+                <p><strong>Eye Contact:</strong> @Model.EyeContactFirstAid</p>
+                <p><strong>Inhalation:</strong> @Model.InhalationFirstAid</p>
+                <p><strong>Skin Contact:</strong> @Model.SkinContactFirstAid</p>
+                <p><strong>Ingestion:</strong> @Model.IngestionFirstAid</p>
+            </div>
+        </div>
+
+        <!-- Section 5 -->
+        <div id="sec5" class="card mb-3">
+            <div class="card-header bg-danger text-white"><h4>🔥 Section 5: Fire Fighting</h4></div>
+            <div class="card-body">
+                <p><strong>Suitable Media:</strong> @Model.SuitableExtinguishingMedia</p>
+                <p><strong>Unsuitable Media:</strong> @Model.UnsuitableExtinguishingMedia</p>
+                <p><strong>Flash Point:</strong> @Model.FlashPoint</p>
+                <p><strong>Auto-ignition:</strong> @Model.AutoIgnitionTemp</p>
+            </div>
+        </div>
+
+        <!-- Section 6 -->
+        <div id="sec6" class="card mb-3">
+            <div class="card-header bg-warning"><h4>🧹 Section 6: Spill Measures</h4></div>
+            <div class="card-body">
+                <p><strong>Small Spill:</strong> @Model.SmallSpillMethods</p>
+                <p><strong>Large Spill:</strong> @Model.LargeSpillMethods</p>
+            </div>
+        </div>
+
+        <!-- Section 7 -->
+        <div id="sec7" class="card mb-3">
+            <div class="card-header bg-primary text-white"><h4>📦 Section 7: Storage</h4></div>
+            <div class="card-body">
+                <p>@Model.SafeStorageConditions</p>
+                <p><strong>Incompatible Materials:</strong> @Model.IncompatibleMaterials</p>
+            </div>
+        </div>
+
+        <!-- Section 8 -->
+        <div id="sec8" class="card mb-3">
+            <div class="card-header bg-secondary text-white"><h4>🧤 Section 8: PPE</h4></div>
+            <div class="card-body">
+                <p><strong>Eye Protection:</strong> @Model.EyeProtection</p>
+                <p><strong>Hand Protection:</strong> @Model.HandProtection</p>
+                <p><strong>Body Protection:</strong> @Model.BodyProtection</p>
+                <p><strong>Respiratory:</strong> @Model.RespiratoryProtection</p>
+            </div>
+        </div>
+
+        <!-- Section 9 -->
+        <div id="sec9" class="card mb-3">
+            <div class="card-header bg-info text-white"><h4>📊 Section 9: Properties</h4></div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6"><strong>Physical State:</strong> @Model.PhysicalState</div>
+                    <div class="col-md-6"><strong>Color:</strong> @Model.Color</div>
+                    <div class="col-md-6"><strong>Odor:</strong> @Model.Odor</div>
+                    <div class="col-md-6"><strong>Melting Point:</strong> @Model.MeltingPoint</div>
+                    <div class="col-md-6"><strong>Boiling Point:</strong> @Model.BoilingPoint</div>
+                    <div class="col-md-6"><strong>Vapor Density:</strong> @Model.VaporDensity</div>
+                    <div class="col-md-6"><strong>Solubility:</strong> @Model.Solubility</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section 10 -->
+        <div id="sec10" class="card mb-3">
+            <div class="card-header bg-dark text-white"><h4>⚡ Section 10: Stability</h4></div>
+            <div class="card-body">
+                <p><strong>Stability:</strong> @Model.ChemicalStability</p>
+                <p><strong>Conditions to Avoid:</strong> @Model.ConditionsToAvoid</p>
+            </div>
+        </div>
+
+        <!-- Section 11 -->
+        <div id="sec11" class="card mb-3">
+            <div class="card-header bg-danger text-white"><h4>⚠️ Section 11: Toxicological</h4></div>
+            <div class="card-body">
+                <p>@Model.AcuteToxicity</p>
+            </div>
+        </div>
+
+        <!-- Section 12 -->
+        <div id="sec12" class="card mb-3">
+            <div class="card-header bg-success text-white"><h4>🌿 Section 12: Ecological</h4></div>
+            <div class="card-body">
+                <p>@Model.Ecotoxicity</p>
+            </div>
+        </div>
+
+        <!-- Section 13 -->
+        <div id="sec13" class="card mb-3">
+            <div class="card-header bg-warning"><h4>🗑️ Section 13: Disposal</h4></div>
+            <div class="card-body">
+                <p>@Model.DisposalMethods</p>
+            </div>
+        </div>
+
+        <!-- Section 14 -->
+        <div id="sec14" class="card mb-3">
+            <div class="card-header bg-primary text-white"><h4>🚚 Section 14: Transport</h4></div>
+            <div class="card-body">
+                <p><strong>UN Number:</strong> @Model.UNNumber</p>
+                <p><strong>Hazard Class:</strong> @Model.TransportHazardClass</p>
+                <p><strong>Packing Group:</strong> @Model.PackingGroup</p>
+            </div>
+        </div>
+
+        <!-- Section 15 -->
+        <div id="sec15" class="card mb-3">
+            <div class="card-header bg-secondary text-white"><h4>📜 Section 15: Regulatory</h4></div>
+            <div class="card-body">
+                <p>@Model.USFederalRegulations</p>
+            </div>
+        </div>
+
+        <!-- Section 16 -->
+        <div id="sec16" class="card mb-3">
+            <div class="card-header bg-info text-white"><h4>ℹ️ Section 16: Other Info</h4></div>
+            <div class="card-body">
+                <p><strong>NFPA Ratings:</strong> @Model.NFPARatings</p>
+                <p><strong>HMIS Ratings:</strong> @Model.HMISRatings</p>
+                <p><strong>Version:</strong> @Model.Version</p>
+            </div>
+        </div>
+    </div>
+</div>

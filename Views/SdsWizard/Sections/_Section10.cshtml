@@ -1,0 +1,10 @@
+@model ChemicalSDS.Models.Chemical
+<h3 class="sds-section-title"><i class="fas fa-shield-alt"></i> Section 10. Stability and reactivity</h3>
+<div class="row sds-field-grid g-3">
+    <div class="col-12"><label asp-for="ChemicalStability" class="form-label">Chemical stability</label><textarea asp-for="ChemicalStability" class="form-control" rows="2"></textarea></div>
+    <div class="col-12"><label asp-for="PossibilityOfHazardousReactions" class="form-label">Possibility of hazardous reactions</label><textarea asp-for="PossibilityOfHazardousReactions" class="form-control" rows="2"></textarea></div>
+    <div class="col-12"><label asp-for="ConditionsToAvoid" class="form-label">Conditions to avoid</label><textarea asp-for="ConditionsToAvoid" class="form-control" rows="3"></textarea></div>
+    <div class="col-md-6"><label asp-for="IncompatibleMaterials" class="form-label">Incompatible materials</label><textarea asp-for="IncompatibleMaterials" class="form-control" rows="2"></textarea></div>
+    <div class="col-md-6"><label asp-for="HazardousDecomposition" class="form-label">Hazardous decomposition products</label><textarea asp-for="HazardousDecomposition" class="form-control" rows="2"></textarea></div>
+    <div class="col-12"><label asp-for="Reactivity" class="form-label">Reactivity</label><textarea asp-for="Reactivity" class="form-control" rows="2"></textarea></div>
+</div>

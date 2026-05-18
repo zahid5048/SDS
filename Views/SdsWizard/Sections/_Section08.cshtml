@@ -1,0 +1,10 @@
+@model ChemicalSDS.Models.Chemical
+<h3 class="sds-section-title"><i class="fas fa-hard-hat"></i> Section 8. Exposure controls / personal protection</h3>
+<div class="row sds-field-grid g-3">
+    <div class="col-12"><label asp-for="OccupationalExposureLimits" class="form-label">Occupational exposure limits</label><textarea asp-for="OccupationalExposureLimits" class="form-control" rows="3"></textarea></div>
+    <div class="col-12"><label asp-for="ExposureControls" class="form-label">Appropriate engineering controls</label><textarea asp-for="ExposureControls" class="form-control" rows="3"></textarea></div>
+    <div class="col-md-6"><label asp-for="EyeProtection" class="form-label">Eye/face protection</label><textarea asp-for="EyeProtection" class="form-control" rows="3"></textarea></div>
+    <div class="col-md-6"><label asp-for="HandProtection" class="form-label">Hand protection</label><textarea asp-for="HandProtection" class="form-control" rows="3"></textarea></div>
+    <div class="col-md-6"><label asp-for="BodyProtection" class="form-label">Body protection</label><textarea asp-for="BodyProtection" class="form-control" rows="3"></textarea></div>
+    <div class="col-md-6"><label asp-for="RespiratoryProtection" class="form-label">Respiratory protection</label><textarea asp-for="RespiratoryProtection" class="form-control" rows="3"></textarea></div>
+</div>

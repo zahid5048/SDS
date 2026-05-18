@@ -1,0 +1,23 @@
+﻿@{
+    var username = Context.Session.GetString("Username") ?? "Guest";
+    var fullName = Context.Session.GetString("FullName");
+    var role = Context.Session.GetString("Role") ?? "User";
+    var pageTitle = ViewBag.PageTitle as string ?? ViewData["Title"]?.ToString() ?? "Dashboard";
+    var pageIcon = ViewBag.PageIcon as string ?? "fa-home";
+    var initial = !string.IsNullOrEmpty(username) ? username.Substring(0, 1).ToUpper() : "G";
+}
+
+<header class="app-topbar">
+    <h1 class="page-title">
+        <i class="fas @pageIcon"></i> @pageTitle
+    </h1>
+    <div class="user-info">
+        <div class="user-info-text">
+            <span class="user-display-name">@(fullName ?? username)</span>
+            <span class="user-display-role">@username</span>
+        </div>
+        <span class="topbar-role-pill">@role</span>
+        <div class="user-avatar">@initial</div>
+    </div>
+</header>
+

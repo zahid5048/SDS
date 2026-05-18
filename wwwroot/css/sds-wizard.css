@@ -1,0 +1,353 @@
+/* Punjab-themed SDS wizard */
+:root {
+    --punjab-green-dark: #0d5c2e;
+    --punjab-green: #1b8a4a;
+    --punjab-green-mid: #2ea85f;
+    --punjab-green-light: #5dc47a;
+    --punjab-gold: #d4a017;
+    --punjab-gradient: linear-gradient(90deg, #0d5c2e 0%, #1b8a4a 35%, #2ea85f 65%, #5dc47a 100%);
+    --punjab-gradient-ring: linear-gradient(135deg, #0d5c2e, #2ea85f, #d4a017);
+}
+
+.sds-wizard-card {
+    background: #fff;
+    border-radius: 16px;
+    padding: 28px 32px;
+    box-shadow: 0 2px 16px rgba(0, 0, 0, 0.06);
+    margin-bottom: 24px;
+}
+
+.sds-wizard-header {
+    text-align: center;
+    margin-bottom: 24px;
+    padding-bottom: 20px;
+    border-bottom: 2px solid #e8f5e9;
+}
+
+.sds-wizard-header h2 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #1a1a2e;
+    margin-bottom: 4px;
+}
+
+.sds-wizard-header .product-name {
+    color: var(--punjab-green-dark);
+    font-size: 1.15rem;
+    font-weight: 600;
+}
+
+.sds-wizard-header .section-label {
+    color: #666;
+    font-size: 0.9rem;
+    margin-top: 6px;
+}
+
+/* Stepper with connecting line */
+.sds-stepper-wrap {
+    margin-bottom: 32px;
+    padding: 20px 8px 8px;
+    background: linear-gradient(180deg, #f4faf6 0%, #fff 100%);
+    border: 1px solid #e0f0e4;
+    border-radius: 14px;
+}
+
+.sds-stepper-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 28px;
+    padding: 0 12px;
+}
+
+.sds-stepper-badge {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--punjab-green-dark);
+    background: #e8f5e9;
+    padding: 6px 14px;
+    border-radius: 20px;
+    border: 1px solid #c8e6c9;
+}
+
+.sds-stepper-badge i {
+    color: var(--punjab-green);
+    margin-right: 6px;
+}
+
+.sds-stepper-count {
+    font-size: 0.88rem;
+    color: #555;
+}
+
+.sds-stepper-count strong {
+    color: var(--punjab-green-dark);
+    font-size: 1.05rem;
+}
+
+.sds-stepper-body {
+    position: relative;
+    padding: 8px 6px 4px;
+}
+
+.sds-stepper-rail {
+    position: absolute;
+    left: 22px;
+    right: 22px;
+    top: 30px;
+    height: 8px;
+    z-index: 0;
+    pointer-events: none;
+}
+
+.sds-stepper-track {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    height: 8px;
+    background: #e2e8e4;
+    border-radius: 999px;
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.06);
+}
+
+.sds-stepper-fill {
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 8px;
+    min-width: 0;
+    background: var(--punjab-gradient);
+    border-radius: 999px;
+    transition: width 0.45s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 0 12px rgba(27, 138, 74, 0.45);
+}
+
+.sds-stepper-fill::after {
+    content: '';
+    position: absolute;
+    right: -2px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 14px;
+    height: 14px;
+    background: #fff;
+    border: 3px solid var(--punjab-green-mid);
+    border-radius: 50%;
+    box-shadow: 0 0 8px rgba(46, 168, 95, 0.6);
+}
+
+.sds-stepper-fill[style*="width: 0%"]::after,
+.sds-stepper-fill[style*="width: 0."]::after {
+    display: none;
+}
+
+.sds-stepper {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    position: relative;
+    z-index: 1;
+    padding: 0 4px;
+    margin: 0;
+    list-style: none;
+}
+
+.sds-step-item {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    min-width: 0;
+}
+
+.sds-step {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.82rem;
+    font-weight: 700;
+    text-decoration: none;
+    color: #8a9a94;
+    background: #fff;
+    border: 3px solid #dde5e0;
+    transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    flex-shrink: 0;
+}
+
+.sds-step-check {
+    font-size: 0.75rem;
+}
+
+.sds-step:hover:not(.disabled):not(.active) {
+    border-color: var(--punjab-green-light);
+    color: var(--punjab-green-dark);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(27, 138, 74, 0.2);
+}
+
+.sds-step.completed {
+    background: var(--punjab-gradient);
+    color: #fff;
+    border-color: var(--punjab-green);
+    box-shadow: 0 2px 8px rgba(13, 92, 46, 0.25);
+}
+
+.sds-step.active {
+    width: 52px;
+    height: 52px;
+    margin-top: -4px;
+    background: #fff;
+    color: var(--punjab-green-dark);
+    border: 4px solid transparent;
+    background-image: linear-gradient(#fff, #fff), var(--punjab-gradient-ring);
+    background-origin: border-box;
+    background-clip: padding-box, border-box;
+    box-shadow: 0 0 0 4px rgba(46, 168, 95, 0.2), 0 6px 20px rgba(13, 92, 46, 0.3);
+    font-size: 0.95rem;
+    z-index: 2;
+}
+
+.sds-step.active::after {
+    content: '';
+    position: absolute;
+    inset: -8px;
+    border-radius: 50%;
+    border: 2px solid rgba(46, 168, 95, 0.35);
+    animation: sds-pulse 2s ease-in-out infinite;
+}
+
+@keyframes sds-pulse {
+    0%, 100% { transform: scale(1); opacity: 0.6; }
+    50% { transform: scale(1.08); opacity: 0.2; }
+}
+
+.sds-step.disabled {
+    pointer-events: none;
+    opacity: 0.5;
+    background: #f5f7f6;
+}
+
+.sds-section-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #2c3e50;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #e8f5e9;
+}
+
+.sds-section-title i {
+    color: var(--punjab-green);
+    margin-right: 8px;
+}
+
+.sds-field-grid .form-label {
+    font-weight: 500;
+    color: #444;
+    font-size: 0.88rem;
+}
+
+.sds-field-grid textarea.form-control {
+    min-height: 88px;
+}
+
+.sds-field-grid .form-control:focus,
+.sds-field-grid .form-select:focus {
+    border-color: var(--punjab-green-light);
+    box-shadow: 0 0 0 0.2rem rgba(46, 168, 95, 0.2);
+}
+
+.wizard-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    margin-top: 28px;
+    padding-top: 20px;
+    border-top: 1px solid #e8f5e9;
+}
+
+.wizard-actions .btn-lg {
+    padding: 10px 28px;
+    font-weight: 600;
+}
+
+.wizard-actions .btn-primary {
+    background: var(--punjab-gradient);
+    border: none;
+}
+
+.wizard-actions .btn-primary:hover {
+    background: linear-gradient(90deg, #0a4d26, #1b8a4a);
+    border: none;
+}
+
+.wizard-actions .btn-success {
+    background: var(--punjab-green-dark);
+    border-color: var(--punjab-green-dark);
+}
+
+@media (max-width: 992px) {
+    .sds-step {
+        width: 36px;
+        height: 36px;
+        font-size: 0.7rem;
+        border-width: 2px;
+    }
+
+    .sds-step.active {
+        width: 42px;
+        height: 42px;
+        font-size: 0.78rem;
+    }
+
+    .sds-stepper-rail {
+        left: 14px;
+        right: 14px;
+        top: 24px;
+    }
+
+    .sds-stepper-meta {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+}
+
+@media (max-width: 576px) {
+    .sds-step {
+        width: 28px;
+        height: 28px;
+        font-size: 0.62rem;
+    }
+
+    .sds-step.active {
+        width: 34px;
+        height: 34px;
+    }
+
+    .sds-step-check {
+        font-size: 0.55rem;
+    }
+
+    .sds-stepper-rail {
+        height: 6px;
+        top: 18px;
+        left: 8px;
+        right: 8px;
+    }
+
+    .sds-stepper-fill::after {
+        width: 10px;
+        height: 10px;
+    }
+
+    .sds-wizard-card {
+        padding: 20px 12px;
+    }
+}

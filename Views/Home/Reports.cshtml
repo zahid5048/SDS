@@ -1,0 +1,30 @@
+@model ChemicalSDS.Models.DashboardViewModel
+@{
+    ViewData["Title"] = "All Chemicals";
+    ViewBag.PageTitle = "All Chemicals";
+    ViewBag.PageIcon = "fa-flask";
+}
+
+@section Scripts {
+    <script src="~/js/chemical-search.js" asp-append-version="true"></script>
+}
+
+<div class="dash-page-intro mb-4">
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+        <div>
+            <h2 class="dash-intro-title"><i class="fas fa-flask me-2"></i> All Chemicals</h2>
+            <p class="dash-intro-sub mb-0">Browse, search and manage every SDS record in the system</p>
+        </div>
+        <a asp-controller="SdsWizard" asp-action="Step" asp-route-step="1" class="btn btn-dash-primary">
+            <i class="fas fa-plus-circle"></i> Add New SDS
+        </a>
+    </div>
+    <div class="row g-2 mt-3">
+        <div class="col-auto"><span class="mini-stat">Total: <strong>@Model.TotalChemicals</strong></span></div>
+        <div class="col-auto"><span class="mini-stat">Complete: <strong>@Model.CompletedCount</strong></span></div>
+        <div class="col-auto"><span class="mini-stat">In progress: <strong>@Model.DraftCount</strong></span></div>
+        <div class="col-auto"><span class="mini-stat">Danger: <strong>@Model.DangerCount</strong></span></div>
+    </div>
+</div>
+
+<partial name="Partials/_ChemicalsTable" model="Model" />

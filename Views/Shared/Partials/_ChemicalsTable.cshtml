@@ -1,0 +1,248 @@
+@model ChemicalSDS.Models.DashboardViewModel
+@{
+    var action = Model.ListAction;
+}
+
+<div class="dash-table-card">
+    <div class="dash-table-header">
+        <div>
+            <h4 class="dash-table-title"><i class="fas fa-flask"></i> All Chemicals</h4>
+            <p class="dash-table-sub">
+                @if (Model.FilteredCount == 0)
+                {
+                    <text>No records found</text>
+                }
+                else
+                {
+                    <text>Showing @Model.ShowingFrom–@Model.ShowingTo of @Model.FilteredCount</text>
+                    @if (!string.IsNullOrEmpty(Model.Search))
+                    {
+                        <text> (filtered from @Model.TotalChemicals total)</text>
+                    }
+                }
+            </p>
+        </div>
+        <span class="dash-count-badge">@Model.FilteredCount records</span>
+    </div>
+
+    <div class="dash-table-toolbar">
+        <form method="get" asp-action="@action" class="dash-search-form" data-live-search>
+            <input type="hidden" name="sortBy" value="@Model.SortBy" />
+            <input type="hidden" name="sortDir" value="@Model.SortDir" />
+            <input type="hidden" name="pageSize" value="@Model.PageSize" />
+            <input type="hidden" name="page" value="1" class="search-page-input" />
+            <div class="dash-search-box">
+                <i class="fas fa-search"></i>
+                <input type="text" name="search" value="@Model.Search" class="form-control live-search-input"
+                       placeholder="Live search — type name, CAS, signal, storage..." autocomplete="off" />
+                <span class="search-hint d-none"><i class="fas fa-circle-notch fa-spin"></i></span>
+            </div>
+            @if (!string.IsNullOrEmpty(Model.Search))
+            {
+                <a asp-action="@action" asp-route-pageSize="@Model.PageSize" asp-route-sortBy="@Model.SortBy" asp-route-sortDir="@Model.SortDir" class="btn btn-clear">Clear</a>
+            }
+        </form>
+        <form method="get" asp-action="@action" class="dash-pagesize-form">
+            <input type="hidden" name="search" value="@Model.Search" />
+            <input type="hidden" name="sortBy" value="@Model.SortBy" />
+            <input type="hidden" name="sortDir" value="@Model.SortDir" />
+            <label for="pageSize-@action">Per page</label>
+            <select name="pageSize" id="pageSize-@action" class="form-select form-select-sm" onchange="this.form.submit()">
+                @foreach (var size in new[] { 5, 10, 25, 50, 100 })
+                {
+                    if (Model.PageSize == size)
+                    {
+                        <option value="@size" selected>@size</option>
+                    }
+                    else
+                    {
+                        <option value="@size">@size</option>
+                    }
+                }
+            </select>
+        </form>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table dash-table mb-0">
+            <thead>
+                <tr>
+                    <th>
+                        <a class="sort-link @(Model.IsSorted("product") ? "active" : "")"
+                           asp-action="@action" asp-route-search="@Model.Search" asp-route-page="1"
+                           asp-route-pageSize="@Model.PageSize" asp-route-sortBy="product" asp-route-sortDir="@Model.NextSortDir("product")">
+                            Chemical <i class="fas @Model.SortIcon("product")"></i>
+                        </a>
+                    </th>
+                    <th>
+                        <a class="sort-link @(Model.IsSorted("cas") ? "active" : "")"
+                           asp-action="@action" asp-route-search="@Model.Search" asp-route-page="1"
+                           asp-route-pageSize="@Model.PageSize" asp-route-sortBy="cas" asp-route-sortDir="@Model.NextSortDir("cas")">
+                            CAS <i class="fas @Model.SortIcon("cas")"></i>
+                        </a>
+                    </th>
+                    <th>
+                        <a class="sort-link @(Model.IsSorted("status") ? "active" : "")"
+                           asp-action="@action" asp-route-search="@Model.Search" asp-route-page="1"
+                           asp-route-pageSize="@Model.PageSize" asp-route-sortBy="status" asp-route-sortDir="@Model.NextSortDir("status")">
+                            Status <i class="fas @Model.SortIcon("status")"></i>
+                        </a>
+                    </th>
+                    <th>
+                        <a class="sort-link @(Model.IsSorted("signal") ? "active" : "")"
+                           asp-action="@action" asp-route-search="@Model.Search" asp-route-page="1"
+                           asp-route-pageSize="@Model.PageSize" asp-route-sortBy="signal" asp-route-sortDir="@Model.NextSortDir("signal")">
+                            Signal <i class="fas @Model.SortIcon("signal")"></i>
+                        </a>
+                    </th>
+                    <th>
+                        <a class="sort-link @(Model.IsSorted("flash") ? "active" : "")"
+                           asp-action="@action" asp-route-search="@Model.Search" asp-route-page="1"
+                           asp-route-pageSize="@Model.PageSize" asp-route-sortBy="flash" asp-route-sortDir="@Model.NextSortDir("flash")">
+                            Flash Point <i class="fas @Model.SortIcon("flash")"></i>
+                        </a>
+                    </th>
+                    <th>
+                        <a class="sort-link @(Model.IsSorted("storage") ? "active" : "")"
+                           asp-action="@action" asp-route-search="@Model.Search" asp-route-page="1"
+                           asp-route-pageSize="@Model.PageSize" asp-route-sortBy="storage" asp-route-sortDir="@Model.NextSortDir("storage")">
+                            Storage <i class="fas @Model.SortIcon("storage")"></i>
+                        </a>
+                    </th>
+                    <th class="text-end">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.Chemicals.Any())
+                {
+                    @foreach (var chemical in Model.Chemicals)
+                    {
+                        var progress = chemical.IsDraft
+                            ? (int)Math.Round(chemical.LastCompletedSection / 16.0 * 100)
+                            : 100;
+                        <tr>
+                            <td>
+                                <div class="chem-name-cell">
+                                    <span class="chem-avatar"><i class="fas fa-vial"></i></span>
+                                    <div>
+                                        <strong>@chemical.ProductIdentifier</strong>
+                                        <small>@chemical.ChemicalName</small>
+                                    </div>
+                                </div>
+                            </td>
+                            <td><code class="cas-code">@(chemical.CASNumber ?? "—")</code></td>
+                            <td>
+                                @if (chemical.IsDraft)
+                                {
+                                    <div class="sds-progress-wrap">
+                                        <div class="sds-progress-bar" style="width: @(progress)%"></div>
+                                    </div>
+                                    <small class="text-muted">@chemical.LastCompletedSection/16</small>
+                                }
+                                else
+                                {
+                                    <span class="status-badge status-complete"><i class="fas fa-check"></i> Complete</span>
+                                }
+                            </td>
+                            <td>
+                                @if (chemical.SignalWord == "Danger")
+                                {
+                                    <span class="signal-tag signal-danger"><i class="fas fa-exclamation-circle"></i> Danger</span>
+                                }
+                                else
+                                {
+                                    <span class="signal-tag signal-warning"><i class="fas fa-exclamation-triangle"></i> @(chemical.SignalWord ?? "Warning")</span>
+                                }
+                            </td>
+                            <td class="text-muted small">@(chemical.FlashPoint ?? "—")</td>
+                            <td class="text-muted small">@(chemical.StorageLocation ?? "—")</td>
+                            <td>
+                                <div class="action-group">
+                                    @if (chemical.IsDraft)
+                                    {
+                                        <a asp-controller="SdsWizard" asp-action="Step" asp-route-id="@chemical.Id" asp-route-step="@(Math.Min(chemical.LastCompletedSection + 1, 16))" class="action-btn btn-continue" title="Continue"><i class="fas fa-play"></i></a>
+                                    }
+                                    <a asp-action="SDSDetails" asp-route-id="@chemical.Id" class="action-btn btn-view" title="View"><i class="fas fa-eye"></i></a>
+                                    <a asp-action="DownloadSdsPdf" asp-route-id="@chemical.Id" class="action-btn btn-pdf" title="PDF"><i class="fas fa-file-pdf"></i></a>
+                                    <a asp-controller="SdsWizard" asp-action="Step" asp-route-id="@chemical.Id" asp-route-step="1" class="action-btn btn-edit" title="Edit"><i class="fas fa-pen"></i></a>
+                                    <a asp-action="Emergency" asp-route-id="@chemical.Id" class="action-btn btn-emergency" title="Emergency"><i class="fas fa-bolt"></i></a>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="7" class="text-center py-5 text-muted">
+                            <i class="fas fa-search fa-2x mb-2 d-block opacity-50"></i>
+                            @if (!string.IsNullOrEmpty(Model.Search))
+                            {
+                                <text>No chemicals match "<strong>@Model.Search</strong>".</text>
+                                <br /><a asp-action="@action" asp-route-pageSize="@Model.PageSize" asp-route-sortBy="@Model.SortBy" asp-route-sortDir="@Model.SortDir" class="mt-2 d-inline-block">Clear search</a>
+                            }
+                            else
+                            {
+                                <text>No chemicals yet.</text>
+                                <br /><a asp-controller="SdsWizard" asp-action="Step" asp-route-step="1">Add your first SDS</a>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    @if (Model.TotalPages > 1)
+    {
+        <nav class="dash-pagination" aria-label="Chemicals pagination">
+            <ul class="pagination justify-content-center mb-0">
+                <li class="page-item @(Model.Page <= 1 ? "disabled" : "")">
+                    <a class="page-link" asp-action="@action" asp-route-search="@Model.Search" asp-route-page="@(Model.Page - 1)"
+                       asp-route-pageSize="@Model.PageSize" asp-route-sortBy="@Model.SortBy" asp-route-sortDir="@Model.SortDir">
+                        <i class="fas fa-chevron-left"></i>
+                    </a>
+                </li>
+                @{
+                    var startPage = Math.Max(1, Model.Page - 2);
+                    var endPage = Math.Min(Model.TotalPages, Model.Page + 2);
+                }
+                @if (startPage > 1)
+                {
+                    <li class="page-item">
+                        <a class="page-link" asp-action="@action" asp-route-search="@Model.Search" asp-route-page="1"
+                           asp-route-pageSize="@Model.PageSize" asp-route-sortBy="@Model.SortBy" asp-route-sortDir="@Model.SortDir">1</a>
+                    </li>
+                    @if (startPage > 2)
+                    {
+                        <li class="page-item disabled"><span class="page-link">…</span></li>
+                    }
+                }
+                @for (var p = startPage; p <= endPage; p++)
+                {
+                    <li class="page-item @(p == Model.Page ? "active" : "")">
+                        <a class="page-link" asp-action="@action" asp-route-search="@Model.Search" asp-route-page="@p"
+                           asp-route-pageSize="@Model.PageSize" asp-route-sortBy="@Model.SortBy" asp-route-sortDir="@Model.SortDir">@p</a>
+                    </li>
+                }
+                @if (endPage < Model.TotalPages)
+                {
+                    @if (endPage < Model.TotalPages - 1)
+                    {
+                        <li class="page-item disabled"><span class="page-link">…</span></li>
+                    }
+                    <li class="page-item">
+                        <a class="page-link" asp-action="@action" asp-route-search="@Model.Search" asp-route-page="@Model.TotalPages"
+                           asp-route-pageSize="@Model.PageSize" asp-route-sortBy="@Model.SortBy" asp-route-sortDir="@Model.SortDir">@Model.TotalPages</a>
+                    </li>
+                }
+                <li class="page-item @(Model.Page >= Model.TotalPages ? "disabled" : "")">
+                    <a class="page-link" asp-action="@action" asp-route-search="@Model.Search" asp-route-page="@(Model.Page + 1)"
+                       asp-route-pageSize="@Model.PageSize" asp-route-sortBy="@Model.SortBy" asp-route-sortDir="@Model.SortDir">
+                        <i class="fas fa-chevron-right"></i>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    }
+</div>

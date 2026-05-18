@@ -1,0 +1,11 @@
+@model ChemicalSDS.Models.Chemical
+<h3 class="sds-section-title"><i class="fas fa-flask"></i> Section 3. Composition/information on ingredients</h3>
+<div class="row sds-field-grid g-3">
+    <div class="col-md-4"><label asp-for="SubstanceMixture" class="form-label">Substance/mixture</label><input asp-for="SubstanceMixture" class="form-control" placeholder="Substance" /></div>
+    <div class="col-md-4"><label asp-for="ChemicalName" class="form-label">Chemical name</label><input asp-for="ChemicalName" class="form-control" /></div>
+    <div class="col-md-4"><label asp-for="ProductCode" class="form-label">Product code</label><input asp-for="ProductCode" class="form-control" placeholder="001114" /></div>
+    <div class="col-md-4"><label asp-for="CASNumber" class="form-label">CAS number</label><input asp-for="CASNumber" class="form-control" placeholder="64-17-5" /></div>
+    <div class="col-md-4"><label asp-for="IngredientName" class="form-label">Ingredient name</label><input asp-for="IngredientName" class="form-control" /></div>
+    <div class="col-md-4"><label asp-for="Percentage" class="form-label">%</label><input asp-for="Percentage" class="form-control" placeholder="100" /></div>
+    <div class="col-12"><label asp-for="OtherMeansOfId" class="form-label">Other means of identification</label><textarea asp-for="OtherMeansOfId" class="form-control" rows="2"></textarea></div>
+</div>

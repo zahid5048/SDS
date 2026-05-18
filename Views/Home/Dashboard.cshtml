@@ -1,0 +1,122 @@
+@model ChemicalSDS.Models.DashboardViewModel
+@using System.Text.Json
+@{
+    ViewData["Title"] = "Dashboard";
+    ViewBag.PageTitle = "Dashboard";
+    ViewBag.PageIcon = "fa-tachometer-alt";
+    var chartJson = JsonSerializer.Serialize(new {
+        statusLabels = Model.Charts.StatusLabels,
+        statusValues = Model.Charts.StatusValues,
+        signalLabels = Model.Charts.SignalLabels,
+        signalValues = Model.Charts.SignalValues,
+        monthlyLabels = Model.Charts.MonthlyLabels,
+        monthlyValues = Model.Charts.MonthlyValues,
+        progressLabels = Model.Charts.ProgressLabels,
+        progressValues = Model.Charts.ProgressValues
+    });
+}
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    <script type="application/json" id="dashChartData">@Html.Raw(chartJson)</script>
+    <script src="~/js/dashboard-charts.js" asp-append-version="true"></script>
+    <script src="~/js/chemical-search.js" asp-append-version="true"></script>
+}
+
+<div class="dash-welcome">
+    <div class="dash-welcome-text">
+        <h2>Welcome back</h2>
+        <p>Chemical Safety Data Sheet management — DGJW Govt of Punjab</p>
+    </div>
+    <a asp-controller="SdsWizard" asp-action="Step" asp-route-step="1" class="btn btn-dash-primary">
+        <i class="fas fa-plus-circle"></i> Add New SDS
+    </a>
+</div>
+
+<div class="row g-3 mb-4">
+    <div class="col-sm-6 col-xl-3">
+        <div class="dash-stat-card">
+            <div class="dash-stat-icon icon-total"><i class="fas fa-flask"></i></div>
+            <div class="dash-stat-body">
+                <span class="dash-stat-value">@Model.TotalChemicals</span>
+                <span class="dash-stat-label">Total Chemicals</span>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-xl-3">
+        <div class="dash-stat-card">
+            <div class="dash-stat-icon icon-complete"><i class="fas fa-check-circle"></i></div>
+            <div class="dash-stat-body">
+                <span class="dash-stat-value">@Model.CompletedCount</span>
+                <span class="dash-stat-label">Completed SDS</span>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-xl-3">
+        <div class="dash-stat-card">
+            <div class="dash-stat-icon icon-pending"><i class="fas fa-hourglass-half"></i></div>
+            <div class="dash-stat-body">
+                <span class="dash-stat-value">@Model.DraftCount</span>
+                <span class="dash-stat-label">In Progress</span>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-xl-3">
+        <div class="dash-stat-card">
+            <div class="dash-stat-icon icon-danger"><i class="fas fa-exclamation-triangle"></i></div>
+            <div class="dash-stat-body">
+                <span class="dash-stat-value">@Model.DangerCount</span>
+                <span class="dash-stat-label">Danger Level</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-3 mb-4 dash-charts-row">
+    <div class="col-lg-3 col-md-6">
+        <div class="dash-chart-card">
+            <div class="dash-chart-header">
+                <h5><i class="fas fa-chart-pie"></i> SDS Status</h5>
+                <span class="dash-chart-sub">Complete vs in progress</span>
+            </div>
+            <div class="dash-chart-body">
+                <canvas id="chartStatus" aria-label="SDS status chart"></canvas>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-3 col-md-6">
+        <div class="dash-chart-card">
+            <div class="dash-chart-header">
+                <h5><i class="fas fa-exclamation-triangle"></i> Hazard Signals</h5>
+                <span class="dash-chart-sub">Danger, warning &amp; other</span>
+            </div>
+            <div class="dash-chart-body">
+                <canvas id="chartSignal" aria-label="Hazard signal chart"></canvas>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-3 col-md-6">
+        <div class="dash-chart-card">
+            <div class="dash-chart-header">
+                <h5><i class="fas fa-tasks"></i> SDS Progress</h5>
+                <span class="dash-chart-sub">Wizard completion stages</span>
+            </div>
+            <div class="dash-chart-body">
+                <canvas id="chartProgress" aria-label="SDS progress chart"></canvas>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-3 col-md-6">
+        <div class="dash-chart-card">
+            <div class="dash-chart-header">
+                <h5><i class="fas fa-chart-line"></i> Monthly Trend</h5>
+                <span class="dash-chart-sub">Chemicals added (6 months)</span>
+            </div>
+            <div class="dash-chart-body">
+                <canvas id="chartMonthly" aria-label="Monthly trend chart"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<partial name="Partials/_ChemicalsTable" model="Model" />

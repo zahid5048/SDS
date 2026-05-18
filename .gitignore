@@ -1,0 +1,92 @@
+## Build output
+[Bb]in/
+[Oo]bj/
+[Ll]og/
+[Ll]ogs/
+[Dd]ebug/
+[Rr]elease/
+x64/
+x86/
+[Aa][Rr][Mm]/
+[Aa][Rr][Mm]64/
+bld/
+[Bb]uild/
+publish/
+out/
+
+## Visual Studio / Rider
+.vs/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+*.rsuser
+.idea/
+*.DotSettings.user
+
+## VS Code (keep shared settings if you add them later)
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+
+## NuGet
+*.nupkg
+*.snupkg
+**/packages/*
+project.lock.json
+project.fragment.lock.json
+artifacts/
+
+## ASP.NET Core — local config & secrets (DO NOT commit real DB passwords)
+appsettings.json
+appsettings.Development.json
+appsettings.*.local.json
+secrets.json
+**/Properties/launchSettings.json.user
+
+## User secrets folder
+**/secrets/
+
+## Environment files
+.env
+.env.*
+!.env.example
+
+## SQL Server local files
+*.mdf
+*.ldf
+*.ndf
+
+## OS
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+.DS_Store
+
+## Logs & temp
+*.log
+*.tmp
+*.temp
+~$*
+
+## Test / coverage
+[Tt]est[Rr]esult*/
+[Bb]uild[Ll]og.*
+coverage*.json
+coverage*.xml
+*.coverage
+*.coveragexml
+
+## JetBrains
+_ReSharper*/
+*.[Rr]e[Ss]harper
+
+## Windows image caches
+*.stackdump
+
+## Uploaded files (if you add uploads later)
+wwwroot/uploads/
+wwwroot/files/
+
+## Cursor / local tooling (optional)
+.cursor/

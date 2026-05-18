@@ -1,0 +1,40 @@
+@model ChemicalSDS.Models.Chemical
+<h3 class="sds-section-title"><i class="fas fa-id-card"></i> Section 1. Identification</h3>
+<div class="row sds-field-grid g-3">
+    <div class="col-md-6">
+        <label asp-for="ProductIdentifier" class="form-label">GHS product identifier *</label>
+        <input asp-for="ProductIdentifier" class="form-control" placeholder="e.g. Ethanol" />
+    </div>
+    <div class="col-md-6">
+        <label asp-for="ChemicalName" class="form-label">Chemical name *</label>
+        <input asp-for="ChemicalName" class="form-control" placeholder="e.g. ethanol" />
+    </div>
+    <div class="col-12">
+        <label asp-for="OtherMeansOfId" class="form-label">Other means of identification</label>
+        <textarea asp-for="OtherMeansOfId" class="form-control" rows="3"></textarea>
+    </div>
+    <div class="col-md-6">
+        <label asp-for="ProductType" class="form-label">Product type</label>
+        <input asp-for="ProductType" class="form-control" placeholder="e.g. Liquid." />
+    </div>
+    <div class="col-md-6">
+        <label asp-for="ProductUse" class="form-label">Product use</label>
+        <input asp-for="ProductUse" class="form-control" />
+    </div>
+    <div class="col-12">
+        <label asp-for="Synonym" class="form-label">Synonym</label>
+        <textarea asp-for="Synonym" class="form-control" rows="2"></textarea>
+    </div>
+    <div class="col-md-4">
+        <label asp-for="SDSNumber" class="form-label">SDS #</label>
+        <input asp-for="SDSNumber" class="form-control" placeholder="e.g. 001114" />
+    </div>
+    <div class="col-md-8">
+        <label asp-for="SupplierDetails" class="form-label">Supplier's details</label>
+        <textarea asp-for="SupplierDetails" class="form-control" rows="4"></textarea>
+    </div>
+    <div class="col-md-6">
+        <label asp-for="EmergencyPhone" class="form-label">24-hour telephone</label>
+        <input asp-for="EmergencyPhone" class="form-control" placeholder="e.g. 1-866-734-3438" />
+    </div>
+</div>

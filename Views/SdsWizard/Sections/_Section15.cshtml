@@ -1,0 +1,9 @@
+@model ChemicalSDS.Models.Chemical
+<h3 class="sds-section-title"><i class="fas fa-gavel"></i> Section 15. Regulatory information</h3>
+<div class="row sds-field-grid g-3">
+    <div class="col-12"><label asp-for="USFederalRegulations" class="form-label">U.S. Federal regulations</label><textarea asp-for="USFederalRegulations" class="form-control" rows="4"></textarea></div>
+    <div class="col-12"><label asp-for="SARA302304" class="form-label">SARA 302/304</label><textarea asp-for="SARA302304" class="form-control" rows="2"></textarea></div>
+    <div class="col-12"><label asp-for="StateRegulations" class="form-label">State regulations</label><textarea asp-for="StateRegulations" class="form-control" rows="3"></textarea></div>
+    <div class="col-12"><label asp-for="InternationalRegulations" class="form-label">International regulations</label><textarea asp-for="InternationalRegulations" class="form-control" rows="3"></textarea></div>
+    <div class="col-12"><label asp-for="InventoryList" class="form-label">Inventory list</label><textarea asp-for="InventoryList" class="form-control" rows="4"></textarea></div>
+</div>

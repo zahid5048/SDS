@@ -1,0 +1,80 @@
+@model ChemicalSDS.Models.Chemical
+@using ChemicalSDS.Models
+@{
+    var step = (int)ViewBag.Step;
+    var chemicalId = ViewBag.ChemicalId as int?;
+    var sectionTitle = SdsWizardStep.GetTitle(step);
+    ViewData["Title"] = $"Section {step} - {sectionTitle}";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/sds-wizard.css" asp-append-version="true" />
+}
+
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        @TempData["Error"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        @TempData["Success"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+
+<div class="sds-wizard-card">
+    <div class="sds-wizard-header">
+        <h2>SAFETY DATA SHEET</h2>
+        @if (!string.IsNullOrEmpty(Model.ProductIdentifier))
+        {
+            <div class="product-name">@Model.ProductIdentifier</div>
+        }
+        <div class="section-label">Section @step. @sectionTitle</div>
+    </div>
+
+    <partial name="_Stepper" model="(step, chemicalId, Model.LastCompletedSection)" />
+
+    <form asp-controller="SdsWizard" asp-action="SaveSection" method="post">
+        @Html.AntiForgeryToken()
+        <input type="hidden" name="id" value="@(chemicalId ?? 0)" />
+        <input type="hidden" name="step" value="@step" />
+
+        <partial name="@($"Sections/_Section{step:D2}")" model="Model" />
+
+        <div class="wizard-actions">
+            <div>
+                @if (step > 1 && chemicalId.HasValue)
+                {
+                    <button type="submit" name="direction" value="back" class="btn btn-outline-secondary btn-lg">
+                        <i class="fas fa-arrow-left"></i> Previous
+                    </button>
+                }
+                else
+                {
+                    <a asp-controller="Home" asp-action="Dashboard" class="btn btn-outline-secondary">
+                        <i class="fas fa-times"></i> Cancel
+                    </a>
+                }
+            </div>
+            <div class="d-flex gap-2">
+                @if (step < SdsWizardStep.Total)
+                {
+                    <button type="submit" name="direction" value="next" class="btn btn-primary btn-lg">
+                        Save &amp; Next <i class="fas fa-arrow-right ms-1"></i>
+                    </button>
+                }
+                else
+                {
+                    <button type="submit" name="direction" value="finish" class="btn btn-success btn-lg">
+                        <i class="fas fa-check"></i> Save &amp; Finish SDS
+                    </button>
+                }
+            </div>
+        </div>
+    </form>
+</div>
+

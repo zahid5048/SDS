@@ -1,0 +1,19 @@
+<nav class="sds-sec-nav" aria-label="Jump to SDS section">
+    @{
+        var links = new (int Num, string Icon)[]
+        {
+            (1, "fa-id-card"), (2, "fa-exclamation-triangle"), (3, "fa-flask"),
+            (4, "fa-kit-medical"), (5, "fa-fire"), (6, "fa-biohazard"),
+            (7, "fa-warehouse"), (8, "fa-hard-hat"), (9, "fa-atom"),
+            (10, "fa-shield-alt"), (11, "fa-skull-crossbones"), (12, "fa-leaf"),
+            (13, "fa-trash"), (14, "fa-truck"), (15, "fa-gavel"), (16, "fa-info-circle")
+        };
+    }
+    @foreach (var (num, icon) in links)
+    {
+        <a href="#@($"sec{num}")" class="sds-sec-pill" data-section="@(num)">
+            <i class="fas @icon"></i>
+            <span>@num</span>
+        </a>
+    }
+</nav>
