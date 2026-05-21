@@ -1,0 +1,23 @@
+@using ChemicalSDS.Models
+@{
+    var data = ViewData["OelData"] as string;
+    var rows = OelLimitsFormatter.Parse(data);
+    if (rows.Count == 0) return;
+}
+<div class="sds-detail-row sds-detail-row-block">
+    <span class="sds-detail-label">Occupational exposure limits</span>
+    <div class="sds-detail-value">
+        <table class="table table-sm table-bordered sds-oel-table mb-0">
+            <thead><tr><th>Ingredient name</th><th>Exposure limits</th></tr></thead>
+            <tbody>
+                @foreach (var r in rows)
+                {
+                    <tr>
+                        <td>@r.Ingredient</td>
+                        <td class="sds-oel-limits-cell">@r.Limits</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

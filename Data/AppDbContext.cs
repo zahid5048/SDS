@@ -104,11 +104,13 @@ namespace ChemicalSDS.Data
                 ChemicalStability = "The product is stable.",
                 ConditionsToAvoid = "Avoid all possible sources of ignition (spark or flame). Do not pressurize, cut, weld, braze, solder, drill, grind or expose containers to heat or sources of ignition. Do not allow vapor to accumulate in low or confined areas.",
                 HazardousDecomposition = "Decomposition products may include the following materials: carbon dioxide, carbon monoxide",
+                HazardousPolymerization = "Under normal conditions of storage and use, hazardous polymerization will not occur.",
 
                 // SECTION 11: TOXICOLOGICAL INFORMATION
                 AcuteToxicity = "Not available.",
-                IrritationCorrosion = "Eyes - Mild irritant Rabbit - 500 milligrams. Skin - Mild irritant Rabbit - 400 milligrams.",
+                IrritationCorrosion = "ethanol|Eyes - Mild irritant|Rabbit|-|24 hours 500 milligrams|-\nethanol|Eyes - Moderate irritant|Rabbit|-|0.066666667 minutes 100 milligrams|-\nethanol|Eyes - Moderate irritant|Rabbit|-|100 microliters|-\nethanol|Eyes - Severe irritant|Rabbit|-|500 milligrams|-\nethanol|Skin - Mild irritant|Rabbit|-|400 milligrams|-\nethanol|Skin - Moderate irritant|Rabbit|-|24 hours 20 milligrams|-",
                 Carcinogenicity = "Not available.",
+                CarcinogenicityClassification = "ethanol|-|1|-",
 
                 // SECTION 12: ECOLOGICAL INFORMATION
                 Ecotoxicity = "Acute EC50 17.921 mg/l Marine water Algae - 96 hours. Acute EC50 2000 µg/l Fresh water Daphnia - 48 hours.",

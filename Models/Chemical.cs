@@ -121,6 +121,7 @@ namespace ChemicalSDS.Models
         public string? ChemicalStability { get; set; }
         public string? ConditionsToAvoid { get; set; }
         public string? HazardousDecomposition { get; set; }
+        public string? HazardousPolymerization { get; set; }
 
         // Section 11: Toxicological
         public string? AcuteToxicity { get; set; }

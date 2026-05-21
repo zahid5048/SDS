@@ -1,0 +1,40 @@
+@model ChemicalSDS.Models.Chemical
+@{
+    var rows = new List<string[]>();
+    if (!string.IsNullOrWhiteSpace(Model.CarcinogenicityClassification) && Model.CarcinogenicityClassification.Contains('|'))
+    {
+        foreach (var line in Model.CarcinogenicityClassification.Split('\n', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries))
+            rows.Add(line.Split('|').Select(x => x.Trim()).ToArray());
+    }
+    if (rows.Count == 0) rows.Add(new[] { "", "", "", "" });
+}
+<div class="sds-grid-editor" data-grid="dynamic" data-cols="4" data-target="#CarcinogenicityClassification">
+    <input type="hidden" asp-for="CarcinogenicityClassification" id="CarcinogenicityClassification" />
+    <p class="text-muted small mb-2">One row per ingredient. Use <strong>-</strong> when not classified by that agency.</p>
+    <div class="table-responsive">
+        <table class="table table-bordered sds-data-grid-table sds-carcinogen-grid-table mb-2">
+            <thead>
+                <tr>
+                    <th>Product/ingredient name</th>
+                    <th>OSHA</th>
+                    <th>IARC</th>
+                    <th>NTP</th>
+                    <th class="sds-grid-actions-col"></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var r in rows)
+                {
+                    <tr>
+                        <td><input type="text" class="form-control form-control-sm" data-col="0" value="@(r.Length > 0 ? r[0] : "")" placeholder="e.g. ethanol" /></td>
+                        <td><input type="text" class="form-control form-control-sm" data-col="1" value="@(r.Length > 1 ? r[1] : "")" placeholder="-" /></td>
+                        <td><input type="text" class="form-control form-control-sm" data-col="2" value="@(r.Length > 2 ? r[2] : "")" placeholder="1" /></td>
+                        <td><input type="text" class="form-control form-control-sm" data-col="3" value="@(r.Length > 3 ? r[3] : "")" placeholder="-" /></td>
+                        <td class="sds-grid-actions"><button type="button" class="btn btn-sm btn-outline-danger sds-grid-remove" title="Remove row"><i class="fas fa-times"></i></button></td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    <button type="button" class="btn btn-sm btn-outline-success sds-grid-add"><i class="fas fa-plus"></i> Add ingredient</button>
+</div>

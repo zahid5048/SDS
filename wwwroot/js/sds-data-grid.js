@@ -3,6 +3,7 @@
  */
 (function () {
     const COL_SEP = '|';
+    const OEL_ROW_SEP = '\n---\n';
     const TRANSPORT_CLASS_IMAGES = {
         '1': '/images/ghs/GHS01.svg',
         '2': '/images/ghs/GHS04.svg',
@@ -62,6 +63,56 @@
         tbody.appendChild(tr);
         bindRow(tr, tbody);
         syncHidden(tbody);
+    }
+
+    function serializeOelGrid(tbody) {
+        const rows = [];
+        tbody.querySelectorAll('tr').forEach(tr => {
+            const ing = (tr.querySelector('[data-col="0"]')?.value || '').trim();
+            const lim = (tr.querySelector('[data-col="1"]')?.value || '').trim();
+            if (ing || lim) rows.push(ing + COL_SEP + lim);
+        });
+        return rows.join(OEL_ROW_SEP);
+    }
+
+    function syncOelHidden(tbody) {
+        const id = tbody.closest('.sds-grid-editor')?.dataset.target;
+        if (!id) return;
+        const hidden = document.querySelector(id);
+        if (hidden) hidden.value = serializeOelGrid(tbody);
+    }
+
+    function addOelRow(tbody) {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+            <td><input type="text" class="form-control form-control-sm" data-col="0" placeholder="e.g. ethanol" /></td>
+            <td><textarea class="form-control form-control-sm" data-col="1" rows="4" placeholder="ACGIH TLV...&#10;OSHA PEL...&#10;NIOSH REL..."></textarea></td>
+            <td class="sds-grid-actions"><button type="button" class="btn btn-sm btn-outline-danger sds-grid-remove" title="Remove row"><i class="fas fa-times"></i></button></td>`;
+        tbody.appendChild(tr);
+        bindOelRow(tr, tbody);
+        syncOelHidden(tbody);
+    }
+
+    function bindOelRow(tr, tbody) {
+        tr.querySelectorAll('[data-col]').forEach(inp => {
+            inp.addEventListener('input', () => syncOelHidden(tbody));
+            inp.addEventListener('change', () => syncOelHidden(tbody));
+        });
+        const rm = tr.querySelector('.sds-grid-remove');
+        if (rm) rm.addEventListener('click', () => {
+            tr.remove();
+            syncOelHidden(tbody);
+        });
+    }
+
+    function initOelGrid(root) {
+        const tbody = root.querySelector('tbody');
+        const addBtn = root.querySelector('.sds-grid-add');
+        if (addBtn) addBtn.addEventListener('click', () => addOelRow(tbody));
+        tbody.querySelectorAll('tr').forEach(tr => bindOelRow(tr, tbody));
+        const form = root.closest('form');
+        if (form) form.addEventListener('submit', () => syncOelHidden(tbody));
+        syncOelHidden(tbody);
     }
 
     function initDynamicGrid(root) {
@@ -178,6 +229,7 @@
 
     document.addEventListener('DOMContentLoaded', () => {
         document.querySelectorAll('.sds-grid-editor[data-grid="dynamic"]').forEach(initDynamicGrid);
+        document.querySelectorAll('.sds-grid-editor[data-grid="oel"]').forEach(initOelGrid);
         document.querySelectorAll('.sds-grid-editor[data-grid="transport"]').forEach(initTransportGrid);
     });
 })();

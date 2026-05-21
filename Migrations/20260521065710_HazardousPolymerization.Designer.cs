@@ -4,6 +4,7 @@ using ChemicalSDS.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ChemicalSDS.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260521065710_HazardousPolymerization")]
+    partial class HazardousPolymerization
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -208,9 +211,6 @@ namespace ChemicalSDS.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("HazardousDecomposition")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("HazardousPolymerization")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("HazardsNotOtherwiseClassified")
@@ -665,7 +665,6 @@ namespace ChemicalSDS.Migrations
                             BoilingPoint = "78.29°C (172.9°F)",
                             CASNumber = "64-17-5",
                             Carcinogenicity = "Not available.",
-                            CarcinogenicityClassification = "ethanol|-|1|-",
                             ChemicalName = "ethanol",
                             ChemicalStability = "The product is stable.",
                             Classification = "FLAMMABLE LIQUIDS - Category 2",
@@ -689,7 +688,6 @@ namespace ChemicalSDS.Migrations
                             HandlingPrecautions = "Wear protective gloves. Use only with adequate ventilation.",
                             HazardStatements = "May form explosive mixtures with air.\nHighly flammable liquid and vapor.",
                             HazardousDecomposition = "Decomposition products may include the following materials: carbon dioxide, carbon monoxide",
-                            HazardousPolymerization = "Under normal conditions of storage and use, hazardous polymerization will not occur.",
                             HazardsNotOtherwiseClassified = "None known.",
                             HmisFlammability = "4",
                             HmisHealth = "1",
@@ -699,7 +697,7 @@ namespace ChemicalSDS.Migrations
                             IngredientName = "ethanol",
                             InhalationFirstAid = "Remove victim to fresh air and keep at rest in a position comfortable for breathing. If not breathing, if breathing is irregular or if respiratory arrest occurs, provide artificial respiration or oxygen by trained personnel. It may be dangerous to the person providing aid to give mouth-to-mouth resuscitation. Get medical attention if adverse health effects persist or are severe. If unconscious, place in recovery position and get medical attention immediately.",
                             InventoryList = "Australia: Listed. Canada: Listed. China: Listed. Europe: Listed. Japan: Listed. United States: Listed.",
-                            IrritationCorrosion = "ethanol|Eyes - Mild irritant|Rabbit|-|24 hours 500 milligrams|-\nethanol|Eyes - Moderate irritant|Rabbit|-|0.066666667 minutes 100 milligrams|-\nethanol|Eyes - Moderate irritant|Rabbit|-|100 microliters|-\nethanol|Eyes - Severe irritant|Rabbit|-|500 milligrams|-\nethanol|Skin - Mild irritant|Rabbit|-|400 milligrams|-\nethanol|Skin - Moderate irritant|Rabbit|-|24 hours 20 milligrams|-",
+                            IrritationCorrosion = "Eyes - Mild irritant Rabbit - 500 milligrams. Skin - Mild irritant Rabbit - 400 milligrams.",
                             IsDeleted = false,
                             IsDraft = false,
                             LargeSpillMethods = "Stop leak if without risk. Move containers from spill area. Use spark-proof tools and explosion-proof equipment. Approach release from upwind. Prevent entry into sewers, water courses, basements or confined areas. Contain and collect spillage with non-combustible, absorbent material e.g. sand, earth, vermiculite or diatomaceous earth and place in container for disposal according to local regulations. Dispose of via a licensed waste disposal contractor.",

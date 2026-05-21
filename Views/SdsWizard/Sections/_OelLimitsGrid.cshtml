@@ -1,0 +1,33 @@
+@model ChemicalSDS.Models.Chemical
+@using ChemicalSDS.Models
+@{
+    var rows = OelLimitsFormatter.Parse(Model.OccupationalExposureLimits).ToList();
+    if (rows.Count == 0)
+        rows.Add(new OelLimitsFormatter.OelRow("", ""));
+}
+<div class="sds-grid-editor" data-grid="oel" data-target="#OccupationalExposureLimits">
+    <input type="hidden" asp-for="OccupationalExposureLimits" id="OccupationalExposureLimits" />
+    <p class="text-muted small mb-2">One row per ingredient. Enter all exposure limits (ACGIH, OSHA, NIOSH, etc.) in the right column — one limit per line.</p>
+    <div class="table-responsive">
+        <table class="table table-bordered sds-data-grid-table sds-oel-grid-table mb-2">
+            <thead>
+                <tr>
+                    <th style="width:28%">Ingredient name</th>
+                    <th>Exposure limits</th>
+                    <th class="sds-grid-actions-col"></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var r in rows)
+                {
+                    <tr>
+                        <td><input type="text" class="form-control form-control-sm" data-col="0" value="@r.Ingredient" placeholder="e.g. ethanol" /></td>
+                        <td><textarea class="form-control form-control-sm" data-col="1" rows="4" placeholder="ACGIH TLV (United States, 3/2017):&#10;STEL: 1000 ppm 15 minutes.&#10;OSHA PEL (United States, 6/2016):&#10;TWA: 1000 ppm 8 hours.">@r.Limits</textarea></td>
+                        <td class="sds-grid-actions"><button type="button" class="btn btn-sm btn-outline-danger sds-grid-remove" title="Remove row"><i class="fas fa-times"></i></button></td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    <button type="button" class="btn btn-sm btn-outline-success sds-grid-add"><i class="fas fa-plus"></i> Add ingredient</button>
+</div>

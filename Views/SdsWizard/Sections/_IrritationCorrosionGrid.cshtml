@@ -1,0 +1,44 @@
+@model ChemicalSDS.Models.Chemical
+@{
+    var rows = new List<string[]>();
+    if (!string.IsNullOrWhiteSpace(Model.IrritationCorrosion) && Model.IrritationCorrosion.Contains('|'))
+    {
+        foreach (var line in Model.IrritationCorrosion.Split('\n', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries))
+            rows.Add(line.Split('|').Select(x => x.Trim()).ToArray());
+    }
+    if (rows.Count == 0) rows.Add(new[] { "", "", "", "", "", "" });
+}
+<div class="sds-grid-editor" data-grid="dynamic" data-cols="6" data-target="#IrritationCorrosion">
+    <input type="hidden" asp-for="IrritationCorrosion" id="IrritationCorrosion" />
+    <p class="text-muted small mb-2">One row per test. Use <strong>-</strong> when score or observation is not available.</p>
+    <div class="table-responsive">
+        <table class="table table-bordered sds-data-grid-table sds-irritation-grid-table mb-2">
+            <thead>
+                <tr>
+                    <th>Product/ingredient name</th>
+                    <th>Result</th>
+                    <th>Species</th>
+                    <th>Score</th>
+                    <th>Exposure</th>
+                    <th>Observation</th>
+                    <th class="sds-grid-actions-col"></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var r in rows)
+                {
+                    <tr>
+                        <td><input type="text" class="form-control form-control-sm" data-col="0" value="@(r.Length > 0 ? r[0] : "")" placeholder="e.g. ethanol" /></td>
+                        <td><input type="text" class="form-control form-control-sm" data-col="1" value="@(r.Length > 1 ? r[1] : "")" placeholder="Eyes - Mild irritant" /></td>
+                        <td><input type="text" class="form-control form-control-sm" data-col="2" value="@(r.Length > 2 ? r[2] : "")" placeholder="Rabbit" /></td>
+                        <td><input type="text" class="form-control form-control-sm" data-col="3" value="@(r.Length > 3 ? r[3] : "")" placeholder="-" /></td>
+                        <td><input type="text" class="form-control form-control-sm" data-col="4" value="@(r.Length > 4 ? r[4] : "")" placeholder="24 hours 500 milligrams" /></td>
+                        <td><input type="text" class="form-control form-control-sm" data-col="5" value="@(r.Length > 5 ? r[5] : "")" placeholder="-" /></td>
+                        <td class="sds-grid-actions"><button type="button" class="btn btn-sm btn-outline-danger sds-grid-remove" title="Remove row"><i class="fas fa-times"></i></button></td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    <button type="button" class="btn btn-sm btn-outline-success sds-grid-add"><i class="fas fa-plus"></i> Add test row</button>
+</div>

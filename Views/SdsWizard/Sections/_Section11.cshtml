@@ -6,9 +6,8 @@
     <div class="col-12"><label asp-for="AcuteToxicity" class="form-label">Acute toxicity</label><textarea asp-for="AcuteToxicity" class="form-control" rows="2" placeholder="Not available."></textarea></div>
 
     <div class="col-12">
-        <label asp-for="IrritationCorrosion" class="form-label">Irritation/Corrosion</label>
-        <p class="text-muted small">One row per test: <strong>Ingredient | Result | Species | Score | Exposure | Observation</strong></p>
-        <textarea asp-for="IrritationCorrosion" class="form-control" rows="4" placeholder="ethanol | Eyes - Mild irritant | Rabbit | - | 24 hours 500 milligrams | -"></textarea>
+        <label class="form-label">Irritation/Corrosion</label>
+        <partial name="Sections/_IrritationCorrosionGrid" model="Model" />
     </div>
 
     <div class="col-12"><label asp-for="Sensitization" class="form-label">Sensitization</label><textarea asp-for="Sensitization" class="form-control" rows="2"></textarea></div>
@@ -16,9 +15,8 @@
 
     <div class="col-12"><label asp-for="Carcinogenicity" class="form-label">Carcinogenicity</label><textarea asp-for="Carcinogenicity" class="form-control" rows="2"></textarea></div>
     <div class="col-12">
-        <label asp-for="CarcinogenicityClassification" class="form-label">Carcinogenicity — Classification</label>
-        <p class="text-muted small">One row per ingredient: <strong>Ingredient | OSHA | IARC | NTP</strong></p>
-        <textarea asp-for="CarcinogenicityClassification" class="form-control" rows="2" placeholder="ethanol | - | 1 | -"></textarea>
+        <label class="form-label">Carcinogenicity — Classification</label>
+        <partial name="Sections/_CarcinogenicityClassificationGrid" model="Model" />
     </div>
 
     <div class="col-md-6"><label asp-for="ReproductiveToxicity" class="form-label">Reproductive toxicity</label><textarea asp-for="ReproductiveToxicity" class="form-control" rows="2"></textarea></div>

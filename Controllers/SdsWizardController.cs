@@ -49,14 +49,15 @@ namespace ChemicalSDS.Controllers
             }
             else
             {
-                model = await _context.Chemicals
+                var existing = await _context.Chemicals
                     .FirstOrDefaultAsync(c => c.Id == id.Value && !c.IsDeleted);
-                if (model == null)
+                if (existing == null)
                 {
                     TempData["Error"] = "Chemical not found or has been deleted.";
                     return RedirectToAction("Reports", "Home");
                 }
 
+                model = existing;
                 var maxStep = Math.Min(SdsWizardStep.Total, model.LastCompletedSection + 1);
                 if (step > maxStep)
                     step = maxStep;
@@ -113,13 +114,15 @@ namespace ChemicalSDS.Controllers
             }
             else
             {
-                entity = await _context.Chemicals
+                var existing = await _context.Chemicals
                     .FirstOrDefaultAsync(c => c.Id == id.Value && !c.IsDeleted);
-                if (entity == null)
+                if (existing == null)
                 {
                     TempData["Error"] = "Chemical not found or has been deleted.";
                     return RedirectToAction("Reports", "Home");
                 }
+
+                entity = existing;
                 _wizard.ApplySection(entity, model, step);
             }
 

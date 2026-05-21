@@ -3,74 +3,127 @@
     ViewData["Title"] = "Edit User";
 }
 
-<div class="mb-3">
-    <a asp-action="Index" class="text-decoration-none small text-muted">
+@section Styles {
+    <link rel="stylesheet" href="~/css/users.css" asp-append-version="true" />
+}
+
+<div class="users-page">
+    <a asp-action="Index" class="users-back-link">
         <i class="fas fa-arrow-left"></i> Back to users
     </a>
-</div>
 
-<div class="user-form-card">
-    <div class="user-form-header">
-        <h2><i class="fas fa-user-edit me-2"></i> Edit User</h2>
-        <p>Update profile, role, or reset password</p>
-    </div>
+    <div class="user-form-shell">
+        <div class="user-form-banner user-form-banner--edit">
+            <div class="user-form-banner-icon" aria-hidden="true">
+                <i class="fas fa-user-pen"></i>
+            </div>
+            <div>
+                <h2 class="user-form-banner-title">Edit User</h2>
+                <p class="user-form-banner-sub">Update profile, role, or set a new password (leave blank to keep current)</p>
+            </div>
+        </div>
 
-    <form asp-action="Edit" method="post" class="user-form">
-        @Html.AntiForgeryToken()
-        <input type="hidden" asp-for="Id" />
-        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+        <form asp-action="Edit" method="post" class="user-form-body" autocomplete="off">
+            @Html.AntiForgeryToken()
+            <input type="hidden" asp-for="Id" />
+            <div asp-validation-summary="ModelOnly" class="alert alert-danger user-form-alert" role="alert"></div>
 
-        <div class="row g-3">
-            <div class="col-md-6">
-                <label asp-for="Username" class="form-label"></label>
-                <input asp-for="Username" class="form-control" />
-                <span asp-validation-for="Username" class="text-danger small"></span>
-            </div>
-            <div class="col-md-6">
-                <label asp-for="FullName" class="form-label"></label>
-                <input asp-for="FullName" class="form-control" />
-                <span asp-validation-for="FullName" class="text-danger small"></span>
-            </div>
-            <div class="col-12">
-                <label asp-for="Email" class="form-label"></label>
-                <input asp-for="Email" class="form-control" type="email" />
-                <span asp-validation-for="Email" class="text-danger small"></span>
-            </div>
-            <div class="col-md-6">
-                <label asp-for="NewPassword" class="form-label"></label>
-                <input asp-for="NewPassword" class="form-control" autocomplete="new-password" />
-                <span asp-validation-for="NewPassword" class="text-danger small"></span>
-            </div>
-            <div class="col-md-6">
-                <label asp-for="ConfirmNewPassword" class="form-label"></label>
-                <input asp-for="ConfirmNewPassword" class="form-control" autocomplete="new-password" />
-                <span asp-validation-for="ConfirmNewPassword" class="text-danger small"></span>
-            </div>
-            <div class="col-md-6">
-                <label asp-for="Role" class="form-label"></label>
-                <select asp-for="Role" class="form-select">
-                    <option value="User">User</option>
-                    <option value="Manager">Manager</option>
-                    <option value="Admin">Admin</option>
-                </select>
-            </div>
-            <div class="col-md-6 d-flex align-items-end">
-                <div class="form-check">
-                    <input asp-for="IsActive" class="form-check-input" />
-                    <label asp-for="IsActive" class="form-check-label">Account is active</label>
+            <section class="user-form-section">
+                <h3 class="user-form-section-title"><i class="fas fa-id-card"></i> Account information</h3>
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label asp-for="Username" class="form-label">Username</label>
+                        <div class="input-group user-input-group">
+                            <span class="input-group-text"><i class="fas fa-user"></i></span>
+                            <input asp-for="Username" class="form-control" autocomplete="off" />
+                        </div>
+                        <span asp-validation-for="Username" class="text-danger small"></span>
+                    </div>
+                    <div class="col-md-6">
+                        <label asp-for="FullName" class="form-label">Full name</label>
+                        <div class="input-group user-input-group">
+                            <span class="input-group-text"><i class="fas fa-signature"></i></span>
+                            <input asp-for="FullName" class="form-control" />
+                        </div>
+                        <span asp-validation-for="FullName" class="text-danger small"></span>
+                    </div>
+                    <div class="col-md-6">
+                        <label asp-for="Email" class="form-label">Email</label>
+                        <div class="input-group user-input-group">
+                            <span class="input-group-text"><i class="fas fa-envelope"></i></span>
+                            <input asp-for="Email" class="form-control" type="email" autocomplete="off" />
+                        </div>
+                        <span asp-validation-for="Email" class="text-danger small"></span>
+                    </div>
                 </div>
-            </div>
-        </div>
+            </section>
 
-        <div class="user-form-actions">
-            <a asp-action="Index" class="btn btn-outline-secondary">Cancel</a>
-            <button type="submit" class="btn btn-dash-primary">
-                <i class="fas fa-save"></i> Save Changes
-            </button>
-        </div>
-    </form>
+            <section class="user-form-section">
+                <h3 class="user-form-section-title"><i class="fas fa-lock"></i> Reset password <span class="user-form-optional">(optional)</span></h3>
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label asp-for="NewPassword" class="form-label">New password</label>
+                        <div class="input-group user-input-group user-password-group">
+                            <span class="input-group-text"><i class="fas fa-key"></i></span>
+                            <input asp-for="NewPassword" class="form-control" type="password" autocomplete="new-password" placeholder="Leave blank to keep current" />
+                            <button type="button" class="input-group-text user-pwd-toggle" aria-label="Show password" aria-pressed="false">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+                        <span asp-validation-for="NewPassword" class="text-danger small"></span>
+                    </div>
+                    <div class="col-md-6">
+                        <label asp-for="ConfirmNewPassword" class="form-label">Confirm new password</label>
+                        <div class="input-group user-input-group user-password-group">
+                            <span class="input-group-text"><i class="fas fa-key"></i></span>
+                            <input asp-for="ConfirmNewPassword" class="form-control" type="password" autocomplete="new-password" />
+                            <button type="button" class="input-group-text user-pwd-toggle" aria-label="Show password" aria-pressed="false">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+                        <span asp-validation-for="ConfirmNewPassword" class="text-danger small"></span>
+                    </div>
+                </div>
+            </section>
+
+            <section class="user-form-section">
+                <h3 class="user-form-section-title"><i class="fas fa-shield-alt"></i> Access &amp; role</h3>
+                <div class="row g-3 align-items-stretch">
+                    <div class="col-md-6">
+                        <label asp-for="Role" class="form-label">Role</label>
+                        <div class="input-group user-input-group">
+                            <span class="input-group-text"><i class="fas fa-user-tag"></i></span>
+                            <select asp-for="Role" class="form-select">
+                                <option value="User">User</option>
+                                <option value="Manager">Manager</option>
+                                <option value="Admin">Admin</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label d-block">Account status</label>
+                        <label class="user-status-card">
+                            <input asp-for="IsActive" class="form-check-input" type="checkbox" />
+                            <span class="user-status-card-body">
+                                <strong>Active account</strong>
+                                <small>User can sign in when this is enabled</small>
+                            </span>
+                        </label>
+                    </div>
+                </div>
+            </section>
+
+            <div class="user-form-footer">
+                <a asp-action="Index" class="btn btn-user-secondary">Cancel</a>
+                <button type="submit" class="btn btn-user-primary">
+                    <i class="fas fa-save"></i> Save Changes
+                </button>
+            </div>
+        </form>
+    </div>
 </div>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+    <script src="~/js/password-toggle.js" asp-append-version="true"></script>
 }

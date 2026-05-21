@@ -175,27 +175,10 @@
     <div id="sec8" class="sds-section">
         <div class="section-header"><h4><i class="fas fa-hard-hat"></i> Section 8: Exposure Controls / PPE</h4></div>
         <div class="section-body sds-detail-layout">
-            @if (!string.IsNullOrEmpty(Model.OccupationalExposureLimits))
-            {
-                <div class="sds-detail-row sds-detail-row-block">
-                    <span class="sds-detail-label">Occupational exposure limits</span>
-                    <div class="sds-detail-value">
-                        <table class="table table-sm table-bordered sds-oel-table mb-0">
-                            <thead><tr><th>Ingredient name</th><th>Exposure limits</th></tr></thead>
-                            <tbody>
-                                @foreach (var line in Model.OccupationalExposureLimits.Split('\n', StringSplitOptions.RemoveEmptyEntries))
-                                {
-                                    var parts = line.Split('|', 2);
-                                    <tr>
-                                        <td>@(parts.Length > 0 ? parts[0].Trim() : line.Trim())</td>
-                                        <td>@(parts.Length > 1 ? parts[1].Trim() : "")</td>
-                                    </tr>
-                                }
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
+            @{
+                ViewData["OelData"] = Model.OccupationalExposureLimits;
             }
+            <partial name="Partials/Sds/_SdsOelTable" />
             <partial name="Partials/Sds/_SdsDetailBlock" model="@(new ChemicalSDS.Models.SdsDetailRow { Label = "Appropriate engineering controls", Value = Model.ExposureControls })" />
             <partial name="Partials/Sds/_SdsDetailBlock" model="@(new ChemicalSDS.Models.SdsDetailRow { Label = "Environmental exposure controls", Value = Model.EnvironmentalExposureControls })" />
             <partial name="Partials/Sds/_SdsDetailBlock" model="@(new ChemicalSDS.Models.SdsDetailRow { Label = "Hygiene measures", Value = Model.HygieneMeasures })" />
@@ -241,10 +224,14 @@
 
     <div id="sec10" class="sds-section">
         <div class="section-header"><h4><i class="fas fa-shield-alt"></i> Section 10: Stability and Reactivity</h4></div>
-        <div class="section-body">
-            <p><strong>Chemical Stability:</strong> @Model.ChemicalStability</p>
-            <p><strong>Conditions to Avoid:</strong> @Model.ConditionsToAvoid</p>
-            <p><strong>Hazardous Decomposition:</strong> @Model.HazardousDecomposition</p>
+        <div class="section-body sds-detail-layout">
+            <partial name="Partials/Sds/_SdsDetailBlock" model="@(new ChemicalSDS.Models.SdsDetailRow { Label = "Reactivity", Value = Model.Reactivity })" />
+            <partial name="Partials/Sds/_SdsDetailBlock" model="@(new ChemicalSDS.Models.SdsDetailRow { Label = "Possibility of hazardous reactions", Value = Model.PossibilityOfHazardousReactions })" />
+            <partial name="Partials/Sds/_SdsDetailBlock" model="@(new ChemicalSDS.Models.SdsDetailRow { Label = "Chemical stability", Value = Model.ChemicalStability })" />
+            <partial name="Partials/Sds/_SdsDetailBlock" model="@(new ChemicalSDS.Models.SdsDetailRow { Label = "Conditions to avoid", Value = Model.ConditionsToAvoid })" />
+            <partial name="Partials/Sds/_SdsDetailBlock" model="@(new ChemicalSDS.Models.SdsDetailRow { Label = "Incompatible materials", Value = Model.IncompatibleMaterials })" />
+            <partial name="Partials/Sds/_SdsDetailBlock" model="@(new ChemicalSDS.Models.SdsDetailRow { Label = "Hazardous decomposition products", Value = Model.HazardousDecomposition })" />
+            <partial name="Partials/Sds/_SdsDetailBlock" model="@(new ChemicalSDS.Models.SdsDetailRow { Label = "Hazardous polymerization", Value = Model.HazardousPolymerization })" />
         </div>
     </div>
 
@@ -260,7 +247,11 @@
             <partial name="Partials/Sds/_SdsDetailBlock" model="@(new ChemicalSDS.Models.SdsDetailRow { Label = "Sensitization", Value = Model.Sensitization })" />
             <partial name="Partials/Sds/_SdsDetailBlock" model="@(new ChemicalSDS.Models.SdsDetailRow { Label = "Mutagenicity", Value = Model.Mutagenicity })" />
             <partial name="Partials/Sds/_SdsDetailBlock" model="@(new ChemicalSDS.Models.SdsDetailRow { Label = "Carcinogenicity", Value = Model.Carcinogenicity })" />
-            <partial name="Partials/Sds/_SdsPipeTable" model="@(new ChemicalSDS.Models.SdsPipeTableModel { Title = "Carcinogenicity — Classification", Headers = new[] { "Product/ingredient name", "OSHA", "IARC", "NTP" }, Data = Model.CarcinogenicityClassification })" />
+            <partial name="Partials/Sds/_SdsPipeTable" model="@(new ChemicalSDS.Models.SdsPipeTableModel { Title = "Classification", Headers = new[] { "Product/ingredient name", "OSHA", "IARC", "NTP" }, Data = Model.CarcinogenicityClassification })" />
+            @if (!string.IsNullOrWhiteSpace(Model.CarcinogenicityClassification) && !Model.CarcinogenicityClassification.Contains('|'))
+            {
+                <partial name="Partials/Sds/_SdsDetailBlock" model="@(new ChemicalSDS.Models.SdsDetailRow { Label = "Classification", Value = Model.CarcinogenicityClassification })" />
+            }
             <partial name="Partials/Sds/_SdsDetailBlock" model="@(new ChemicalSDS.Models.SdsDetailRow { Label = "Reproductive toxicity", Value = Model.ReproductiveToxicity })" />
             <partial name="Partials/Sds/_SdsDetailBlock" model="@(new ChemicalSDS.Models.SdsDetailRow { Label = "Teratogenicity", Value = Model.Teratogenicity })" />
             <partial name="Partials/Sds/_SdsDetailBlock" model="@(new ChemicalSDS.Models.SdsDetailRow { Label = "Specific target organ toxicity (single exposure)", Value = Model.TargetOrganToxicitySingle })" />

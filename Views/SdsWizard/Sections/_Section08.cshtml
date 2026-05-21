@@ -3,9 +3,8 @@
 <div class="row sds-field-grid g-3">
     <div class="col-12"><h5 class="sds-subheading">Control parameters</h5></div>
     <div class="col-12">
-        <label asp-for="OccupationalExposureLimits" class="form-label">Occupational exposure limits</label>
-        <p class="text-muted small">One line per ingredient: <strong>Ingredient name | Exposure limits</strong> (ACGIH, OSHA, NIOSH, etc.)</p>
-        <textarea asp-for="OccupationalExposureLimits" class="form-control" rows="5" placeholder="ethanol | ACGIH TLV STEL: 1000 ppm 15 min.&#10;OSHA PEL TWA: 1000 ppm 8 hours..."></textarea>
+        <label class="form-label">Occupational exposure limits</label>
+        <partial name="Sections/_OelLimitsGrid" />
     </div>
 
     <div class="col-12"><h5 class="sds-subheading mt-2">Appropriate engineering controls</h5></div>

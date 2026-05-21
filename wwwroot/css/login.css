@@ -54,22 +54,47 @@
 .login-brand-inner {
     position: relative;
     z-index: 1;
-    text-align: center;
-    max-width: 380px;
+    text-align: left;
+    max-width: 420px;
+}
+
+.login-brand-head {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    margin-bottom: 32px;
+}
+
+.login-brand-text {
+    flex: 1;
+    min-width: 0;
 }
 
 .login-brand-icon {
     width: 88px;
     height: 88px;
-    border-radius: 22px;
-    background: rgba(255, 255, 255, 0.12);
-    border: 2px solid rgba(255, 255, 255, 0.2);
+    flex-shrink: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.95);
+    border: 2px solid rgba(255, 255, 255, 0.35);
     display: flex;
     align-items: center;
     justify-content: center;
-    margin: 0 auto 28px;
-    font-size: 2.4rem;
+    margin: 0;
+    padding: 6px;
     box-shadow: 0 12px 32px rgba(0, 0, 0, 0.2);
+}
+
+.login-brand-logo {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.login-brand-logo-sm {
+    width: 52px;
+    height: 52px;
+    object-fit: contain;
 }
 
 .login-brand h1 {
@@ -83,7 +108,7 @@
     font-size: 0.95rem;
     opacity: 0.9;
     color: #b8e0c8;
-    margin-bottom: 32px;
+    margin-bottom: 0;
 }
 
 .login-brand-features {
@@ -371,26 +396,22 @@
 
 .login-mobile-brand {
     display: none;
-    text-align: center;
-    margin-bottom: 24px;
-}
-
-.login-mobile-brand .icon {
-    width: 56px;
-    height: 56px;
-    border-radius: 14px;
-    background: var(--login-pale);
-    color: var(--login-base);
-    display: inline-flex;
     align-items: center;
-    justify-content: center;
-    font-size: 1.5rem;
-    margin-bottom: 10px;
+    gap: 14px;
+    margin-bottom: 24px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid #e0ebe3;
 }
 
-.login-mobile-brand h3 {
+.login-mobile-brand-text h3 {
     font-size: 1.1rem;
     color: var(--login-dark);
+    margin: 0 0 2px;
+}
+
+.login-mobile-brand-text p {
+    font-size: 0.8rem;
+    color: var(--login-mid);
     margin: 0;
 }
 
@@ -404,7 +425,7 @@
     }
 
     .login-mobile-brand {
-        display: block;
+        display: flex;
     }
 
     .login-form-panel {

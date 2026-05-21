@@ -122,6 +122,7 @@ namespace ChemicalSDS.Services
                     target.ChemicalStability = source.ChemicalStability;
                     target.ConditionsToAvoid = source.ConditionsToAvoid;
                     target.HazardousDecomposition = source.HazardousDecomposition;
+                    target.HazardousPolymerization = source.HazardousPolymerization;
                     target.IncompatibleMaterials = source.IncompatibleMaterials ?? target.IncompatibleMaterials;
                     target.PossibilityOfHazardousReactions = source.PossibilityOfHazardousReactions;
                     target.Reactivity = source.Reactivity;
