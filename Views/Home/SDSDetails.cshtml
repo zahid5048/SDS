@@ -89,21 +89,24 @@
 
     <div id="sec2" class="sds-section">
         <div class="section-header"><h4><i class="fas fa-exclamation-triangle"></i> Section 2: Hazards Identification</h4></div>
-        <div class="section-body">
-            <p><strong>OSHA/HCS Status:</strong> @Model.OSHASstatus</p>
-            <p><strong>Classification:</strong> @Model.Classification</p>
-            <p><strong>Signal Word:</strong> <span class="badge @(Model.SignalWord == "Danger" ? "bg-danger" : "bg-warning text-dark")">@Model.SignalWord</span></p>
-            <p><strong>Hazard Statements:</strong></p>
-            <p>@Html.Raw(Model.HazardStatements?.Replace("\n", "<br/>"))</p>
-            <p><strong>Precautionary — General:</strong> @Model.PrecautionaryGeneral</p>
-            <p><strong>Precautionary — Prevention:</strong> @Model.PrecautionaryPrevention</p>
-            <p><strong>Precautionary — Response:</strong> @Model.PrecautionaryResponse</p>
-            <p><strong>Precautionary — Storage:</strong> @Model.PrecautionaryStorage</p>
-            <p><strong>Precautionary — Disposal:</strong> @Model.PrecautionaryDisposal</p>
-            @if (!string.IsNullOrEmpty(Model.HazardsNotOtherwiseClassified))
+        <div class="section-body sds-detail-layout">
+            <partial name="Partials/Sds/_SdsDetailBlock" model="@(new ChemicalSDS.Models.SdsDetailRow { Label = "OSHA/HCS status", Value = Model.OSHASstatus })" />
+            <partial name="Partials/Sds/_SdsDetailBlock" model="@(new ChemicalSDS.Models.SdsDetailRow { Label = "Classification", Value = Model.Classification })" />
+            @if (!string.IsNullOrEmpty(Model.SignalWord))
             {
-                <p><strong>Hazards Not Otherwise Classified:</strong> @Model.HazardsNotOtherwiseClassified</p>
+                <div class="sds-detail-row">
+                    <span class="sds-detail-label">Signal word</span>
+                    <span class="sds-detail-value"><span class="badge @(Model.SignalWord == "Danger" ? "bg-danger" : "bg-warning text-dark")">@Model.SignalWord</span></span>
+                </div>
             }
+            <partial name="Partials/Sds/_GhsDisplay" model="Model" />
+            <partial name="Partials/Sds/_SdsDetailBlock" model="@(new ChemicalSDS.Models.SdsDetailRow { Label = "Hazard statements", Value = Model.HazardStatements })" />
+            <partial name="Partials/Sds/_SdsDetailBlock" model="@(new ChemicalSDS.Models.SdsDetailRow { Label = "Precautionary – General", Value = Model.PrecautionaryGeneral })" />
+            <partial name="Partials/Sds/_SdsDetailBlock" model="@(new ChemicalSDS.Models.SdsDetailRow { Label = "Precautionary – Prevention", Value = Model.PrecautionaryPrevention })" />
+            <partial name="Partials/Sds/_SdsDetailBlock" model="@(new ChemicalSDS.Models.SdsDetailRow { Label = "Precautionary – Response", Value = Model.PrecautionaryResponse })" />
+            <partial name="Partials/Sds/_SdsDetailBlock" model="@(new ChemicalSDS.Models.SdsDetailRow { Label = "Precautionary – Storage", Value = Model.PrecautionaryStorage })" />
+            <partial name="Partials/Sds/_SdsDetailBlock" model="@(new ChemicalSDS.Models.SdsDetailRow { Label = "Precautionary – Disposal", Value = Model.PrecautionaryDisposal })" />
+            <partial name="Partials/Sds/_SdsDetailBlock" model="@(new ChemicalSDS.Models.SdsDetailRow { Label = "Hazards not otherwise classified", Value = Model.HazardsNotOtherwiseClassified })" />
         </div>
     </div>
 
@@ -121,73 +124,118 @@
 
     <div id="sec4" class="sds-section">
         <div class="section-header"><h4><i class="fas fa-kit-medical"></i> Section 4: First Aid Measures</h4></div>
-        <div class="section-body">
-            <p><strong>Eye Contact:</strong> @Model.EyeContactFirstAid</p>
-            <p><strong>Inhalation:</strong> @Model.InhalationFirstAid</p>
-            <p><strong>Skin Contact:</strong> @Model.SkinContactFirstAid</p>
-            <p><strong>Ingestion:</strong> @Model.IngestionFirstAid</p>
+        <div class="section-body sds-detail-layout">
+            <partial name="Partials/Sds/_SdsDetailBlock" model="@(new ChemicalSDS.Models.SdsDetailRow { Label = "Eye contact", Value = Model.EyeContactFirstAid })" />
+            <partial name="Partials/Sds/_SdsDetailBlock" model="@(new ChemicalSDS.Models.SdsDetailRow { Label = "Inhalation", Value = Model.InhalationFirstAid })" />
+            <partial name="Partials/Sds/_SdsDetailBlock" model="@(new ChemicalSDS.Models.SdsDetailRow { Label = "Skin contact", Value = Model.SkinContactFirstAid })" />
+            <partial name="Partials/Sds/_SdsDetailBlock" model="@(new ChemicalSDS.Models.SdsDetailRow { Label = "Ingestion", Value = Model.IngestionFirstAid })" />
+            <partial name="Partials/Sds/_SdsDetailBlock" model="@(new ChemicalSDS.Models.SdsDetailRow { Label = "Indication of immediate medical attention and special treatment needed", Value = Model.MedicalAttentionIndication })" />
+            <partial name="Partials/Sds/_SdsDetailBlock" model="@(new ChemicalSDS.Models.SdsDetailRow { Label = "Notes to physician", Value = Model.NotesToPhysician })" />
+            <partial name="Partials/Sds/_SdsDetailBlock" model="@(new ChemicalSDS.Models.SdsDetailRow { Label = "Specific treatments", Value = Model.SpecificTreatments })" />
+            <partial name="Partials/Sds/_SdsDetailBlock" model="@(new ChemicalSDS.Models.SdsDetailRow { Label = "Protection of first-aiders", Value = Model.ProtectionOfFirstAiders })" />
         </div>
     </div>
 
     <div id="sec5" class="sds-section">
         <div class="section-header"><h4><i class="fas fa-fire"></i> Section 5: Fire-Fighting Measures</h4></div>
-        <div class="section-body">
-            <p><strong>Suitable Extinguishing Media:</strong> @Model.SuitableExtinguishingMedia</p>
-            <p><strong>Unsuitable Extinguishing Media:</strong> @Model.UnsuitableExtinguishingMedia</p>
-            <p><strong>Specific Hazards:</strong> @Model.SpecificHazards</p>
-            <p><strong>Flash Point:</strong> @Model.FlashPoint</p>
-            <p><strong>Auto-ignition Temperature:</strong> @Model.AutoIgnitionTemp</p>
-            <p><strong>Explosive Limits:</strong> @Model.LowerExplosiveLimit — @Model.UpperExplosiveLimit</p>
+        <div class="section-body sds-detail-layout">
+            <partial name="Partials/Sds/_SdsDetailBlock" model="@(new ChemicalSDS.Models.SdsDetailRow { Label = "Suitable extinguishing media", Value = Model.SuitableExtinguishingMedia })" />
+            <partial name="Partials/Sds/_SdsDetailBlock" model="@(new ChemicalSDS.Models.SdsDetailRow { Label = "Unsuitable extinguishing media", Value = Model.UnsuitableExtinguishingMedia })" />
+            <partial name="Partials/Sds/_SdsDetailBlock" model="@(new ChemicalSDS.Models.SdsDetailRow { Label = "Specific hazards arising from the chemical", Value = Model.SpecificHazards })" />
+            <partial name="Partials/Sds/_SdsDetailBlock" model="@(new ChemicalSDS.Models.SdsDetailRow { Label = "Hazardous thermal decomposition products", Value = Model.HazardousDecomposition })" />
+            <partial name="Partials/Sds/_SdsDetailBlock" model="@(new ChemicalSDS.Models.SdsDetailRow { Label = "Special protective actions for fire-fighters", Value = Model.FirefighterProtectiveActions })" />
+            <partial name="Partials/Sds/_SdsDetailBlock" model="@(new ChemicalSDS.Models.SdsDetailRow { Label = "Special protective equipment for fire-fighters", Value = Model.FirefighterProtectiveEquipment })" />
+            <partial name="Partials/Sds/_SdsDetailBlock" model="@(new ChemicalSDS.Models.SdsDetailRow { Label = "Flash point", Value = Model.FlashPoint })" />
+            <partial name="Partials/Sds/_SdsDetailBlock" model="@(new ChemicalSDS.Models.SdsDetailRow { Label = "Auto-ignition temperature", Value = Model.AutoIgnitionTemp })" />
+            <partial name="Partials/Sds/_SdsDetailBlock" model="@(new ChemicalSDS.Models.SdsDetailRow { Label = "Lower explosive limit", Value = Model.LowerExplosiveLimit })" />
+            <partial name="Partials/Sds/_SdsDetailBlock" model="@(new ChemicalSDS.Models.SdsDetailRow { Label = "Upper explosive limit", Value = Model.UpperExplosiveLimit })" />
         </div>
     </div>
 
     <div id="sec6" class="sds-section">
         <div class="section-header"><h4><i class="fas fa-biohazard"></i> Section 6: Accidental Release</h4></div>
-        <div class="section-body">
-            <p><strong>Small Spill:</strong> @Model.SmallSpillMethods</p>
-            <p><strong>Large Spill:</strong> @Model.LargeSpillMethods</p>
+        <div class="section-body sds-detail-layout">
+            <partial name="Partials/Sds/_SdsDetailBlock" model="@(new ChemicalSDS.Models.SdsDetailRow { Label = "For non-emergency personnel", Value = Model.SpillNonEmergencyPersonnel })" />
+            <partial name="Partials/Sds/_SdsDetailBlock" model="@(new ChemicalSDS.Models.SdsDetailRow { Label = "For emergency responders", Value = Model.SpillEmergencyResponders })" />
+            <partial name="Partials/Sds/_SdsDetailBlock" model="@(new ChemicalSDS.Models.SdsDetailRow { Label = "Environmental precautions", Value = Model.EnvironmentalPrecautionsSpill })" />
+            <partial name="Partials/Sds/_SdsDetailBlock" model="@(new ChemicalSDS.Models.SdsDetailRow { Label = "Small spill", Value = Model.SmallSpillMethods })" />
+            <partial name="Partials/Sds/_SdsDetailBlock" model="@(new ChemicalSDS.Models.SdsDetailRow { Label = "Large spill", Value = Model.LargeSpillMethods })" />
         </div>
     </div>
 
     <div id="sec7" class="sds-section">
         <div class="section-header"><h4><i class="fas fa-warehouse"></i> Section 7: Handling and Storage</h4></div>
-        <div class="section-body">
-            @if (!string.IsNullOrEmpty(Model.HandlingPrecautions)) { <p><strong>Handling:</strong> @Model.HandlingPrecautions</p> }
-            <p><strong>Storage Requirements:</strong> @Model.SafeStorageConditions</p>
-            <p><strong>Incompatible Materials:</strong> @Model.IncompatibleMaterials</p>
+        <div class="section-body sds-detail-layout">
+            <partial name="Partials/Sds/_SdsDetailBlock" model="@(new ChemicalSDS.Models.SdsDetailRow { Label = "Precautions for safe handling", Value = Model.HandlingPrecautions })" />
+            <partial name="Partials/Sds/_SdsDetailBlock" model="@(new ChemicalSDS.Models.SdsDetailRow { Label = "Advice on general occupational hygiene", Value = Model.OccupationalHygiene })" />
+            <partial name="Partials/Sds/_SdsDetailBlock" model="@(new ChemicalSDS.Models.SdsDetailRow { Label = "Conditions for safe storage", Value = Model.SafeStorageConditions })" />
         </div>
     </div>
 
     <div id="sec8" class="sds-section">
         <div class="section-header"><h4><i class="fas fa-hard-hat"></i> Section 8: Exposure Controls / PPE</h4></div>
-        <div class="section-body">
-            @if (!string.IsNullOrEmpty(Model.OccupationalExposureLimits)) { <p><strong>Exposure Limits:</strong> @Model.OccupationalExposureLimits</p> }
-            @if (!string.IsNullOrEmpty(Model.ExposureControls)) { <p><strong>Engineering Controls:</strong> @Model.ExposureControls</p> }
-            <p><strong>Eye Protection:</strong> @Model.EyeProtection</p>
-            <p><strong>Hand Protection:</strong> @Model.HandProtection</p>
-            <p><strong>Body Protection:</strong> @Model.BodyProtection</p>
-            <p><strong>Respiratory Protection:</strong> @Model.RespiratoryProtection</p>
+        <div class="section-body sds-detail-layout">
+            @if (!string.IsNullOrEmpty(Model.OccupationalExposureLimits))
+            {
+                <div class="sds-detail-row sds-detail-row-block">
+                    <span class="sds-detail-label">Occupational exposure limits</span>
+                    <div class="sds-detail-value">
+                        <table class="table table-sm table-bordered sds-oel-table mb-0">
+                            <thead><tr><th>Ingredient name</th><th>Exposure limits</th></tr></thead>
+                            <tbody>
+                                @foreach (var line in Model.OccupationalExposureLimits.Split('\n', StringSplitOptions.RemoveEmptyEntries))
+                                {
+                                    var parts = line.Split('|', 2);
+                                    <tr>
+                                        <td>@(parts.Length > 0 ? parts[0].Trim() : line.Trim())</td>
+                                        <td>@(parts.Length > 1 ? parts[1].Trim() : "")</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            }
+            <partial name="Partials/Sds/_SdsDetailBlock" model="@(new ChemicalSDS.Models.SdsDetailRow { Label = "Appropriate engineering controls", Value = Model.ExposureControls })" />
+            <partial name="Partials/Sds/_SdsDetailBlock" model="@(new ChemicalSDS.Models.SdsDetailRow { Label = "Environmental exposure controls", Value = Model.EnvironmentalExposureControls })" />
+            <partial name="Partials/Sds/_SdsDetailBlock" model="@(new ChemicalSDS.Models.SdsDetailRow { Label = "Hygiene measures", Value = Model.HygieneMeasures })" />
+            <partial name="Partials/Sds/_SdsDetailBlock" model="@(new ChemicalSDS.Models.SdsDetailRow { Label = "Eye / face protection", Value = Model.EyeProtection })" />
+            <partial name="Partials/Sds/_SdsDetailBlock" model="@(new ChemicalSDS.Models.SdsDetailRow { Label = "Hand protection", Value = Model.HandProtection })" />
+            <partial name="Partials/Sds/_SdsDetailBlock" model="@(new ChemicalSDS.Models.SdsDetailRow { Label = "Body protection", Value = Model.BodyProtection })" />
+            <partial name="Partials/Sds/_SdsDetailBlock" model="@(new ChemicalSDS.Models.SdsDetailRow { Label = "Other skin protection", Value = Model.OtherSkinProtection })" />
+            <partial name="Partials/Sds/_SdsDetailBlock" model="@(new ChemicalSDS.Models.SdsDetailRow { Label = "Respiratory protection", Value = Model.RespiratoryProtection })" />
         </div>
     </div>
 
     <div id="sec9" class="sds-section">
         <div class="section-header"><h4><i class="fas fa-atom"></i> Section 9: Physical and Chemical Properties</h4></div>
-        <div class="section-body">
-            <div class="row">
-                <div class="col-md-6">
-                    <p><strong>Physical State:</strong> @Model.PhysicalState</p>
-                    <p><strong>Color:</strong> @Model.Color</p>
-                    <p><strong>Odor:</strong> @Model.Odor</p>
-                    <p><strong>Melting Point:</strong> @Model.MeltingPoint</p>
-                    <p><strong>Boiling Point:</strong> @Model.BoilingPoint</p>
-                </div>
-                <div class="col-md-6">
-                    <p><strong>Vapor Pressure:</strong> @Model.VaporPressure</p>
-                    <p><strong>Vapor Density:</strong> @Model.VaporDensity</p>
-                    <p><strong>Relative Density:</strong> @Model.RelativeDensity</p>
-                    <p><strong>Solubility:</strong> @Model.Solubility</p>
-                </div>
-            </div>
+        <div class="section-body sds-detail-layout sds-props-grid">
+            <partial name="Partials/Sds/_SdsDetailBlock" model="@(new ChemicalSDS.Models.SdsDetailRow { Label = "Physical state", Value = Model.PhysicalState })" />
+            <partial name="Partials/Sds/_SdsDetailBlock" model="@(new ChemicalSDS.Models.SdsDetailRow { Label = "Color", Value = Model.Color })" />
+            <partial name="Partials/Sds/_SdsDetailBlock" model="@(new ChemicalSDS.Models.SdsDetailRow { Label = "Odor", Value = Model.Odor })" />
+            <partial name="Partials/Sds/_SdsDetailBlock" model="@(new ChemicalSDS.Models.SdsDetailRow { Label = "Odor threshold", Value = Model.OdorThreshold })" />
+            <partial name="Partials/Sds/_SdsDetailBlock" model="@(new ChemicalSDS.Models.SdsDetailRow { Label = "pH", Value = Model.pH })" />
+            <partial name="Partials/Sds/_SdsDetailBlock" model="@(new ChemicalSDS.Models.SdsDetailRow { Label = "Melting point / freezing point", Value = Model.MeltingPoint })" />
+            <partial name="Partials/Sds/_SdsDetailBlock" model="@(new ChemicalSDS.Models.SdsDetailRow { Label = "Boiling point", Value = Model.BoilingPoint })" />
+            <partial name="Partials/Sds/_SdsDetailBlock" model="@(new ChemicalSDS.Models.SdsDetailRow { Label = "Critical temperature", Value = Model.CriticalTemperature })" />
+            <partial name="Partials/Sds/_SdsDetailBlock" model="@(new ChemicalSDS.Models.SdsDetailRow { Label = "Flash point", Value = Model.FlashPoint })" />
+            <partial name="Partials/Sds/_SdsDetailBlock" model="@(new ChemicalSDS.Models.SdsDetailRow { Label = "Evaporation rate", Value = Model.EvaporationRate })" />
+            <partial name="Partials/Sds/_SdsDetailBlock" model="@(new ChemicalSDS.Models.SdsDetailRow { Label = "Flammability (solid, gas)", Value = Model.Flammability })" />
+            <partial name="Partials/Sds/_SdsDetailBlock" model="@(new ChemicalSDS.Models.SdsDetailRow { Label = "Lower explosive (flammable) limit", Value = Model.LowerExplosiveLimit })" />
+            <partial name="Partials/Sds/_SdsDetailBlock" model="@(new ChemicalSDS.Models.SdsDetailRow { Label = "Upper explosive (flammable) limit", Value = Model.UpperExplosiveLimit })" />
+            <partial name="Partials/Sds/_SdsDetailBlock" model="@(new ChemicalSDS.Models.SdsDetailRow { Label = "Vapor pressure", Value = Model.VaporPressure })" />
+            <partial name="Partials/Sds/_SdsDetailBlock" model="@(new ChemicalSDS.Models.SdsDetailRow { Label = "Vapor density", Value = Model.VaporDensity })" />
+            <partial name="Partials/Sds/_SdsDetailBlock" model="@(new ChemicalSDS.Models.SdsDetailRow { Label = "Specific volume (ft³/lb)", Value = Model.SpecificVolume })" />
+            <partial name="Partials/Sds/_SdsDetailBlock" model="@(new ChemicalSDS.Models.SdsDetailRow { Label = "Gas density (lb/ft³)", Value = Model.GasDensity })" />
+            <partial name="Partials/Sds/_SdsDetailBlock" model="@(new ChemicalSDS.Models.SdsDetailRow { Label = "Relative density", Value = Model.RelativeDensity })" />
+            <partial name="Partials/Sds/_SdsDetailBlock" model="@(new ChemicalSDS.Models.SdsDetailRow { Label = "Solubility", Value = Model.Solubility })" />
+            <partial name="Partials/Sds/_SdsDetailBlock" model="@(new ChemicalSDS.Models.SdsDetailRow { Label = "Solubility in water", Value = Model.SolubilityInWater })" />
+            <partial name="Partials/Sds/_SdsDetailBlock" model="@(new ChemicalSDS.Models.SdsDetailRow { Label = "Partition coefficient: n-octanol/water", Value = Model.PartitionCoefficient })" />
+            <partial name="Partials/Sds/_SdsDetailBlock" model="@(new ChemicalSDS.Models.SdsDetailRow { Label = "Auto-ignition temperature", Value = Model.AutoIgnitionTemp })" />
+            <partial name="Partials/Sds/_SdsDetailBlock" model="@(new ChemicalSDS.Models.SdsDetailRow { Label = "Decomposition temperature", Value = Model.DecompositionTemperature })" />
+            <partial name="Partials/Sds/_SdsDetailBlock" model="@(new ChemicalSDS.Models.SdsDetailRow { Label = "Viscosity", Value = Model.Viscosity })" />
+            <partial name="Partials/Sds/_SdsDetailBlock" model="@(new ChemicalSDS.Models.SdsDetailRow { Label = "Flow time (ISO 2431)", Value = Model.FlowTimeIso2431 })" />
+            <partial name="Partials/Sds/_SdsDetailBlock" model="@(new ChemicalSDS.Models.SdsDetailRow { Label = "Molecular weight", Value = Model.MolecularWeight })" />
         </div>
     </div>
 
@@ -202,18 +250,62 @@
 
     <div id="sec11" class="sds-section">
         <div class="section-header"><h4><i class="fas fa-skull-crossbones"></i> Section 11: Toxicological Information</h4></div>
-        <div class="section-body">
-            <p><strong>Acute Toxicity:</strong> @Model.AcuteToxicity</p>
-            <p><strong>Irritation/Corrosion:</strong> @Model.IrritationCorrosion</p>
-            <p><strong>Carcinogenicity:</strong> @Model.Carcinogenicity</p>
+        <div class="section-body sds-detail-layout">
+            <partial name="Partials/Sds/_SdsDetailBlock" model="@(new ChemicalSDS.Models.SdsDetailRow { Label = "Acute toxicity", Value = Model.AcuteToxicity })" />
+            <partial name="Partials/Sds/_SdsPipeTable" model="@(new ChemicalSDS.Models.SdsPipeTableModel { Title = "Irritation/Corrosion", Headers = new[] { "Product/ingredient name", "Result", "Species", "Score", "Exposure", "Observation" }, Data = Model.IrritationCorrosion })" />
+            @if (!string.IsNullOrWhiteSpace(Model.IrritationCorrosion) && !Model.IrritationCorrosion.Contains('|'))
+            {
+                <partial name="Partials/Sds/_SdsDetailBlock" model="@(new ChemicalSDS.Models.SdsDetailRow { Label = "Irritation/Corrosion", Value = Model.IrritationCorrosion })" />
+            }
+            <partial name="Partials/Sds/_SdsDetailBlock" model="@(new ChemicalSDS.Models.SdsDetailRow { Label = "Sensitization", Value = Model.Sensitization })" />
+            <partial name="Partials/Sds/_SdsDetailBlock" model="@(new ChemicalSDS.Models.SdsDetailRow { Label = "Mutagenicity", Value = Model.Mutagenicity })" />
+            <partial name="Partials/Sds/_SdsDetailBlock" model="@(new ChemicalSDS.Models.SdsDetailRow { Label = "Carcinogenicity", Value = Model.Carcinogenicity })" />
+            <partial name="Partials/Sds/_SdsPipeTable" model="@(new ChemicalSDS.Models.SdsPipeTableModel { Title = "Carcinogenicity — Classification", Headers = new[] { "Product/ingredient name", "OSHA", "IARC", "NTP" }, Data = Model.CarcinogenicityClassification })" />
+            <partial name="Partials/Sds/_SdsDetailBlock" model="@(new ChemicalSDS.Models.SdsDetailRow { Label = "Reproductive toxicity", Value = Model.ReproductiveToxicity })" />
+            <partial name="Partials/Sds/_SdsDetailBlock" model="@(new ChemicalSDS.Models.SdsDetailRow { Label = "Teratogenicity", Value = Model.Teratogenicity })" />
+            <partial name="Partials/Sds/_SdsDetailBlock" model="@(new ChemicalSDS.Models.SdsDetailRow { Label = "Specific target organ toxicity (single exposure)", Value = Model.TargetOrganToxicitySingle })" />
+            <partial name="Partials/Sds/_SdsDetailBlock" model="@(new ChemicalSDS.Models.SdsDetailRow { Label = "Specific target organ toxicity (repeated exposure)", Value = Model.TargetOrganToxicityRepeated })" />
+            <partial name="Partials/Sds/_SdsDetailBlock" model="@(new ChemicalSDS.Models.SdsDetailRow { Label = "Aspiration hazard", Value = Model.AspirationHazard })" />
+            <partial name="Partials/Sds/_SdsDetailBlock" model="@(new ChemicalSDS.Models.SdsDetailRow { Label = "Routes of exposure", Value = Model.RoutesOfExposure })" />
+            <partial name="Partials/Sds/_SdsDetailBlock" model="@(new ChemicalSDS.Models.SdsDetailRow { Label = "Potential acute health effects — Eye contact", Value = Model.AcuteHealthEffectsEye })" />
+            <partial name="Partials/Sds/_SdsDetailBlock" model="@(new ChemicalSDS.Models.SdsDetailRow { Label = "Potential acute health effects — Inhalation", Value = Model.AcuteHealthEffectsInhalation })" />
+            <partial name="Partials/Sds/_SdsDetailBlock" model="@(new ChemicalSDS.Models.SdsDetailRow { Label = "Potential acute health effects — Skin contact", Value = Model.AcuteHealthEffectsSkin })" />
+            <partial name="Partials/Sds/_SdsDetailBlock" model="@(new ChemicalSDS.Models.SdsDetailRow { Label = "Potential acute health effects — Ingestion", Value = Model.AcuteHealthEffectsIngestion })" />
+            <partial name="Partials/Sds/_SdsDetailBlock" model="@(new ChemicalSDS.Models.SdsDetailRow { Label = "Symptoms — Eye contact", Value = Model.ToxicologicalSymptomsEye })" />
+            <partial name="Partials/Sds/_SdsDetailBlock" model="@(new ChemicalSDS.Models.SdsDetailRow { Label = "Symptoms — Inhalation", Value = Model.ToxicologicalSymptomsInhalation })" />
+            <partial name="Partials/Sds/_SdsDetailBlock" model="@(new ChemicalSDS.Models.SdsDetailRow { Label = "Symptoms — Skin contact", Value = Model.ToxicologicalSymptomsSkin })" />
+            <partial name="Partials/Sds/_SdsDetailBlock" model="@(new ChemicalSDS.Models.SdsDetailRow { Label = "Symptoms — Ingestion", Value = Model.ToxicologicalSymptomsIngestion })" />
+            <partial name="Partials/Sds/_SdsDetailBlock" model="@(new ChemicalSDS.Models.SdsDetailRow { Label = "Short term — Potential immediate effects", Value = Model.ShortTermImmediateEffects })" />
+            <partial name="Partials/Sds/_SdsDetailBlock" model="@(new ChemicalSDS.Models.SdsDetailRow { Label = "Short term — Potential delayed effects", Value = Model.ShortTermDelayedEffects })" />
+            <partial name="Partials/Sds/_SdsDetailBlock" model="@(new ChemicalSDS.Models.SdsDetailRow { Label = "Long term — Potential immediate effects", Value = Model.LongTermImmediateEffects })" />
+            <partial name="Partials/Sds/_SdsDetailBlock" model="@(new ChemicalSDS.Models.SdsDetailRow { Label = "Long term — Potential delayed effects", Value = Model.LongTermDelayedEffects })" />
+            <partial name="Partials/Sds/_SdsDetailBlock" model="@(new ChemicalSDS.Models.SdsDetailRow { Label = "Potential chronic health effects", Value = Model.ChronicHealthEffects })" />
+            <partial name="Partials/Sds/_SdsDetailBlock" model="@(new ChemicalSDS.Models.SdsDetailRow { Label = "Chronic — General", Value = Model.ChronicEffectsGeneral })" />
+            <partial name="Partials/Sds/_SdsDetailBlock" model="@(new ChemicalSDS.Models.SdsDetailRow { Label = "Chronic — Carcinogenicity", Value = Model.ChronicCarcinogenicity })" />
+            <partial name="Partials/Sds/_SdsDetailBlock" model="@(new ChemicalSDS.Models.SdsDetailRow { Label = "Chronic — Mutagenicity", Value = Model.ChronicMutagenicity })" />
+            <partial name="Partials/Sds/_SdsDetailBlock" model="@(new ChemicalSDS.Models.SdsDetailRow { Label = "Chronic — Teratogenicity", Value = Model.ChronicTeratogenicity })" />
+            <partial name="Partials/Sds/_SdsDetailBlock" model="@(new ChemicalSDS.Models.SdsDetailRow { Label = "Developmental effects", Value = Model.DevelopmentalEffects })" />
+            <partial name="Partials/Sds/_SdsDetailBlock" model="@(new ChemicalSDS.Models.SdsDetailRow { Label = "Fertility effects", Value = Model.FertilityEffects })" />
+            <partial name="Partials/Sds/_SdsDetailBlock" model="@(new ChemicalSDS.Models.SdsDetailRow { Label = "Acute toxicity estimates", Value = Model.AcuteToxicityEstimates })" />
         </div>
     </div>
 
     <div id="sec12" class="sds-section">
         <div class="section-header"><h4><i class="fas fa-leaf"></i> Section 12: Ecological Information</h4></div>
-        <div class="section-body">
-            <p><strong>Ecotoxicity:</strong> @Model.Ecotoxicity</p>
-            <p><strong>Bioaccumulative Potential:</strong> @Model.BioaccumulativePotential</p>
+        <div class="section-body sds-detail-layout">
+            <partial name="Partials/Sds/_SdsPipeTable" model="@(new ChemicalSDS.Models.SdsPipeTableModel { Title = "Toxicity", Headers = new[] { "Product/ingredient name", "Result", "Species", "Exposure" }, Data = Model.Ecotoxicity })" />
+            @if (!string.IsNullOrWhiteSpace(Model.Ecotoxicity) && !Model.Ecotoxicity.Contains('|'))
+            {
+                <partial name="Partials/Sds/_SdsDetailBlock" model="@(new ChemicalSDS.Models.SdsDetailRow { Label = "Toxicity", Value = Model.Ecotoxicity })" />
+            }
+            <partial name="Partials/Sds/_SdsDetailBlock" model="@(new ChemicalSDS.Models.SdsDetailRow { Label = "Persistence and degradability", Value = Model.PersistenceDegradability })" />
+            <partial name="Partials/Sds/_SdsPipeTable" model="@(new ChemicalSDS.Models.SdsPipeTableModel { Title = "Bioaccumulative potential", Headers = new[] { "Product/ingredient name", "LogP\u2080w", "BCF", "Potential" }, Data = Model.BioaccumulativePotential })" />
+            @if (!string.IsNullOrWhiteSpace(Model.BioaccumulativePotential) && !Model.BioaccumulativePotential.Contains('|'))
+            {
+                <partial name="Partials/Sds/_SdsDetailBlock" model="@(new ChemicalSDS.Models.SdsDetailRow { Label = "Bioaccumulative potential", Value = Model.BioaccumulativePotential })" />
+            }
+            <partial name="Partials/Sds/_SdsDetailBlock" model="@(new ChemicalSDS.Models.SdsDetailRow { Label = "Soil/water partition coefficient (Koc)", Value = Model.MobilityInSoil })" />
+            <partial name="Partials/Sds/_SdsDetailBlock" model="@(new ChemicalSDS.Models.SdsDetailRow { Label = "Other adverse effects", Value = Model.OtherEcologicalEffects })" />
         </div>
     </div>
 
@@ -224,31 +316,86 @@
 
     <div id="sec14" class="sds-section">
         <div class="section-header"><h4><i class="fas fa-truck"></i> Section 14: Transport Information</h4></div>
-        <div class="section-body">
-            <p><strong>UN Number:</strong> @Model.UNNumber</p>
-            <p><strong>UN Proper Shipping Name:</strong> @Model.UNProperShippingName</p>
-            <p><strong>Transport Hazard Class:</strong> @Model.TransportHazardClass</p>
-            <p><strong>Packing Group:</strong> @Model.PackingGroup</p>
+        <div class="section-body sds-detail-layout">
+            <partial name="Partials/Sds/_SdsTransportMatrixDisplay" model="Model" />
+            @if (string.IsNullOrWhiteSpace(Model.TransportRegulations) || !Model.TransportRegulations.Contains('|'))
+            {
+                <partial name="Partials/Sds/_SdsDetailBlock" model="@(new ChemicalSDS.Models.SdsDetailRow { Label = "UN number", Value = Model.UNNumber })" />
+                <partial name="Partials/Sds/_SdsDetailBlock" model="@(new ChemicalSDS.Models.SdsDetailRow { Label = "UN proper shipping name", Value = Model.UNProperShippingName })" />
+                <partial name="Partials/Sds/_SdsDetailBlock" model="@(new ChemicalSDS.Models.SdsDetailRow { Label = "Transport hazard class(es)", Value = Model.TransportHazardClass })" />
+                <partial name="Partials/Sds/_SdsDetailBlock" model="@(new ChemicalSDS.Models.SdsDetailRow { Label = "Packing group", Value = Model.PackingGroup })" />
+                <partial name="Partials/Sds/_SdsDetailBlock" model="@(new ChemicalSDS.Models.SdsDetailRow { Label = "Environmental hazards", Value = Model.EnvironmentalHazardsTransport })" />
+            }
+            <partial name="Partials/Sds/_SdsDetailBlock" model="@(new ChemicalSDS.Models.SdsDetailRow { Label = "DOT classification", Value = Model.TransportDotClassification })" />
+            <partial name="Partials/Sds/_SdsDetailBlock" model="@(new ChemicalSDS.Models.SdsDetailRow { Label = "TDG classification", Value = Model.TransportTdgClassification })" />
+            <partial name="Partials/Sds/_SdsDetailBlock" model="@(new ChemicalSDS.Models.SdsDetailRow { Label = "IATA", Value = Model.TransportIataClassification })" />
+            <partial name="Partials/Sds/_SdsDetailBlock" model="@(new ChemicalSDS.Models.SdsDetailRow { Label = "Special precautions for user", Value = Model.TransportSpecialPrecautions })" />
+            <partial name="Partials/Sds/_SdsDetailBlock" model="@(new ChemicalSDS.Models.SdsDetailRow { Label = "Transport in bulk (MARPOL / IBC Code)", Value = Model.TransportBulkMarpol })" />
         </div>
     </div>
 
     <div id="sec15" class="sds-section">
         <div class="section-header"><h4><i class="fas fa-gavel"></i> Section 15: Regulatory Information</h4></div>
-        <div class="section-body">
-            <p><strong>U.S. Federal Regulations:</strong> @Model.USFederalRegulations</p>
-            <p><strong>State Regulations:</strong> @Model.StateRegulations</p>
-            <p><strong>Inventory List:</strong> @Model.InventoryList</p>
+        <div class="section-body sds-detail-layout sds-regulatory-detail">
+            <div class="sds-regulatory-group"><strong class="sds-regulatory-group-title">U.S. Federal regulations</strong></div>
+            <partial name="Partials/Sds/_SdsDetailBlock" model="@(new ChemicalSDS.Models.SdsDetailRow { Label = "TSCA 8(a) CDR Exempt/Partial exemption", Value = Model.RegTscaCdrExempt })" />
+            <partial name="Partials/Sds/_SdsDetailBlock" model="@(new ChemicalSDS.Models.SdsDetailRow { Label = "Clean Air Act Section 112 (b) HAPs", Value = Model.RegCleanAirActHaps })" />
+            <partial name="Partials/Sds/_SdsDetailBlock" model="@(new ChemicalSDS.Models.SdsDetailRow { Label = "Clean Air Act Section 602 Class I", Value = Model.RegCleanAirActClassI })" />
+            <partial name="Partials/Sds/_SdsDetailBlock" model="@(new ChemicalSDS.Models.SdsDetailRow { Label = "Clean Air Act Section 602 Class II", Value = Model.RegCleanAirActClassII })" />
+            <partial name="Partials/Sds/_SdsDetailBlock" model="@(new ChemicalSDS.Models.SdsDetailRow { Label = "DEA List I", Value = Model.RegDeaListI })" />
+            <partial name="Partials/Sds/_SdsDetailBlock" model="@(new ChemicalSDS.Models.SdsDetailRow { Label = "DEA List II", Value = Model.RegDeaListII })" />
+            <div class="sds-regulatory-group"><strong class="sds-regulatory-group-title">SARA</strong></div>
+            <partial name="Partials/Sds/_SdsDetailBlock" model="@(new ChemicalSDS.Models.SdsDetailRow { Label = "SARA 302/304 — Composition", Value = Model.RegSara302Composition ?? Model.SARA302304 })" />
+            <partial name="Partials/Sds/_SdsDetailBlock" model="@(new ChemicalSDS.Models.SdsDetailRow { Label = "SARA 304 RQ", Value = Model.RegSara304RQ })" />
+            <partial name="Partials/Sds/_SdsDetailBlock" model="@(new ChemicalSDS.Models.SdsDetailRow { Label = "SARA 311/312 — Classification", Value = Model.RegSara311312Classification })" />
+            <div class="sds-regulatory-group"><strong class="sds-regulatory-group-title">State regulations</strong></div>
+            <partial name="Partials/Sds/_SdsDetailBlock" model="@(new ChemicalSDS.Models.SdsDetailRow { Label = "Massachusetts", Value = Model.RegStateMassachusetts })" />
+            <partial name="Partials/Sds/_SdsDetailBlock" model="@(new ChemicalSDS.Models.SdsDetailRow { Label = "New York", Value = Model.RegStateNewYork })" />
+            <partial name="Partials/Sds/_SdsDetailBlock" model="@(new ChemicalSDS.Models.SdsDetailRow { Label = "New Jersey", Value = Model.RegStateNewJersey })" />
+            <partial name="Partials/Sds/_SdsDetailBlock" model="@(new ChemicalSDS.Models.SdsDetailRow { Label = "Pennsylvania", Value = Model.RegStatePennsylvania })" />
+            <div class="sds-regulatory-group"><strong class="sds-regulatory-group-title">International regulations</strong></div>
+            <partial name="Partials/Sds/_SdsDetailBlock" model="@(new ChemicalSDS.Models.SdsDetailRow { Label = "Chemical Weapon Convention", Value = Model.RegChemWeaponConvention })" />
+            <partial name="Partials/Sds/_SdsDetailBlock" model="@(new ChemicalSDS.Models.SdsDetailRow { Label = "Montreal Protocol", Value = Model.RegMontrealProtocol })" />
+            <partial name="Partials/Sds/_SdsDetailBlock" model="@(new ChemicalSDS.Models.SdsDetailRow { Label = "Stockholm Convention", Value = Model.RegStockholmConvention })" />
+            <partial name="Partials/Sds/_SdsDetailBlock" model="@(new ChemicalSDS.Models.SdsDetailRow { Label = "Rotterdam Convention (PIC)", Value = Model.RegRotterdamConvention })" />
+            <partial name="Partials/Sds/_SdsDetailBlock" model="@(new ChemicalSDS.Models.SdsDetailRow { Label = "UNECE Aarhus Protocol", Value = Model.RegUneceAarhus })" />
+            <div class="sds-regulatory-group"><strong class="sds-regulatory-group-title">Inventory list</strong></div>
+            <partial name="Partials/Sds/_SdsDetailBlock" model="@(new ChemicalSDS.Models.SdsDetailRow { Label = "Australia", Value = Model.RegInventoryAustralia })" />
+            <partial name="Partials/Sds/_SdsDetailBlock" model="@(new ChemicalSDS.Models.SdsDetailRow { Label = "Canada", Value = Model.RegInventoryCanada })" />
+            <partial name="Partials/Sds/_SdsDetailBlock" model="@(new ChemicalSDS.Models.SdsDetailRow { Label = "China", Value = Model.RegInventoryChina })" />
+            <partial name="Partials/Sds/_SdsDetailBlock" model="@(new ChemicalSDS.Models.SdsDetailRow { Label = "Europe", Value = Model.RegInventoryEurope })" />
+            <partial name="Partials/Sds/_SdsDetailBlock" model="@(new ChemicalSDS.Models.SdsDetailRow { Label = "Japan (ENCS)", Value = Model.RegInventoryJapanEncs })" />
+            <partial name="Partials/Sds/_SdsDetailBlock" model="@(new ChemicalSDS.Models.SdsDetailRow { Label = "Japan (ISHL)", Value = Model.RegInventoryJapanIshl })" />
+            <partial name="Partials/Sds/_SdsDetailBlock" model="@(new ChemicalSDS.Models.SdsDetailRow { Label = "Malaysia", Value = Model.RegInventoryMalaysia })" />
+            <partial name="Partials/Sds/_SdsDetailBlock" model="@(new ChemicalSDS.Models.SdsDetailRow { Label = "New Zealand", Value = Model.RegInventoryNewZealand })" />
+            <partial name="Partials/Sds/_SdsDetailBlock" model="@(new ChemicalSDS.Models.SdsDetailRow { Label = "Philippines", Value = Model.RegInventoryPhilippines })" />
+            <partial name="Partials/Sds/_SdsDetailBlock" model="@(new ChemicalSDS.Models.SdsDetailRow { Label = "Republic of Korea", Value = Model.RegInventoryKorea })" />
+            <partial name="Partials/Sds/_SdsDetailBlock" model="@(new ChemicalSDS.Models.SdsDetailRow { Label = "Taiwan", Value = Model.RegInventoryTaiwan })" />
+            <partial name="Partials/Sds/_SdsDetailBlock" model="@(new ChemicalSDS.Models.SdsDetailRow { Label = "Thailand", Value = Model.RegInventoryThailand })" />
+            <partial name="Partials/Sds/_SdsDetailBlock" model="@(new ChemicalSDS.Models.SdsDetailRow { Label = "Turkey", Value = Model.RegInventoryTurkey })" />
+            <partial name="Partials/Sds/_SdsDetailBlock" model="@(new ChemicalSDS.Models.SdsDetailRow { Label = "United States", Value = Model.RegInventoryUnitedStates })" />
+            <partial name="Partials/Sds/_SdsDetailBlock" model="@(new ChemicalSDS.Models.SdsDetailRow { Label = "Viet Nam", Value = Model.RegInventoryVietnam })" />
         </div>
     </div>
 
     <div id="sec16" class="sds-section mb-4">
         <div class="section-header"><h4><i class="fas fa-info-circle"></i> Section 16: Other Information</h4></div>
-        <div class="section-body">
-            <p><strong>HMIS Ratings:</strong> @Model.HMISRatings</p>
-            <p><strong>NFPA Ratings:</strong> @Model.NFPARatings</p>
-            <p><strong>Version:</strong> @Model.Version</p>
-            <p><strong>Date of Revision:</strong> @Model.DateOfRevision</p>
-            <p><strong>Notice to Reader:</strong> @Model.NoticeToReader</p>
+        <div class="section-body sds-detail-layout sds-section16-detail">
+            <partial name="Partials/Sds/_HmisDisplay" model="Model" />
+            <partial name="Partials/Sds/_NfpaDiamondDisplay" model="Model" />
+            <partial name="Partials/Sds/_SdsPipeTable" model="@(new ChemicalSDS.Models.SdsPipeTableModel { Title = "Procedure used to derive the classification", Headers = new[] { "Classification", "Justification" }, Data = !string.IsNullOrWhiteSpace(Model.ClassificationProcedure) ? $"{Model.ClassificationProcedure}|{Model.ClassificationJustification}" : null })" />
+            <partial name="Partials/Sds/_SdsDetailBlock" model="@(new ChemicalSDS.Models.SdsDetailRow { Label = "Date of printing", Value = Model.DateOfPrinting })" />
+            <partial name="Partials/Sds/_SdsDetailBlock" model="@(new ChemicalSDS.Models.SdsDetailRow { Label = "Date of issue / revision", Value = Model.DateOfRevision })" />
+            <partial name="Partials/Sds/_SdsDetailBlock" model="@(new ChemicalSDS.Models.SdsDetailRow { Label = "Date of previous issue", Value = Model.DateOfPreviousIssue })" />
+            <partial name="Partials/Sds/_SdsDetailBlock" model="@(new ChemicalSDS.Models.SdsDetailRow { Label = "Version", Value = Model.Version })" />
+            @if (!string.IsNullOrWhiteSpace(Model.Abbreviations))
+            {
+                <div class="sds-detail-row sds-detail-row-block">
+                    <span class="sds-detail-label sds-sec16-blue-label">Key to abbreviations</span>
+                    <div class="sds-detail-value"><pre class="sds-abbrev-pre mb-0">@Model.Abbreviations</pre></div>
+                </div>
+            }
+            <partial name="Partials/Sds/_SdsSection16Footer" model="Model" />
         </div>
     </div>
 </div>

@@ -1,0 +1,120 @@
+@model ChemicalSDS.Models.Chemical
+@using ChemicalSDS.Models
+@{
+    var authorities = new[] { "DOT", "TDG", "Mexico", "IMDG", "IATA" };
+    var standardRows = new[]
+    {
+        "UN number",
+        "UN proper shipping name",
+        "Transport hazard class(es)",
+        "Packing group",
+        "Environmental hazards"
+    };
+    var parsed = new Dictionary<string, string[]>(StringComparer.OrdinalIgnoreCase);
+    if (!string.IsNullOrWhiteSpace(Model.TransportRegulations) && Model.TransportRegulations.Contains('|'))
+    {
+        foreach (var line in Model.TransportRegulations.Split('\n', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries))
+        {
+            var p = line.Split('|');
+            if (p.Length > 0)
+                parsed[p[0].Trim()] = p.Select(x => x.Trim()).ToArray();
+        }
+    }
+    var customImages = TransportHazardClassCatalog.ParseCustomImages(Model.TransportHazardClassImages);
+
+    string Cell(string row, int col)
+    {
+        if (parsed.TryGetValue(row, out var arr) && col < arr.Length && !string.IsNullOrEmpty(arr[col]))
+            return arr[col];
+        var dot = parsed.TryGetValue(row, out var a) && a.Length > 1 ? a[1] : null;
+        if (dot != null && col >= 1 && col <= 5) return dot;
+        if (col == 1)
+        {
+            if (row == "UN number") return Model.UNNumber ?? "UN1170";
+            if (row == "UN proper shipping name") return Model.UNProperShippingName ?? "";
+            if (row == "Transport hazard class(es)") return Model.TransportHazardClass ?? "3";
+            if (row == "Packing group") return Model.PackingGroup ?? "II";
+            if (row == "Environmental hazards") return Model.EnvironmentalHazardsTransport ?? "No.";
+        }
+        if (col >= 2 && col <= 5 && row == "UN number" && !string.IsNullOrEmpty(Model.UNNumber)) return Model.UNNumber;
+        if (col >= 2 && col <= 5 && row == "Transport hazard class(es)") return Model.TransportHazardClass ?? "3";
+        if (col >= 2 && col <= 5 && row == "Packing group" && !string.IsNullOrEmpty(Model.PackingGroup)) return Model.PackingGroup;
+        if (col >= 2 && col <= 5 && row == "Environmental hazards") return Model.EnvironmentalHazardsTransport ?? "No.";
+        return "";
+    }
+}
+<div class="sds-grid-editor sds-transport-grid" data-grid="transport" data-target="#TransportRegulations">
+    <input type="hidden" asp-for="TransportRegulations" id="TransportRegulations" />
+    <input type="hidden" asp-for="TransportHazardClassImages" id="TransportHazardClassImages" />
+    <div class="table-responsive">
+        <table class="table table-bordered sds-transport-matrix mb-0">
+            <thead>
+                <tr>
+                    <th class="sds-transport-field-col">Field</th>
+                    @foreach (var a in authorities) { <th>@a</th> }
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var row in standardRows)
+                {
+                    var isHazard = row == "Transport hazard class(es)";
+                    <tr data-field="@row">
+                        <th class="sds-transport-label">
+                            @row
+                            @if (isHazard)
+                            {
+                                <img src="/images/transport/class-3.svg" alt="Class 3" class="transport-hazard-label-icon" />
+                            }
+                        </th>
+                        @for (var c = 0; c < authorities.Length; c++)
+                        {
+                            var auth = authorities[c];
+                            var col = c + 1;
+                            var cellVal = Cell(row, col);
+                            <td class="@(isHazard ? "transport-class-cell" : "")" @(isHazard ? $"data-authority=\"{auth}\"" : "")>
+                                @if (isHazard)
+                                {
+                                    var classNum = cellVal.Trim().Split(' ')[0];
+                                    var defaultImg = TransportHazardClassCatalog.GetImagePath(classNum) ?? "/images/transport/class-3.svg";
+                                    customImages.TryGetValue(auth, out var customPath);
+                                    var showImg = !string.IsNullOrEmpty(customPath) ? $"/{customPath.TrimStart('/')}" : defaultImg;
+                                    <div class="transport-class-cell-inner">
+                                        <select class="form-select form-select-sm transport-class-select" data-col="@col">
+                                            <option value="">— Select class —</option>
+                                            @foreach (var tc in TransportHazardClassCatalog.All)
+                                            {
+                                                <option value="@tc.Number" data-img="@tc.ImagePath" selected="@(classNum == tc.Number ? "selected" : null)">@tc.Label</option>
+                                            }
+                                        </select>
+                                        <div class="transport-pictogram-preview">
+                                            <img src="@showImg" alt="Hazard class @classNum" class="transport-hazard-icon" data-default-img="@defaultImg" />
+                                        </div>
+                                        <label class="transport-upload-btn btn btn-sm btn-outline-secondary mb-0">
+                                            <i class="fas fa-image"></i> Upload pictogram
+                                            <input type="file" name="transportHazardImage_@auth" accept="image/jpeg,image/png,image/webp,image/gif" class="d-none transport-hazard-upload" data-authority="@auth" />
+                                        </label>
+                                        @if (!string.IsNullOrEmpty(customPath))
+                                        {
+                                            <small class="text-muted d-block transport-custom-hint">Custom image saved</small>
+                                        }
+                                    </div>
+                                }
+                                else if (row == "UN proper shipping name")
+                                {
+                                    <textarea class="form-control form-control-sm sds-transport-textarea" data-col="@col" rows="2">@cellVal</textarea>
+                                }
+                                else
+                                {
+                                    <input type="text" class="form-control form-control-sm" data-col="@col" value="@cellVal" />
+                                }
+                            </td>
+                        }
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    <p class="text-muted small mt-2 mb-0">
+        <i class="fas fa-info-circle"></i> Select hazard class <strong>1–9</strong> — pictogram appears automatically (Class 3 = red diamond + flame). Use <strong>Upload pictogram</strong> to add your own label image per authority (DOT, TDG, etc.).
+    </p>
+</div>

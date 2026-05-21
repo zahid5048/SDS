@@ -1,0 +1,34 @@
+@model ChemicalSDS.Models.Chemical
+@{
+    var h = Model.HmisHealth ?? ParseHmis(Model.HMISRatings, "Health");
+    var f = Model.HmisFlammability ?? ParseHmis(Model.HMISRatings, "Flammability");
+    var p = Model.HmisPhysicalHazards ?? ParseHmis(Model.HMISRatings, "Physical");
+    if (string.IsNullOrEmpty(h) && string.IsNullOrEmpty(f) && string.IsNullOrEmpty(p)) return;
+}
+@functions {
+    string? ParseHmis(string? text, string key)
+    {
+        if (string.IsNullOrWhiteSpace(text)) return null;
+        foreach (var part in text.Split(',', StringSplitOptions.TrimEntries))
+        {
+            if (part.StartsWith(key, StringComparison.OrdinalIgnoreCase))
+            {
+                var idx = part.IndexOf(':');
+                return idx >= 0 ? part[(idx + 1)..].Trim() : part;
+            }
+        }
+        return null;
+    }
+}
+<div class="sds-hmis-block mb-3">
+    <strong>Hazardous Material Information System (U.S.A.)</strong>
+    <table class="table table-sm sds-hmis-table mt-2 mb-2">
+        <tr class="sds-hmis-health"><th>Health</th><td>@h</td></tr>
+        <tr class="sds-hmis-flam"><th>Flammability</th><td>@f</td></tr>
+        <tr class="sds-hmis-phys"><th>Physical hazards</th><td>@p</td></tr>
+    </table>
+    @if (!string.IsNullOrWhiteSpace(Model.HmisCautionNote))
+    {
+        <p class="small text-muted mb-0">@Model.HmisCautionNote</p>
+    }
+</div>

@@ -1,0 +1,36 @@
+@model ChemicalSDS.Models.Chemical
+@{
+    var health = Model.NfpaHealth ?? ParseNfpa(Model.NFPARatings, "Health");
+    var flam = Model.NfpaFlammability ?? ParseNfpa(Model.NFPARatings, "Flammability");
+    var react = Model.NfpaReactivity ?? ParseNfpa(Model.NFPARatings, "Instability") ?? ParseNfpa(Model.NFPARatings, "Reactivity");
+    var special = Model.NfpaSpecial ?? "";
+    if (string.IsNullOrEmpty(health) && string.IsNullOrEmpty(flam) && string.IsNullOrEmpty(react)) return;
+}
+@functions {
+    string? ParseNfpa(string? text, string key)
+    {
+        if (string.IsNullOrWhiteSpace(text)) return null;
+        foreach (var part in text.Split(',', StringSplitOptions.TrimEntries))
+        {
+            if (part.Contains(key, StringComparison.OrdinalIgnoreCase))
+            {
+                var idx = part.IndexOf(':');
+                return idx >= 0 ? part[(idx + 1)..].Trim() : part;
+            }
+        }
+        return null;
+    }
+}
+<div class="sds-nfpa-block mb-3">
+    <strong>National Fire Protection Association (U.S.A.)</strong>
+    <div class="sds-nfpa-diamond mt-2" aria-label="NFPA 704 diamond">
+        <div class="sds-nfpa-flam">@flam</div>
+        <div class="sds-nfpa-health">@health</div>
+        <div class="sds-nfpa-react">@react</div>
+        <div class="sds-nfpa-special">@special</div>
+    </div>
+    @if (!string.IsNullOrWhiteSpace(Model.NfpaCopyrightNote))
+    {
+        <p class="small text-muted mt-2 mb-0">@Model.NfpaCopyrightNote</p>
+    }
+</div>

@@ -1,0 +1,5 @@
+@model (string Label, string FieldName, string? Value, string Placeholder)
+<div class="sds-regulatory-row">
+    <label class="sds-regulatory-label" for="@Model.FieldName">@Model.Label</label>
+    <input type="text" name="@Model.FieldName" id="@Model.FieldName" value="@Model.Value" class="form-control form-control-sm" placeholder="@Model.Placeholder" />
+</div>

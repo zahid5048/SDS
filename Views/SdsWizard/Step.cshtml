@@ -38,7 +38,7 @@
 
     <partial name="_Stepper" model="(step, chemicalId, Model.LastCompletedSection)" />
 
-    <form asp-controller="SdsWizard" asp-action="SaveSection" method="post">
+    <form asp-controller="SdsWizard" asp-action="SaveSection" method="post" enctype="multipart/form-data" id="sdsWizardForm">
         @Html.AntiForgeryToken()
         <input type="hidden" name="id" value="@(chemicalId ?? 0)" />
         <input type="hidden" name="step" value="@step" />
@@ -77,4 +77,15 @@
         </div>
     </form>
 </div>
+
+@section Scripts {
+    @if (step == 2)
+    {
+        <script src="~/js/ghs-pictogram-picker.js" asp-append-version="true"></script>
+    }
+    @if (step == 12 || step == 14)
+    {
+        <script src="~/js/sds-data-grid.js" asp-append-version="true"></script>
+    }
+}
 

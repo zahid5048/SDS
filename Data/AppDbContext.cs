@@ -23,6 +23,11 @@ namespace ChemicalSDS.Data
                 entity.HasIndex(u => u.Email).IsUnique();
             });
 
+            modelBuilder.Entity<Chemical>(entity =>
+            {
+                entity.Property(c => c.Quantity).HasPrecision(18, 2);
+            });
+
             // Ethanol - Complete SDS Data (from your document)
             modelBuilder.Entity<Chemical>().HasData(new Chemical
             {
@@ -119,16 +124,61 @@ namespace ChemicalSDS.Data
                 PackingGroup = "II",
 
                 // SECTION 15: REGULATORY INFORMATION
+                RegTscaCdrExempt = "Not determined",
+                RegCleanAirActHaps = "Not listed",
+                RegCleanAirActClassI = "Not listed",
+                RegCleanAirActClassII = "Not listed",
+                RegDeaListI = "Not listed",
+                RegDeaListII = "Not listed",
+                RegSara302Composition = "No products were found.",
+                RegSara304RQ = "Not applicable.",
+                RegSara311312Classification = "Refer to Section 2: Hazards Identification of this SDS for classification of substance.",
+                RegStateMassachusetts = "This material is listed.",
+                RegStateNewYork = "This material is not listed.",
+                RegStateNewJersey = "This material is listed.",
+                RegStatePennsylvania = "This material is listed.",
+                RegChemWeaponConvention = "Not listed.",
+                RegMontrealProtocol = "Not listed.",
+                RegStockholmConvention = "Not listed.",
+                RegRotterdamConvention = "Not listed.",
+                RegUneceAarhus = "Not listed.",
+                RegInventoryAustralia = "This material is listed or exempted.",
+                RegInventoryCanada = "This material is listed or exempted.",
+                RegInventoryChina = "This material is listed or exempted.",
+                RegInventoryEurope = "This material is listed or exempted.",
+                RegInventoryJapanEncs = "This material is listed or exempted.",
+                RegInventoryJapanIshl = "This material is listed or exempted.",
+                RegInventoryMalaysia = "This material is listed or exempted.",
+                RegInventoryNewZealand = "This material is listed or exempted.",
+                RegInventoryPhilippines = "This material is listed or exempted.",
+                RegInventoryKorea = "This material is listed or exempted.",
+                RegInventoryTaiwan = "This material is listed or exempted.",
+                RegInventoryThailand = "Not determined",
+                RegInventoryTurkey = "This material is listed or exempted.",
+                RegInventoryUnitedStates = "This material is listed or exempted.",
+                RegInventoryVietnam = "Not determined",
                 USFederalRegulations = "TSCA 8(a) CDR Exempt/Partial exemption: Not determined. Clean Air Act: Not listed. SARA 302/304: Not listed.",
                 StateRegulations = "Massachusetts: This material is listed. New Jersey: This material is listed. Pennsylvania: This material is listed.",
                 InventoryList = "Australia: Listed. Canada: Listed. China: Listed. Europe: Listed. Japan: Listed. United States: Listed.",
 
                 // SECTION 16: OTHER INFORMATION
+                HmisHealth = "1",
+                HmisFlammability = "4",
+                HmisPhysicalHazards = "0",
+                NfpaHealth = "1",
+                NfpaFlammability = "4",
+                NfpaReactivity = "0",
+                ClassificationProcedure = "FLAMMABLE LIQUIDS - Category 2",
+                ClassificationJustification = "Expert judgment",
+                References = "Not available.",
                 HMISRatings = "Health: 1, Flammability: 4, Physical hazards: 0",
                 NFPARatings = "Health: 1, Flammability: 4, Instability/Reactivity: 0",
                 Version = "1",
                 DateOfRevision = "4/8/2019",
-                NoticeToReader = "To the best of our knowledge, the information contained herein is accurate. However, neither the above-named supplier, nor any of its subsidiaries, assumes any liability whatsoever for the accuracy or completeness of the information contained herein.",
+                DateOfPrinting = "4/8/2019",
+                DateOfPreviousIssue = "No previous validation",
+                NoticeToReader = "To the best of our knowledge, the information contained herein is accurate. However, neither the above-named supplier, nor any of its subsidiaries, assumes any liability whatsoever for the accuracy or completeness of the information contained herein. Final determination of suitability of any material is the sole responsibility of the user. All materials may present unknown hazards and should be used with caution. Although certain hazards are described herein, we cannot guarantee that these are the only hazards that exist.",
+                Abbreviations = "ATE = Acute Toxicity Estimate\nBCF = Bioconcentration Factor\nGHS = Globally Harmonized System of Classification and Labelling of Chemicals\nIATA = International Air Transport Association\nIBC = Intermediate Bulk Container\nIMDG = International Maritime Dangerous Goods\nLogPow = logarithm of the octanol/water partition coefficient\nMARPOL = International Convention for the Prevention of Pollution From Ships, 1973 as modified by the Protocol of 1978. (\"Marpol\" = marine pollution)",
 
                 // Inventory
                 Quantity = 5.5m,
@@ -141,8 +191,7 @@ namespace ChemicalSDS.Data
                 ProductCode = "001114",
                 HandlingPrecautions = "Wear protective gloves. Use only with adequate ventilation.",
                 ExposureControls = "Use only with adequate ventilation. Use explosion-proof ventilation equipment.",
-                HazardsNotOtherwiseClassified = "None known.",
-                DateOfPreviousIssue = "No previous validation"
+                HazardsNotOtherwiseClassified = "None known."
             });
         }
     }

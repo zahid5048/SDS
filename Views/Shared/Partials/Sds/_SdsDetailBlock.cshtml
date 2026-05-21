@@ -1,0 +1,8 @@
+@model ChemicalSDS.Models.SdsDetailRow
+@if (!string.IsNullOrWhiteSpace(Model.Value))
+{
+    <div class="sds-detail-row">
+        <span class="sds-detail-label">@Model.Label</span>
+        <span class="sds-detail-value">@Html.Raw(Model.Value.Replace("\n", "<br/>"))</span>
+    </div>
+}

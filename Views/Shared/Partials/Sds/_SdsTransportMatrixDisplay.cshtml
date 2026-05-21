@@ -1,0 +1,61 @@
+@model ChemicalSDS.Models.Chemical
+@using ChemicalSDS.Models
+@{
+    var data = Model.TransportRegulations;
+    if (string.IsNullOrWhiteSpace(data) || !data.Contains('|')) return;
+    var authorities = new[] { "DOT", "TDG", "Mexico", "IMDG", "IATA" };
+    var rows = data.Split('\n', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+        .Select(l => l.Split('|').Select(c => c.Trim()).ToArray()).ToList();
+    var customImages = TransportHazardClassCatalog.ParseCustomImages(Model.TransportHazardClassImages);
+}
+<div class="sds-detail-row sds-detail-row-block">
+    <span class="sds-detail-label">Transport regulations</span>
+    <div class="sds-detail-value">
+        <div class="table-responsive">
+            <table class="table table-sm table-bordered sds-transport-matrix mb-0">
+                <thead>
+                    <tr>
+                        <th>Field</th>
+                        @foreach (var a in authorities) { <th>@a</th> }
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var r in rows)
+                    {
+                        var field = r.Length > 0 ? r[0] : "";
+                        var isHazard = field.Contains("hazard class", StringComparison.OrdinalIgnoreCase);
+                        <tr>
+                            <th class="sds-transport-label">@field</th>
+                            @for (var i = 0; i < authorities.Length; i++)
+                            {
+                                var auth = authorities[i];
+                                var val = i + 1 < r.Length ? r[i + 1] : "";
+                                <td>
+                                    @if (isHazard && !string.IsNullOrWhiteSpace(val))
+                                    {
+                                        var classNum = val.Split(' ')[0];
+                                        customImages.TryGetValue(auth, out var customPath);
+                                        var imgSrc = !string.IsNullOrEmpty(customPath)
+                                            ? $"/{customPath.TrimStart('/')}"
+                                            : TransportHazardClassCatalog.GetImagePath(classNum);
+                                        <div class="transport-display-class">
+                                            <span class="transport-class-num">@val</span>
+                                            @if (!string.IsNullOrEmpty(imgSrc))
+                                            {
+                                                <img src="@imgSrc" alt="Class @classNum" class="transport-hazard-icon" />
+                                            }
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        @val
+                                    }
+                                </td>
+                            }
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

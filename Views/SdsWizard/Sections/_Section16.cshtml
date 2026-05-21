@@ -1,15 +1,92 @@
 @model ChemicalSDS.Models.Chemical
+@{
+    var defaultAbbrev = @"ATE = Acute Toxicity Estimate
+BCF = Bioconcentration Factor
+GHS = Globally Harmonized System of Classification and Labelling of Chemicals
+IATA = International Air Transport Association
+IBC = Intermediate Bulk Container
+IMDG = International Maritime Dangerous Goods
+LogPow = logarithm of the octanol/water partition coefficient
+MARPOL = International Convention for the Prevention of Pollution From Ships, 1973 as modified by the Protocol of 1978. (""Marpol"" = marine pollution)";
+    var defaultNotice = "To the best of our knowledge, the information contained herein is accurate. However, neither the above-named supplier, nor any of its subsidiaries, assumes any liability whatsoever for the accuracy or completeness of the information contained herein. Final determination of suitability of any material is the sole responsibility of the user. All materials may present unknown hazards and should be used with caution. Although certain hazards are described herein, we cannot guarantee that these are the only hazards that exist.";
+}
 <h3 class="sds-section-title"><i class="fas fa-info-circle"></i> Section 16. Other information</h3>
 <div class="row sds-field-grid g-3">
-    <div class="col-md-6"><label asp-for="HMISRatings" class="form-label">HMIS ratings</label><input asp-for="HMISRatings" class="form-control" placeholder="Health: 1, Flammability: 4, Physical: 0" /></div>
-    <div class="col-md-6"><label asp-for="NFPARatings" class="form-label">NFPA ratings</label><input asp-for="NFPARatings" class="form-control" placeholder="Health: 1, Flammability: 4, Instability: 0" /></div>
-    <div class="col-md-4"><label asp-for="Version" class="form-label">Version</label><input asp-for="Version" class="form-control" /></div>
-    <div class="col-md-4"><label asp-for="DateOfPrinting" class="form-label">Date of printing</label><input asp-for="DateOfPrinting" class="form-control" /></div>
-    <div class="col-md-4"><label asp-for="DateOfRevision" class="form-label">Date of issue/revision</label><input asp-for="DateOfRevision" class="form-control" /></div>
-    <div class="col-md-6"><label asp-for="DateOfPreviousIssue" class="form-label">Date of previous issue</label><input asp-for="DateOfPreviousIssue" class="form-control" /></div>
-    <div class="col-12"><label asp-for="Abbreviations" class="form-label">Key to abbreviations</label><textarea asp-for="Abbreviations" class="form-control" rows="3"></textarea></div>
-    <div class="col-12"><label asp-for="NoticeToReader" class="form-label">Notice to reader</label><textarea asp-for="NoticeToReader" class="form-control" rows="4"></textarea></div>
-    <div class="col-12"><hr /><h5 class="text-muted">Inventory (optional)</h5></div>
+
+    <div class="col-12"><h5 class="sds-subheading">Hazardous Material Information System (U.S.A.)</h5></div>
+    <div class="col-md-4">
+        <label asp-for="HmisHealth" class="form-label">HMIS — Health (0–4)</label>
+        <input asp-for="HmisHealth" class="form-control" placeholder="1" maxlength="1" />
+    </div>
+    <div class="col-md-4">
+        <label asp-for="HmisFlammability" class="form-label">HMIS — Flammability (0–4)</label>
+        <input asp-for="HmisFlammability" class="form-control" placeholder="4" maxlength="1" />
+    </div>
+    <div class="col-md-4">
+        <label asp-for="HmisPhysicalHazards" class="form-label">HMIS — Physical hazards (0–4)</label>
+        <input asp-for="HmisPhysicalHazards" class="form-control" placeholder="0" maxlength="1" />
+    </div>
+    <div class="col-12">
+        <label asp-for="HmisCautionNote" class="form-label">HMIS caution / note</label>
+        <textarea asp-for="HmisCautionNote" class="form-control" rows="2" placeholder="Caution: HMIS® ratings are based on a 0-4 rating scale..."></textarea>
+    </div>
+
+    <div class="col-12"><h5 class="sds-subheading mt-2">National Fire Protection Association (U.S.A.) — NFPA 704</h5></div>
+    <div class="col-md-3">
+        <label asp-for="NfpaFlammability" class="form-label">Flammability (top)</label>
+        <input asp-for="NfpaFlammability" class="form-control" placeholder="4" maxlength="2" />
+    </div>
+    <div class="col-md-3">
+        <label asp-for="NfpaHealth" class="form-label">Health (left)</label>
+        <input asp-for="NfpaHealth" class="form-control" placeholder="1" maxlength="2" />
+    </div>
+    <div class="col-md-3">
+        <label asp-for="NfpaReactivity" class="form-label">Instability / Reactivity (right)</label>
+        <input asp-for="NfpaReactivity" class="form-control" placeholder="0" maxlength="2" />
+    </div>
+    <div class="col-md-3">
+        <label asp-for="NfpaSpecial" class="form-label">Special (bottom)</label>
+        <input asp-for="NfpaSpecial" class="form-control" placeholder="—" maxlength="4" />
+    </div>
+    <div class="col-12">
+        <label asp-for="NfpaCopyrightNote" class="form-label">NFPA copyright / legal notice (optional)</label>
+        <textarea asp-for="NfpaCopyrightNote" class="form-control" rows="2"></textarea>
+    </div>
+
+    <div class="col-12"><h5 class="sds-subheading mt-2">Procedure used to derive the classification</h5></div>
+    <div class="col-md-6">
+        <label asp-for="ClassificationProcedure" class="form-label">Classification</label>
+        <input asp-for="ClassificationProcedure" class="form-control" placeholder="FLAMMABLE LIQUIDS - Category 2" />
+    </div>
+    <div class="col-md-6">
+        <label asp-for="ClassificationJustification" class="form-label">Justification</label>
+        <input asp-for="ClassificationJustification" class="form-control" placeholder="Expert judgment" />
+    </div>
+
+    <div class="col-12"><h5 class="sds-subheading mt-2">History</h5></div>
+    <div class="col-md-3"><label asp-for="DateOfPrinting" class="form-label">Date of printing</label><input asp-for="DateOfPrinting" class="form-control" placeholder="4/8/2019" /></div>
+    <div class="col-md-3"><label asp-for="DateOfRevision" class="form-label">Date of issue / revision</label><input asp-for="DateOfRevision" class="form-control" /></div>
+    <div class="col-md-3"><label asp-for="DateOfPreviousIssue" class="form-label">Date of previous issue</label><input asp-for="DateOfPreviousIssue" class="form-control" placeholder="No previous validation" /></div>
+    <div class="col-md-3"><label asp-for="Version" class="form-label">Version</label><input asp-for="Version" class="form-control" placeholder="1" /></div>
+
+    <div class="col-12"><h5 class="sds-subheading mt-2">References &amp; abbreviations</h5></div>
+    <div class="col-12"><p class="sds-sec16-un text-center mb-2">UN = United Nations</p></div>
+    <div class="col-12">
+        <label asp-for="References" class="form-label sds-sec16-wizard-label">References</label>
+        <input asp-for="References" class="form-control" placeholder="Not available." />
+    </div>
+    <div class="col-12">
+        <label asp-for="Abbreviations" class="form-label">Key to abbreviations</label>
+        <textarea asp-for="Abbreviations" class="form-control" rows="6" placeholder="@defaultAbbrev">@(Model.Abbreviations ?? defaultAbbrev)</textarea>
+    </div>
+
+    <div class="col-12"><h5 class="sds-subheading mt-2">Notice to reader</h5></div>
+    <div class="col-12">
+        <label asp-for="NoticeToReader" class="form-label sds-sec16-wizard-label">Notice to reader</label>
+        <textarea asp-for="NoticeToReader" class="form-control" rows="4">@(Model.NoticeToReader ?? defaultNotice)</textarea>
+    </div>
+
+    <div class="col-12"><hr /><h5 class="sds-subheading">Lab inventory (optional — internal use)</h5></div>
     <div class="col-md-4"><label asp-for="Quantity" class="form-label">Quantity</label><input asp-for="Quantity" class="form-control" type="number" step="0.01" /></div>
     <div class="col-md-4"><label asp-for="Unit" class="form-label">Unit</label><input asp-for="Unit" class="form-control" placeholder="Liters" /></div>
     <div class="col-md-4"><label asp-for="StorageLocation" class="form-label">Storage location</label><input asp-for="StorageLocation" class="form-control" /></div>

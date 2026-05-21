@@ -1,0 +1,27 @@
+@model ChemicalSDS.Models.Chemical
+@using ChemicalSDS.Models
+@{
+    var codes = GhsPictogramCatalog.ParseCodes(Model.GhsPictogramCodes);
+}
+@if (codes.Count > 0 || !string.IsNullOrEmpty(Model.GhsPictogramImagePath))
+{
+    <div class="ghs-display-block mb-3">
+        <strong>GHS hazard pictograms:</strong>
+        <div class="ghs-display-row mt-2">
+            @foreach (var ghs in GhsPictogramCatalog.All.Where(g => codes.Contains(g.Code)))
+            {
+                <figure class="ghs-display-item">
+                    <img src="@ghs.ImagePath" alt="@ghs.Label" />
+                    <figcaption>@ghs.Label</figcaption>
+                </figure>
+            }
+            @if (!string.IsNullOrEmpty(Model.GhsPictogramImagePath))
+            {
+                <figure class="ghs-display-item ghs-display-upload">
+                    <img src="~/@Model.GhsPictogramImagePath" alt="GHS label" />
+                    <figcaption>Label image</figcaption>
+                </figure>
+            }
+        </div>
+    </div>
+}

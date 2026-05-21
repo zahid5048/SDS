@@ -1,0 +1,34 @@
+@model ChemicalSDS.Models.Chemical
+@using ChemicalSDS.Models
+@{
+    var selected = GhsPictogramCatalog.ParseCodes(Model.GhsPictogramCodes);
+}
+<div class="col-12">
+    <label class="form-label">GHS label elements — Hazard pictograms</label>
+    <p class="text-muted small mb-2">Select all pictograms that apply to this product (Section 2).</p>
+    <input type="hidden" asp-for="GhsPictogramCodes" id="GhsPictogramCodes" />
+    <div class="ghs-pictogram-grid">
+        @foreach (var ghs in GhsPictogramCatalog.All)
+        {
+            var isOn = selected.Contains(ghs.Code);
+            <label class="ghs-pictogram-item @(isOn ? "selected" : "")" data-code="@ghs.Code">
+                <input type="checkbox" class="ghs-pictogram-check" value="@ghs.Code" @(isOn ? "checked" : "") />
+                <img src="@ghs.ImagePath" alt="@ghs.Label" loading="lazy" />
+                <span>@ghs.Label</span>
+            </label>
+        }
+    </div>
+</div>
+
+<div class="col-12 mt-2">
+    <label class="form-label">Upload GHS label image (optional)</label>
+    <p class="text-muted small">Upload a photo or scan of the full GHS label if needed.</p>
+    @if (!string.IsNullOrEmpty(Model.GhsPictogramImagePath))
+    {
+        <div class="ghs-upload-preview mb-2">
+            <img src="~/@Model.GhsPictogramImagePath" alt="GHS label" class="ghs-label-upload-img" />
+            <small class="d-block text-muted mt-1">Current image — upload a new file to replace.</small>
+        </div>
+    }
+    <input type="file" name="ghsPictogramImage" class="form-control" accept="image/jpeg,image/png,image/webp,image/gif" />
+</div>

@@ -5,8 +5,13 @@
     <div class="col-md-6"><label asp-for="UnsuitableExtinguishingMedia" class="form-label">Unsuitable extinguishing media</label><textarea asp-for="UnsuitableExtinguishingMedia" class="form-control" rows="2"></textarea></div>
     <div class="col-12"><label asp-for="SpecificHazards" class="form-label">Specific hazards arising from the chemical</label><textarea asp-for="SpecificHazards" class="form-control" rows="3"></textarea></div>
     <div class="col-12"><label asp-for="HazardousDecomposition" class="form-label">Hazardous thermal decomposition products</label><textarea asp-for="HazardousDecomposition" class="form-control" rows="2"></textarea></div>
-    <div class="col-md-3"><label asp-for="FlashPoint" class="form-label">Flash point</label><input asp-for="FlashPoint" class="form-control" /></div>
-    <div class="col-md-3"><label asp-for="AutoIgnitionTemp" class="form-label">Auto-ignition temperature</label><input asp-for="AutoIgnitionTemp" class="form-control" /></div>
-    <div class="col-md-3"><label asp-for="LowerExplosiveLimit" class="form-label">Lower explosive limit</label><input asp-for="LowerExplosiveLimit" class="form-control" /></div>
-    <div class="col-md-3"><label asp-for="UpperExplosiveLimit" class="form-label">Upper explosive limit</label><input asp-for="UpperExplosiveLimit" class="form-control" /></div>
+
+    <div class="col-12"><h5 class="sds-subheading mt-2">Advice for firefighters</h5></div>
+    <div class="col-md-6"><label asp-for="FirefighterProtectiveActions" class="form-label">Special protective actions for fire-fighters</label><textarea asp-for="FirefighterProtectiveActions" class="form-control" rows="4"></textarea></div>
+    <div class="col-md-6"><label asp-for="FirefighterProtectiveEquipment" class="form-label">Special protective equipment for fire-fighters</label><textarea asp-for="FirefighterProtectiveEquipment" class="form-control" rows="4"></textarea></div>
+
+    <div class="col-md-3"><label asp-for="FlashPoint" class="form-label">Flash point (optional)</label><input asp-for="FlashPoint" class="form-control" /></div>
+    <div class="col-md-3"><label asp-for="AutoIgnitionTemp" class="form-label">Auto-ignition temperature (optional)</label><input asp-for="AutoIgnitionTemp" class="form-control" /></div>
+    <div class="col-md-3"><label asp-for="LowerExplosiveLimit" class="form-label">Lower explosive limit (optional)</label><input asp-for="LowerExplosiveLimit" class="form-control" /></div>
+    <div class="col-md-3"><label asp-for="UpperExplosiveLimit" class="form-label">Upper explosive limit (optional)</label><input asp-for="UpperExplosiveLimit" class="form-control" /></div>
 </div>

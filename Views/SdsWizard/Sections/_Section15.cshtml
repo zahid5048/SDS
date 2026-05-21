@@ -1,9 +1,73 @@
 @model ChemicalSDS.Models.Chemical
 <h3 class="sds-section-title"><i class="fas fa-gavel"></i> Section 15. Regulatory information</h3>
-<div class="row sds-field-grid g-3">
-    <div class="col-12"><label asp-for="USFederalRegulations" class="form-label">U.S. Federal regulations</label><textarea asp-for="USFederalRegulations" class="form-control" rows="4"></textarea></div>
-    <div class="col-12"><label asp-for="SARA302304" class="form-label">SARA 302/304</label><textarea asp-for="SARA302304" class="form-control" rows="2"></textarea></div>
-    <div class="col-12"><label asp-for="StateRegulations" class="form-label">State regulations</label><textarea asp-for="StateRegulations" class="form-control" rows="3"></textarea></div>
-    <div class="col-12"><label asp-for="InternationalRegulations" class="form-label">International regulations</label><textarea asp-for="InternationalRegulations" class="form-control" rows="3"></textarea></div>
-    <div class="col-12"><label asp-for="InventoryList" class="form-label">Inventory list</label><textarea asp-for="InventoryList" class="form-control" rows="4"></textarea></div>
+<div class="row sds-field-grid g-3 sds-regulatory-form">
+
+    <div class="col-12"><h5 class="sds-subheading">U.S. Federal regulations</h5></div>
+    <div class="col-lg-6">
+        <partial name="Sections/_RegulatoryFieldRow" model="@("TSCA 8(a) CDR Exempt/Partial exemption", nameof(Model.RegTscaCdrExempt), Model.RegTscaCdrExempt, "Not determined")" />
+        <partial name="Sections/_RegulatoryFieldRow" model="@("Clean Air Act Section 112 (b) HAPs", nameof(Model.RegCleanAirActHaps), Model.RegCleanAirActHaps, "Not listed")" />
+        <partial name="Sections/_RegulatoryFieldRow" model="@("Clean Air Act Section 602 Class I Substances", nameof(Model.RegCleanAirActClassI), Model.RegCleanAirActClassI, "Not listed")" />
+        <partial name="Sections/_RegulatoryFieldRow" model="@("Clean Air Act Section 602 Class II Substances", nameof(Model.RegCleanAirActClassII), Model.RegCleanAirActClassII, "Not listed")" />
+    </div>
+    <div class="col-lg-6">
+        <partial name="Sections/_RegulatoryFieldRow" model="@("DEA List I Chemicals (Precursor Chemicals)", nameof(Model.RegDeaListI), Model.RegDeaListI, "Not listed")" />
+        <partial name="Sections/_RegulatoryFieldRow" model="@("DEA List II Chemicals (Essential Chemicals)", nameof(Model.RegDeaListII), Model.RegDeaListII, "Not listed")" />
+    </div>
+
+    <div class="col-12"><h5 class="sds-subheading mt-2">SARA</h5></div>
+    <div class="col-12">
+        <partial name="Sections/_RegulatoryFieldRow" model="@("SARA 302/304 — Composition/information on ingredients", nameof(Model.RegSara302Composition), Model.RegSara302Composition ?? Model.SARA302304, "No products were found.")" />
+    </div>
+    <div class="col-md-6">
+        <partial name="Sections/_RegulatoryFieldRow" model="@("SARA 304 RQ", nameof(Model.RegSara304RQ), Model.RegSara304RQ, "Not applicable.")" />
+    </div>
+    <div class="col-md-6">
+        <partial name="Sections/_RegulatoryFieldRow" model="@("SARA 311/312 — Classification", nameof(Model.RegSara311312Classification), Model.RegSara311312Classification, "Refer to Section 2 of this SDS.")" />
+    </div>
+
+    <div class="col-12"><h5 class="sds-subheading mt-2">State regulations</h5></div>
+    <div class="col-md-6">
+        <partial name="Sections/_RegulatoryFieldRow" model="@("Massachusetts", nameof(Model.RegStateMassachusetts), Model.RegStateMassachusetts, "This material is listed.")" />
+        <partial name="Sections/_RegulatoryFieldRow" model="@("New Jersey", nameof(Model.RegStateNewJersey), Model.RegStateNewJersey, "This material is listed.")" />
+    </div>
+    <div class="col-md-6">
+        <partial name="Sections/_RegulatoryFieldRow" model="@("New York", nameof(Model.RegStateNewYork), Model.RegStateNewYork, "This material is not listed.")" />
+        <partial name="Sections/_RegulatoryFieldRow" model="@("Pennsylvania", nameof(Model.RegStatePennsylvania), Model.RegStatePennsylvania, "This material is listed.")" />
+    </div>
+
+    <div class="col-12"><h5 class="sds-subheading mt-2">International regulations</h5></div>
+    <div class="col-lg-6">
+        <partial name="Sections/_RegulatoryFieldRow" model="@("Chemical Weapon Convention List Schedules I, II & III", nameof(Model.RegChemWeaponConvention), Model.RegChemWeaponConvention, "Not listed.")" />
+        <partial name="Sections/_RegulatoryFieldRow" model="@("Montreal Protocol (Annexes A, B, C, E)", nameof(Model.RegMontrealProtocol), Model.RegMontrealProtocol, "Not listed.")" />
+        <partial name="Sections/_RegulatoryFieldRow" model="@("Stockholm Convention on Persistent Organic Pollutants", nameof(Model.RegStockholmConvention), Model.RegStockholmConvention, "Not listed.")" />
+    </div>
+    <div class="col-lg-6">
+        <partial name="Sections/_RegulatoryFieldRow" model="@("Rotterdam Convention on Prior Informed Consent (PIC)", nameof(Model.RegRotterdamConvention), Model.RegRotterdamConvention, "Not listed.")" />
+        <partial name="Sections/_RegulatoryFieldRow" model="@("UNECE Aarhus Protocol on POPs and Heavy Metals", nameof(Model.RegUneceAarhus), Model.RegUneceAarhus, "Not listed.")" />
+    </div>
+
+    <div class="col-12"><h5 class="sds-subheading mt-2">Inventory list</h5></div>
+    <div class="col-md-6">
+        <partial name="Sections/_RegulatoryFieldRow" model="@("Australia", nameof(Model.RegInventoryAustralia), Model.RegInventoryAustralia, "This material is listed or exempted.")" />
+        <partial name="Sections/_RegulatoryFieldRow" model="@("Canada", nameof(Model.RegInventoryCanada), Model.RegInventoryCanada, "This material is listed or exempted.")" />
+        <partial name="Sections/_RegulatoryFieldRow" model="@("China", nameof(Model.RegInventoryChina), Model.RegInventoryChina, "This material is listed or exempted.")" />
+        <partial name="Sections/_RegulatoryFieldRow" model="@("Europe", nameof(Model.RegInventoryEurope), Model.RegInventoryEurope, "This material is listed or exempted.")" />
+        <partial name="Sections/_RegulatoryFieldRow" model="@("Malaysia", nameof(Model.RegInventoryMalaysia), Model.RegInventoryMalaysia, "This material is listed or exempted.")" />
+    </div>
+    <div class="col-md-6">
+        <partial name="Sections/_RegulatoryFieldRow" model="@("Japan inventory (ENCS)", nameof(Model.RegInventoryJapanEncs), Model.RegInventoryJapanEncs, "This material is listed or exempted.")" />
+        <partial name="Sections/_RegulatoryFieldRow" model="@("Japan inventory (ISHL)", nameof(Model.RegInventoryJapanIshl), Model.RegInventoryJapanIshl, "This material is listed or exempted.")" />
+        <partial name="Sections/_RegulatoryFieldRow" model="@("New Zealand", nameof(Model.RegInventoryNewZealand), Model.RegInventoryNewZealand, "This material is listed or exempted.")" />
+        <partial name="Sections/_RegulatoryFieldRow" model="@("Philippines", nameof(Model.RegInventoryPhilippines), Model.RegInventoryPhilippines, "This material is listed or exempted.")" />
+        <partial name="Sections/_RegulatoryFieldRow" model="@("Republic of Korea", nameof(Model.RegInventoryKorea), Model.RegInventoryKorea, "This material is listed or exempted.")" />
+    </div>
+    <div class="col-md-6">
+        <partial name="Sections/_RegulatoryFieldRow" model="@("Taiwan", nameof(Model.RegInventoryTaiwan), Model.RegInventoryTaiwan, "This material is listed or exempted.")" />
+        <partial name="Sections/_RegulatoryFieldRow" model="@("Thailand", nameof(Model.RegInventoryThailand), Model.RegInventoryThailand, "Not determined")" />
+        <partial name="Sections/_RegulatoryFieldRow" model="@("Turkey", nameof(Model.RegInventoryTurkey), Model.RegInventoryTurkey, "This material is listed or exempted.")" />
+    </div>
+    <div class="col-md-6">
+        <partial name="Sections/_RegulatoryFieldRow" model="@("United States", nameof(Model.RegInventoryUnitedStates), Model.RegInventoryUnitedStates, "This material is listed or exempted.")" />
+        <partial name="Sections/_RegulatoryFieldRow" model="@("Viet Nam", nameof(Model.RegInventoryVietnam), Model.RegInventoryVietnam, "Not determined")" />
+    </div>
 </div>

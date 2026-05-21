@@ -1,22 +1,30 @@
 @model ChemicalSDS.Models.Chemical
 <h3 class="sds-section-title"><i class="fas fa-atom"></i> Section 9. Physical and chemical properties</h3>
 <div class="row sds-field-grid g-3">
-    <div class="col-md-4"><label asp-for="PhysicalState" class="form-label">Physical state</label><input asp-for="PhysicalState" class="form-control" /></div>
+    <div class="col-md-4"><label asp-for="PhysicalState" class="form-label">Physical state</label><input asp-for="PhysicalState" class="form-control" placeholder="Liquid, solid, gas..." /></div>
     <div class="col-md-4"><label asp-for="Color" class="form-label">Color</label><input asp-for="Color" class="form-control" /></div>
     <div class="col-md-4"><label asp-for="Odor" class="form-label">Odor</label><input asp-for="Odor" class="form-control" /></div>
     <div class="col-md-4"><label asp-for="OdorThreshold" class="form-label">Odor threshold</label><input asp-for="OdorThreshold" class="form-control" /></div>
     <div class="col-md-4"><label asp-for="pH" class="form-label">pH</label><input asp-for="pH" class="form-control" /></div>
-    <div class="col-md-4"><label asp-for="MeltingPoint" class="form-label">Melting point</label><input asp-for="MeltingPoint" class="form-control" /></div>
+    <div class="col-md-4"><label asp-for="MeltingPoint" class="form-label">Melting point / freezing point</label><input asp-for="MeltingPoint" class="form-control" /></div>
     <div class="col-md-4"><label asp-for="BoilingPoint" class="form-label">Boiling point</label><input asp-for="BoilingPoint" class="form-control" /></div>
+    <div class="col-md-4"><label asp-for="CriticalTemperature" class="form-label">Critical temperature</label><input asp-for="CriticalTemperature" class="form-control" /></div>
     <div class="col-md-4"><label asp-for="FlashPoint" class="form-label">Flash point</label><input asp-for="FlashPoint" class="form-control" /></div>
     <div class="col-md-4"><label asp-for="EvaporationRate" class="form-label">Evaporation rate</label><input asp-for="EvaporationRate" class="form-control" /></div>
-    <div class="col-md-4"><label asp-for="Flammability" class="form-label">Flammability</label><input asp-for="Flammability" class="form-control" /></div>
-    <div class="col-md-4"><label asp-for="LowerExplosiveLimit" class="form-label">Lower explosive limit</label><input asp-for="LowerExplosiveLimit" class="form-control" /></div>
-    <div class="col-md-4"><label asp-for="UpperExplosiveLimit" class="form-label">Upper explosive limit</label><input asp-for="UpperExplosiveLimit" class="form-control" /></div>
+    <div class="col-md-4"><label asp-for="Flammability" class="form-label">Flammability (solid, gas)</label><input asp-for="Flammability" class="form-control" /></div>
+    <div class="col-md-4"><label asp-for="LowerExplosiveLimit" class="form-label">Lower explosive (flammable) limit</label><input asp-for="LowerExplosiveLimit" class="form-control" /></div>
+    <div class="col-md-4"><label asp-for="UpperExplosiveLimit" class="form-label">Upper explosive (flammable) limit</label><input asp-for="UpperExplosiveLimit" class="form-control" /></div>
     <div class="col-md-4"><label asp-for="VaporPressure" class="form-label">Vapor pressure</label><input asp-for="VaporPressure" class="form-control" /></div>
     <div class="col-md-4"><label asp-for="VaporDensity" class="form-label">Vapor density</label><input asp-for="VaporDensity" class="form-control" /></div>
+    <div class="col-md-4"><label asp-for="SpecificVolume" class="form-label">Specific volume (ft³/lb)</label><input asp-for="SpecificVolume" class="form-control" /></div>
+    <div class="col-md-4"><label asp-for="GasDensity" class="form-label">Gas density (lb/ft³)</label><input asp-for="GasDensity" class="form-control" /></div>
     <div class="col-md-4"><label asp-for="RelativeDensity" class="form-label">Relative density</label><input asp-for="RelativeDensity" class="form-control" /></div>
     <div class="col-md-4"><label asp-for="Solubility" class="form-label">Solubility</label><input asp-for="Solubility" class="form-control" /></div>
+    <div class="col-md-4"><label asp-for="SolubilityInWater" class="form-label">Solubility in water</label><input asp-for="SolubilityInWater" class="form-control" /></div>
+    <div class="col-md-4"><label asp-for="PartitionCoefficient" class="form-label">Partition coefficient: n-octanol/water</label><input asp-for="PartitionCoefficient" class="form-control" /></div>
     <div class="col-md-4"><label asp-for="AutoIgnitionTemp" class="form-label">Auto-ignition temperature</label><input asp-for="AutoIgnitionTemp" class="form-control" /></div>
+    <div class="col-md-4"><label asp-for="DecompositionTemperature" class="form-label">Decomposition temperature</label><input asp-for="DecompositionTemperature" class="form-control" /></div>
+    <div class="col-md-4"><label asp-for="Viscosity" class="form-label">Viscosity</label><input asp-for="Viscosity" class="form-control" /></div>
+    <div class="col-md-4"><label asp-for="FlowTimeIso2431" class="form-label">Flow time (ISO 2431)</label><input asp-for="FlowTimeIso2431" class="form-control" /></div>
     <div class="col-md-4"><label asp-for="MolecularWeight" class="form-label">Molecular weight</label><input asp-for="MolecularWeight" class="form-control" /></div>
 </div>

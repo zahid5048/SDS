@@ -1,0 +1,25 @@
+@model ChemicalSDS.Models.SdsPipeTableModel
+@{
+    if (string.IsNullOrWhiteSpace(Model.Data) || !Model.Data.Contains('|')) return;
+    var rows = Model.Data.Split('\n', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+}
+<div class="sds-detail-row sds-detail-row-block">
+    <span class="sds-detail-label">@Model.Title</span>
+    <div class="sds-detail-value">
+        <table class="table table-sm table-bordered sds-oel-table mb-0">
+            <thead><tr>@foreach (var h in Model.Headers) { <th>@h</th> }</tr></thead>
+            <tbody>
+                @foreach (var line in rows)
+                {
+                    var cells = line.Split('|');
+                    <tr>
+                        @for (var i = 0; i < Model.Headers.Length; i++)
+                        {
+                            <td>@(i < cells.Length ? cells[i].Trim() : "")</td>
+                        }
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

@@ -1,11 +1,64 @@
 @model ChemicalSDS.Models.Chemical
 <h3 class="sds-section-title"><i class="fas fa-skull-crossbones"></i> Section 11. Toxicological information</h3>
 <div class="row sds-field-grid g-3">
-    <div class="col-12"><label asp-for="AcuteToxicity" class="form-label">Acute toxicity</label><textarea asp-for="AcuteToxicity" class="form-control" rows="3"></textarea></div>
-    <div class="col-12"><label asp-for="IrritationCorrosion" class="form-label">Irritation/Corrosion</label><textarea asp-for="IrritationCorrosion" class="form-control" rows="3"></textarea></div>
-    <div class="col-md-4"><label asp-for="Carcinogenicity" class="form-label">Carcinogenicity</label><textarea asp-for="Carcinogenicity" class="form-control" rows="2"></textarea></div>
-    <div class="col-md-4"><label asp-for="Mutagenicity" class="form-label">Mutagenicity</label><textarea asp-for="Mutagenicity" class="form-control" rows="2"></textarea></div>
-    <div class="col-md-4"><label asp-for="Teratogenicity" class="form-label">Teratogenicity</label><textarea asp-for="Teratogenicity" class="form-control" rows="2"></textarea></div>
-    <div class="col-12"><label asp-for="RoutesOfExposure" class="form-label">Routes of exposure</label><textarea asp-for="RoutesOfExposure" class="form-control" rows="2"></textarea></div>
-    <div class="col-12"><label asp-for="ChronicHealthEffects" class="form-label">Chronic health effects</label><textarea asp-for="ChronicHealthEffects" class="form-control" rows="2"></textarea></div>
+    <div class="col-12"><h5 class="sds-subheading">Information on toxicological effects</h5></div>
+
+    <div class="col-12"><label asp-for="AcuteToxicity" class="form-label">Acute toxicity</label><textarea asp-for="AcuteToxicity" class="form-control" rows="2" placeholder="Not available."></textarea></div>
+
+    <div class="col-12">
+        <label asp-for="IrritationCorrosion" class="form-label">Irritation/Corrosion</label>
+        <p class="text-muted small">One row per test: <strong>Ingredient | Result | Species | Score | Exposure | Observation</strong></p>
+        <textarea asp-for="IrritationCorrosion" class="form-control" rows="4" placeholder="ethanol | Eyes - Mild irritant | Rabbit | - | 24 hours 500 milligrams | -"></textarea>
+    </div>
+
+    <div class="col-12"><label asp-for="Sensitization" class="form-label">Sensitization</label><textarea asp-for="Sensitization" class="form-control" rows="2"></textarea></div>
+    <div class="col-md-6"><label asp-for="Mutagenicity" class="form-label">Mutagenicity</label><textarea asp-for="Mutagenicity" class="form-control" rows="2"></textarea></div>
+
+    <div class="col-12"><label asp-for="Carcinogenicity" class="form-label">Carcinogenicity</label><textarea asp-for="Carcinogenicity" class="form-control" rows="2"></textarea></div>
+    <div class="col-12">
+        <label asp-for="CarcinogenicityClassification" class="form-label">Carcinogenicity — Classification</label>
+        <p class="text-muted small">One row per ingredient: <strong>Ingredient | OSHA | IARC | NTP</strong></p>
+        <textarea asp-for="CarcinogenicityClassification" class="form-control" rows="2" placeholder="ethanol | - | 1 | -"></textarea>
+    </div>
+
+    <div class="col-md-6"><label asp-for="ReproductiveToxicity" class="form-label">Reproductive toxicity</label><textarea asp-for="ReproductiveToxicity" class="form-control" rows="2"></textarea></div>
+    <div class="col-md-6"><label asp-for="Teratogenicity" class="form-label">Teratogenicity</label><textarea asp-for="Teratogenicity" class="form-control" rows="2"></textarea></div>
+    <div class="col-md-6"><label asp-for="TargetOrganToxicitySingle" class="form-label">Specific target organ toxicity (single exposure)</label><textarea asp-for="TargetOrganToxicitySingle" class="form-control" rows="2"></textarea></div>
+    <div class="col-md-6"><label asp-for="TargetOrganToxicityRepeated" class="form-label">Specific target organ toxicity (repeated exposure)</label><textarea asp-for="TargetOrganToxicityRepeated" class="form-control" rows="2"></textarea></div>
+    <div class="col-12"><label asp-for="AspirationHazard" class="form-label">Aspiration hazard</label><textarea asp-for="AspirationHazard" class="form-control" rows="2"></textarea></div>
+
+    <div class="col-12"><h5 class="sds-subheading mt-2">Likely routes of exposure</h5></div>
+    <div class="col-12"><label asp-for="RoutesOfExposure" class="form-label">Information on the likely routes of exposure</label><textarea asp-for="RoutesOfExposure" class="form-control" rows="2"></textarea></div>
+
+    <div class="col-12"><h5 class="sds-subheading mt-2">Potential acute health effects</h5></div>
+    <div class="col-md-6"><label asp-for="AcuteHealthEffectsEye" class="form-label">Eye contact</label><textarea asp-for="AcuteHealthEffectsEye" class="form-control" rows="2"></textarea></div>
+    <div class="col-md-6"><label asp-for="AcuteHealthEffectsInhalation" class="form-label">Inhalation</label><textarea asp-for="AcuteHealthEffectsInhalation" class="form-control" rows="2"></textarea></div>
+    <div class="col-md-6"><label asp-for="AcuteHealthEffectsSkin" class="form-label">Skin contact</label><textarea asp-for="AcuteHealthEffectsSkin" class="form-control" rows="2"></textarea></div>
+    <div class="col-md-6"><label asp-for="AcuteHealthEffectsIngestion" class="form-label">Ingestion</label><textarea asp-for="AcuteHealthEffectsIngestion" class="form-control" rows="2"></textarea></div>
+
+    <div class="col-12"><h5 class="sds-subheading mt-2">Symptoms related to physical, chemical and toxicological characteristics</h5></div>
+    <div class="col-md-6"><label asp-for="ToxicologicalSymptomsEye" class="form-label">Eye contact</label><textarea asp-for="ToxicologicalSymptomsEye" class="form-control" rows="2"></textarea></div>
+    <div class="col-md-6"><label asp-for="ToxicologicalSymptomsInhalation" class="form-label">Inhalation</label><textarea asp-for="ToxicologicalSymptomsInhalation" class="form-control" rows="2"></textarea></div>
+    <div class="col-md-6"><label asp-for="ToxicologicalSymptomsSkin" class="form-label">Skin contact</label><textarea asp-for="ToxicologicalSymptomsSkin" class="form-control" rows="2"></textarea></div>
+    <div class="col-md-6"><label asp-for="ToxicologicalSymptomsIngestion" class="form-label">Ingestion</label><textarea asp-for="ToxicologicalSymptomsIngestion" class="form-control" rows="2"></textarea></div>
+
+    <div class="col-12"><h5 class="sds-subheading mt-2">Delayed and immediate effects; short and long term exposure</h5></div>
+    <div class="col-12"><strong class="text-primary small">Short term exposure</strong></div>
+    <div class="col-md-6"><label asp-for="ShortTermImmediateEffects" class="form-label">Potential immediate effects</label><textarea asp-for="ShortTermImmediateEffects" class="form-control" rows="2"></textarea></div>
+    <div class="col-md-6"><label asp-for="ShortTermDelayedEffects" class="form-label">Potential delayed effects</label><textarea asp-for="ShortTermDelayedEffects" class="form-control" rows="2"></textarea></div>
+    <div class="col-12"><strong class="text-primary small">Long term exposure</strong></div>
+    <div class="col-md-6"><label asp-for="LongTermImmediateEffects" class="form-label">Potential immediate effects</label><textarea asp-for="LongTermImmediateEffects" class="form-control" rows="2"></textarea></div>
+    <div class="col-md-6"><label asp-for="LongTermDelayedEffects" class="form-label">Potential delayed effects</label><textarea asp-for="LongTermDelayedEffects" class="form-control" rows="2"></textarea></div>
+
+    <div class="col-12"><h5 class="sds-subheading mt-2">Potential chronic health effects</h5></div>
+    <div class="col-12"><label asp-for="ChronicHealthEffects" class="form-label">Potential chronic health effects</label><textarea asp-for="ChronicHealthEffects" class="form-control" rows="2"></textarea></div>
+    <div class="col-12"><label asp-for="ChronicEffectsGeneral" class="form-label">General</label><textarea asp-for="ChronicEffectsGeneral" class="form-control" rows="2"></textarea></div>
+    <div class="col-md-6"><label asp-for="ChronicCarcinogenicity" class="form-label">Carcinogenicity</label><textarea asp-for="ChronicCarcinogenicity" class="form-control" rows="2"></textarea></div>
+    <div class="col-md-6"><label asp-for="ChronicMutagenicity" class="form-label">Mutagenicity</label><textarea asp-for="ChronicMutagenicity" class="form-control" rows="2"></textarea></div>
+    <div class="col-md-6"><label asp-for="ChronicTeratogenicity" class="form-label">Teratogenicity</label><textarea asp-for="ChronicTeratogenicity" class="form-control" rows="2"></textarea></div>
+    <div class="col-md-6"><label asp-for="DevelopmentalEffects" class="form-label">Developmental effects</label><textarea asp-for="DevelopmentalEffects" class="form-control" rows="2"></textarea></div>
+    <div class="col-12"><label asp-for="FertilityEffects" class="form-label">Fertility effects</label><textarea asp-for="FertilityEffects" class="form-control" rows="2"></textarea></div>
+
+    <div class="col-12"><h5 class="sds-subheading mt-2">Numerical measures of toxicity</h5></div>
+    <div class="col-12"><label asp-for="AcuteToxicityEstimates" class="form-label">Acute toxicity estimates</label><textarea asp-for="AcuteToxicityEstimates" class="form-control" rows="2" placeholder="Not available."></textarea></div>
 </div>

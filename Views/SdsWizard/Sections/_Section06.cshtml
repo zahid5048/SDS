@@ -1,6 +1,14 @@
 @model ChemicalSDS.Models.Chemical
 <h3 class="sds-section-title"><i class="fas fa-biohazard"></i> Section 6. Accidental release measures</h3>
 <div class="row sds-field-grid g-3">
+    <div class="col-12"><h5 class="sds-subheading">Personal precautions, protective equipment and emergency procedures</h5></div>
+    <div class="col-12"><label asp-for="SpillNonEmergencyPersonnel" class="form-label">For non-emergency personnel</label><textarea asp-for="SpillNonEmergencyPersonnel" class="form-control" rows="5" placeholder="Evacuate, ventilation, PPE, no ignition sources..."></textarea></div>
+    <div class="col-12"><label asp-for="SpillEmergencyResponders" class="form-label">For emergency responders</label><textarea asp-for="SpillEmergencyResponders" class="form-control" rows="3" placeholder="Specialized clothing — see Section 8..."></textarea></div>
+
+    <div class="col-12"><h5 class="sds-subheading mt-2">Environmental precautions</h5></div>
+    <div class="col-12"><label asp-for="EnvironmentalPrecautionsSpill" class="form-label">Environmental precautions</label><textarea asp-for="EnvironmentalPrecautionsSpill" class="form-control" rows="3"></textarea></div>
+
+    <div class="col-12"><h5 class="sds-subheading mt-2">Methods and material for containment and cleaning up</h5></div>
     <div class="col-12"><label asp-for="SmallSpillMethods" class="form-label">Small spill</label><textarea asp-for="SmallSpillMethods" class="form-control" rows="4"></textarea></div>
     <div class="col-12"><label asp-for="LargeSpillMethods" class="form-label">Large spill</label><textarea asp-for="LargeSpillMethods" class="form-control" rows="4"></textarea></div>
 </div>

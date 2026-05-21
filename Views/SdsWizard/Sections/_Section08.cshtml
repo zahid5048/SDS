@@ -1,10 +1,24 @@
 @model ChemicalSDS.Models.Chemical
 <h3 class="sds-section-title"><i class="fas fa-hard-hat"></i> Section 8. Exposure controls / personal protection</h3>
 <div class="row sds-field-grid g-3">
-    <div class="col-12"><label asp-for="OccupationalExposureLimits" class="form-label">Occupational exposure limits</label><textarea asp-for="OccupationalExposureLimits" class="form-control" rows="3"></textarea></div>
-    <div class="col-12"><label asp-for="ExposureControls" class="form-label">Appropriate engineering controls</label><textarea asp-for="ExposureControls" class="form-control" rows="3"></textarea></div>
-    <div class="col-md-6"><label asp-for="EyeProtection" class="form-label">Eye/face protection</label><textarea asp-for="EyeProtection" class="form-control" rows="3"></textarea></div>
-    <div class="col-md-6"><label asp-for="HandProtection" class="form-label">Hand protection</label><textarea asp-for="HandProtection" class="form-control" rows="3"></textarea></div>
-    <div class="col-md-6"><label asp-for="BodyProtection" class="form-label">Body protection</label><textarea asp-for="BodyProtection" class="form-control" rows="3"></textarea></div>
-    <div class="col-md-6"><label asp-for="RespiratoryProtection" class="form-label">Respiratory protection</label><textarea asp-for="RespiratoryProtection" class="form-control" rows="3"></textarea></div>
+    <div class="col-12"><h5 class="sds-subheading">Control parameters</h5></div>
+    <div class="col-12">
+        <label asp-for="OccupationalExposureLimits" class="form-label">Occupational exposure limits</label>
+        <p class="text-muted small">One line per ingredient: <strong>Ingredient name | Exposure limits</strong> (ACGIH, OSHA, NIOSH, etc.)</p>
+        <textarea asp-for="OccupationalExposureLimits" class="form-control" rows="5" placeholder="ethanol | ACGIH TLV STEL: 1000 ppm 15 min.&#10;OSHA PEL TWA: 1000 ppm 8 hours..."></textarea>
+    </div>
+
+    <div class="col-12"><h5 class="sds-subheading mt-2">Appropriate engineering controls</h5></div>
+    <div class="col-12"><label asp-for="ExposureControls" class="form-label">Appropriate engineering controls</label><textarea asp-for="ExposureControls" class="form-control" rows="4"></textarea></div>
+
+    <div class="col-12"><h5 class="sds-subheading mt-2">Environmental exposure controls</h5></div>
+    <div class="col-12"><label asp-for="EnvironmentalExposureControls" class="form-label">Environmental exposure controls</label><textarea asp-for="EnvironmentalExposureControls" class="form-control" rows="3"></textarea></div>
+
+    <div class="col-12"><h5 class="sds-subheading mt-2">Individual protection measures</h5></div>
+    <div class="col-12"><label asp-for="HygieneMeasures" class="form-label">Hygiene measures</label><textarea asp-for="HygieneMeasures" class="form-control" rows="3"></textarea></div>
+    <div class="col-md-6"><label asp-for="EyeProtection" class="form-label">Eye / face protection</label><textarea asp-for="EyeProtection" class="form-control" rows="4"></textarea></div>
+    <div class="col-md-6"><label asp-for="HandProtection" class="form-label">Hand protection (skin protection)</label><textarea asp-for="HandProtection" class="form-control" rows="4"></textarea></div>
+    <div class="col-md-6"><label asp-for="BodyProtection" class="form-label">Body protection</label><textarea asp-for="BodyProtection" class="form-control" rows="4"></textarea></div>
+    <div class="col-md-6"><label asp-for="OtherSkinProtection" class="form-label">Other skin protection</label><textarea asp-for="OtherSkinProtection" class="form-control" rows="4"></textarea></div>
+    <div class="col-12"><label asp-for="RespiratoryProtection" class="form-label">Respiratory protection</label><textarea asp-for="RespiratoryProtection" class="form-control" rows="4"></textarea></div>
 </div>

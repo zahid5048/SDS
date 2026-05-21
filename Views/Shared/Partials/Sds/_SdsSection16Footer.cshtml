@@ -1,0 +1,21 @@
+@model ChemicalSDS.Models.Chemical
+@{
+    var references = string.IsNullOrWhiteSpace(Model.References) ? "Not available." : Model.References;
+    var notice = string.IsNullOrWhiteSpace(Model.NoticeToReader)
+        ? "To the best of our knowledge, the information contained herein is accurate. However, neither the above-named supplier, nor any of its subsidiaries, assumes any liability whatsoever for the accuracy or completeness of the information contained herein. Final determination of suitability of any material is the sole responsibility of the user. All materials may present unknown hazards and should be used with caution. Although certain hazards are described herein, we cannot guarantee that these are the only hazards that exist."
+        : Model.NoticeToReader;
+}
+<div class="sds-sec16-footer">
+    <p class="sds-sec16-un text-center">UN = United Nations</p>
+
+    <div class="sds-sec16-line">
+        <span class="sds-sec16-label">References</span>
+        <span class="sds-sec16-colon">:</span>
+        <span class="sds-sec16-value">@references</span>
+    </div>
+
+    <div class="sds-sec16-notice">
+        <div class="sds-sec16-label sds-sec16-notice-title">Notice to reader</div>
+        <p class="sds-sec16-notice-text">@notice</p>
+    </div>
+</div>

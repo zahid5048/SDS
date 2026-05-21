@@ -1,9 +1,22 @@
 @model ChemicalSDS.Models.Chemical
 <h3 class="sds-section-title"><i class="fas fa-leaf"></i> Section 12. Ecological information</h3>
 <div class="row sds-field-grid g-3">
-    <div class="col-12"><label asp-for="Ecotoxicity" class="form-label">Toxicity</label><textarea asp-for="Ecotoxicity" class="form-control" rows="4"></textarea></div>
-    <div class="col-md-6"><label asp-for="PersistenceDegradability" class="form-label">Persistence and degradability</label><textarea asp-for="PersistenceDegradability" class="form-control" rows="2"></textarea></div>
-    <div class="col-md-6"><label asp-for="BioaccumulativePotential" class="form-label">Bioaccumulative potential</label><textarea asp-for="BioaccumulativePotential" class="form-control" rows="2"></textarea></div>
-    <div class="col-md-6"><label asp-for="MobilityInSoil" class="form-label">Mobility in soil</label><textarea asp-for="MobilityInSoil" class="form-control" rows="2"></textarea></div>
-    <div class="col-md-6"><label asp-for="OtherEcologicalEffects" class="form-label">Other adverse effects</label><textarea asp-for="OtherEcologicalEffects" class="form-control" rows="2"></textarea></div>
+    <div class="col-12"><h5 class="sds-subheading">Toxicity</h5></div>
+    <div class="col-12">
+        <partial name="Sections/_EcologicalToxicityGrid" model="Model" />
+    </div>
+
+    <div class="col-12"><h5 class="sds-subheading mt-2">Persistence and degradability</h5></div>
+    <div class="col-12"><label asp-for="PersistenceDegradability" class="form-label">Persistence and degradability</label><textarea asp-for="PersistenceDegradability" class="form-control" rows="2" placeholder="Not available."></textarea></div>
+
+    <div class="col-12"><h5 class="sds-subheading mt-2">Bioaccumulative potential</h5></div>
+    <div class="col-12">
+        <partial name="Sections/_EcologicalBioaccumGrid" model="Model" />
+    </div>
+
+    <div class="col-12"><h5 class="sds-subheading mt-2">Mobility in soil</h5></div>
+    <div class="col-12"><label asp-for="MobilityInSoil" class="form-label">Soil/water partition coefficient (K<sub>oc</sub>)</label><textarea asp-for="MobilityInSoil" class="form-control" rows="2" placeholder="Not available."></textarea></div>
+
+    <div class="col-12"><h5 class="sds-subheading mt-2">Other adverse effects</h5></div>
+    <div class="col-12"><label asp-for="OtherEcologicalEffects" class="form-label">Other adverse effects</label><textarea asp-for="OtherEcologicalEffects" class="form-control" rows="2"></textarea></div>
 </div>

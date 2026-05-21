@@ -33,7 +33,25 @@ namespace ChemicalSDS.Migrations
                     b.Property<string>("Abbreviations")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("AcuteHealthEffectsEye")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("AcuteHealthEffectsIngestion")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("AcuteHealthEffectsInhalation")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("AcuteHealthEffectsSkin")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("AcuteToxicity")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("AcuteToxicityEstimates")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("AspirationHazard")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("AutoIgnitionTemp")
@@ -54,16 +72,37 @@ namespace ChemicalSDS.Migrations
                     b.Property<string>("Carcinogenicity")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("CarcinogenicityClassification")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("ChemicalName")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ChemicalStability")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("ChronicCarcinogenicity")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ChronicEffectsGeneral")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("ChronicHealthEffects")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("ChronicMutagenicity")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ChronicTeratogenicity")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Classification")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ClassificationJustification")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ClassificationProcedure")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Color")
@@ -75,6 +114,9 @@ namespace ChemicalSDS.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("CriticalTemperature")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("DateOfPreviousIssue")
                         .HasColumnType("nvarchar(max)");
 
@@ -84,10 +126,16 @@ namespace ChemicalSDS.Migrations
                     b.Property<string>("DateOfRevision")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("DecompositionTemperature")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<DateTime?>("DeletedAt")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("DeletedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("DevelopmentalEffects")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("DisposalMethods")
@@ -99,7 +147,13 @@ namespace ChemicalSDS.Migrations
                     b.Property<string>("EmergencyPhone")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("EnvironmentalExposureControls")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("EnvironmentalHazardsTransport")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("EnvironmentalPrecautionsSpill")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("EvaporationRate")
@@ -114,10 +168,31 @@ namespace ChemicalSDS.Migrations
                     b.Property<string>("EyeProtection")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("FertilityEffects")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("FirefighterProtectiveActions")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("FirefighterProtectiveEquipment")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Flammability")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("FlashPoint")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("FlowTimeIso2431")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("GasDensity")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("GhsPictogramCodes")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("GhsPictogramImagePath")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("HMISRatings")
@@ -136,6 +211,21 @@ namespace ChemicalSDS.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("HazardsNotOtherwiseClassified")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("HmisCautionNote")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("HmisFlammability")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("HmisHealth")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("HmisPhysicalHazards")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("HygieneMeasures")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("IncompatibleMaterials")
@@ -171,7 +261,16 @@ namespace ChemicalSDS.Migrations
                     b.Property<int>("LastCompletedSection")
                         .HasColumnType("int");
 
+                    b.Property<string>("LongTermDelayedEffects")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("LongTermImmediateEffects")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("LowerExplosiveLimit")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("MedicalAttentionIndication")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("MeltingPoint")
@@ -187,6 +286,24 @@ namespace ChemicalSDS.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("NFPARatings")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("NfpaCopyrightNote")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("NfpaFlammability")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("NfpaHealth")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("NfpaReactivity")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("NfpaSpecial")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("NotesToPhysician")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("NoticeToReader")
@@ -213,7 +330,13 @@ namespace ChemicalSDS.Migrations
                     b.Property<string>("OtherMeansOfId")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("OtherSkinProtection")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("PackingGroup")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PartitionCoefficient")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Percentage")
@@ -255,13 +378,122 @@ namespace ChemicalSDS.Migrations
                     b.Property<string>("ProductUse")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("ProtectionOfFirstAiders")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<decimal>("Quantity")
+                        .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<string>("Reactivity")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("References")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("RegChemWeaponConvention")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("RegCleanAirActClassI")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("RegCleanAirActClassII")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("RegCleanAirActHaps")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("RegDeaListI")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("RegDeaListII")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("RegInventoryAustralia")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("RegInventoryCanada")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("RegInventoryChina")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("RegInventoryEurope")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("RegInventoryJapanEncs")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("RegInventoryJapanIshl")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("RegInventoryKorea")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("RegInventoryMalaysia")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("RegInventoryNewZealand")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("RegInventoryPhilippines")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("RegInventoryTaiwan")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("RegInventoryThailand")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("RegInventoryTurkey")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("RegInventoryUnitedStates")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("RegInventoryVietnam")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("RegMontrealProtocol")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("RegRotterdamConvention")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("RegSara302Composition")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("RegSara304RQ")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("RegSara311312Classification")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("RegStateMassachusetts")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("RegStateNewJersey")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("RegStateNewYork")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("RegStatePennsylvania")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("RegStockholmConvention")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("RegTscaCdrExempt")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("RegUneceAarhus")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("RelativeDensity")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ReproductiveToxicity")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("RespiratoryProtection")
@@ -279,6 +511,15 @@ namespace ChemicalSDS.Migrations
                     b.Property<string>("SafeStorageConditions")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("Sensitization")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ShortTermDelayedEffects")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ShortTermImmediateEffects")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("SignalWord")
                         .HasColumnType("nvarchar(max)");
 
@@ -291,7 +532,22 @@ namespace ChemicalSDS.Migrations
                     b.Property<string>("Solubility")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("SolubilityInWater")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("SpecificHazards")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("SpecificTreatments")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("SpecificVolume")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("SpillEmergencyResponders")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("SpillNonEmergencyPersonnel")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("StateRegulations")
@@ -312,13 +568,49 @@ namespace ChemicalSDS.Migrations
                     b.Property<string>("Synonym")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("TargetOrganToxicityRepeated")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("TargetOrganToxicitySingle")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Teratogenicity")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ToxicologicalSymptomsEye")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ToxicologicalSymptomsIngestion")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ToxicologicalSymptomsInhalation")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ToxicologicalSymptomsSkin")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("TransportBulkMarpol")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("TransportDotClassification")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("TransportHazardClass")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("TransportHazardClassImages")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("TransportIataClassification")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("TransportRegulations")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("TransportSpecialPrecautions")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("TransportTdgClassification")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("UNNumber")
@@ -348,6 +640,9 @@ namespace ChemicalSDS.Migrations
                     b.Property<string>("Version")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("Viscosity")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("pH")
                         .HasColumnType("nvarchar(max)");
 
@@ -359,6 +654,7 @@ namespace ChemicalSDS.Migrations
                         new
                         {
                             Id = 1,
+                            Abbreviations = "ATE = Acute Toxicity Estimate\nBCF = Bioconcentration Factor\nGHS = Globally Harmonized System of Classification and Labelling of Chemicals\nIATA = International Air Transport Association\nIBC = Intermediate Bulk Container\nIMDG = International Maritime Dangerous Goods\nLogPow = logarithm of the octanol/water partition coefficient\nMARPOL = International Convention for the Prevention of Pollution From Ships, 1973 as modified by the Protocol of 1978. (\"Marpol\" = marine pollution)",
                             AcuteToxicity = "Not available.",
                             AutoIgnitionTemp = "455°C (851°F)",
                             BioaccumulativePotential = "Not available.",
@@ -369,10 +665,13 @@ namespace ChemicalSDS.Migrations
                             ChemicalName = "ethanol",
                             ChemicalStability = "The product is stable.",
                             Classification = "FLAMMABLE LIQUIDS - Category 2",
+                            ClassificationJustification = "Expert judgment",
+                            ClassificationProcedure = "FLAMMABLE LIQUIDS - Category 2",
                             Color = "Colorless. Clear.",
                             ConditionsToAvoid = "Avoid all possible sources of ignition (spark or flame). Do not pressurize, cut, weld, braze, solder, drill, grind or expose containers to heat or sources of ignition. Do not allow vapor to accumulate in low or confined areas.",
                             CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             DateOfPreviousIssue = "No previous validation",
+                            DateOfPrinting = "4/8/2019",
                             DateOfRevision = "4/8/2019",
                             DisposalMethods = "The generation of waste should be avoided or minimized wherever possible. Dispose of surplus and non-recyclable products via a licensed waste disposal contractor. Empty containers or liners may retain some product residues. Do not cut, weld or grind used containers unless they have been cleaned thoroughly internally.",
                             Ecotoxicity = "Acute EC50 17.921 mg/l Marine water Algae - 96 hours. Acute EC50 2000 µg/l Fresh water Daphnia - 48 hours.",
@@ -387,6 +686,9 @@ namespace ChemicalSDS.Migrations
                             HazardStatements = "May form explosive mixtures with air.\nHighly flammable liquid and vapor.",
                             HazardousDecomposition = "Decomposition products may include the following materials: carbon dioxide, carbon monoxide",
                             HazardsNotOtherwiseClassified = "None known.",
+                            HmisFlammability = "4",
+                            HmisHealth = "1",
+                            HmisPhysicalHazards = "0",
                             IncompatibleMaterials = "Reactive or incompatible with the following materials: oxidizing materials",
                             IngestionFirstAid = "Wash out mouth with water. Remove dentures if any. Remove victim to fresh air and keep at rest in a position comfortable for breathing. If material has been swallowed and the exposed person is conscious, give small quantities of water to drink. Stop if the exposed person feels sick as vomiting may be dangerous. Do not induce vomiting unless directed to do so by medical personnel. If vomiting occurs, the head should be kept low so that vomit does not enter the lungs. Get medical attention if adverse health effects persist or are severe. Never give anything by mouth to an unconscious person.",
                             IngredientName = "ethanol",
@@ -400,7 +702,10 @@ namespace ChemicalSDS.Migrations
                             LowerExplosiveLimit = "3.3%",
                             MeltingPoint = "-114°C (-173.2°F)",
                             NFPARatings = "Health: 1, Flammability: 4, Instability/Reactivity: 0",
-                            NoticeToReader = "To the best of our knowledge, the information contained herein is accurate. However, neither the above-named supplier, nor any of its subsidiaries, assumes any liability whatsoever for the accuracy or completeness of the information contained herein.",
+                            NfpaFlammability = "4",
+                            NfpaHealth = "1",
+                            NfpaReactivity = "0",
+                            NoticeToReader = "To the best of our knowledge, the information contained herein is accurate. However, neither the above-named supplier, nor any of its subsidiaries, assumes any liability whatsoever for the accuracy or completeness of the information contained herein. Final determination of suitability of any material is the sole responsibility of the user. All materials may present unknown hazards and should be used with caution. Although certain hazards are described herein, we cannot guarantee that these are the only hazards that exist.",
                             OSHASstatus = "This material is considered hazardous by the OSHA Hazard Communication Standard (29 CFR 1910.1200).",
                             Odor = "Characteristic.",
                             OtherMeansOfId = "ethyl alcohol; ALCOHOL; Ethyl alcohol (Ethanol); EtOH; Grain alcohol; Cologne spirit; Denatured Alcohol; METHYLCARBINOL",
@@ -417,6 +722,40 @@ namespace ChemicalSDS.Migrations
                             ProductType = "Liquid.",
                             ProductUse = "Synthetic/Analytical chemistry.",
                             Quantity = 5.5m,
+                            References = "Not available.",
+                            RegChemWeaponConvention = "Not listed.",
+                            RegCleanAirActClassI = "Not listed",
+                            RegCleanAirActClassII = "Not listed",
+                            RegCleanAirActHaps = "Not listed",
+                            RegDeaListI = "Not listed",
+                            RegDeaListII = "Not listed",
+                            RegInventoryAustralia = "This material is listed or exempted.",
+                            RegInventoryCanada = "This material is listed or exempted.",
+                            RegInventoryChina = "This material is listed or exempted.",
+                            RegInventoryEurope = "This material is listed or exempted.",
+                            RegInventoryJapanEncs = "This material is listed or exempted.",
+                            RegInventoryJapanIshl = "This material is listed or exempted.",
+                            RegInventoryKorea = "This material is listed or exempted.",
+                            RegInventoryMalaysia = "This material is listed or exempted.",
+                            RegInventoryNewZealand = "This material is listed or exempted.",
+                            RegInventoryPhilippines = "This material is listed or exempted.",
+                            RegInventoryTaiwan = "This material is listed or exempted.",
+                            RegInventoryThailand = "Not determined",
+                            RegInventoryTurkey = "This material is listed or exempted.",
+                            RegInventoryUnitedStates = "This material is listed or exempted.",
+                            RegInventoryVietnam = "Not determined",
+                            RegMontrealProtocol = "Not listed.",
+                            RegRotterdamConvention = "Not listed.",
+                            RegSara302Composition = "No products were found.",
+                            RegSara304RQ = "Not applicable.",
+                            RegSara311312Classification = "Refer to Section 2: Hazards Identification of this SDS for classification of substance.",
+                            RegStateMassachusetts = "This material is listed.",
+                            RegStateNewJersey = "This material is listed.",
+                            RegStateNewYork = "This material is not listed.",
+                            RegStatePennsylvania = "This material is listed.",
+                            RegStockholmConvention = "Not listed.",
+                            RegTscaCdrExempt = "Not determined",
+                            RegUneceAarhus = "Not listed.",
                             RelativeDensity = "0.8",
                             RespiratoryProtection = "Based on the hazard and potential for exposure, select a respirator that meets the appropriate standard or certification.",
                             SDSNumber = "001114",

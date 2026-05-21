@@ -1,10 +1,22 @@
 @model ChemicalSDS.Models.Chemical
 <h3 class="sds-section-title"><i class="fas fa-truck"></i> Section 14. Transport information</h3>
 <div class="row sds-field-grid g-3">
-    <div class="col-md-3"><label asp-for="UNNumber" class="form-label">UN number</label><input asp-for="UNNumber" class="form-control" placeholder="UN1170" /></div>
-    <div class="col-md-9"><label asp-for="UNProperShippingName" class="form-label">UN proper shipping name</label><input asp-for="UNProperShippingName" class="form-control" /></div>
-    <div class="col-md-4"><label asp-for="TransportHazardClass" class="form-label">Transport hazard class</label><input asp-for="TransportHazardClass" class="form-control" /></div>
-    <div class="col-md-4"><label asp-for="PackingGroup" class="form-label">Packing group</label><input asp-for="PackingGroup" class="form-control" /></div>
-    <div class="col-md-4"><label asp-for="EnvironmentalHazardsTransport" class="form-label">Environmental hazards</label><input asp-for="EnvironmentalHazardsTransport" class="form-control" /></div>
+    <div class="col-12"><h5 class="sds-subheading">Transport regulations (DOT, TDG, Mexico, IMDG, IATA)</h5></div>
+    <div class="col-12">
+        <partial name="Sections/_TransportRegulationsGrid" model="Model" />
+    </div>
+    <input type="hidden" asp-for="UNNumber" id="UNNumber" />
+    <input type="hidden" asp-for="UNProperShippingName" id="UNProperShippingName" />
+    <input type="hidden" asp-for="TransportHazardClass" id="TransportHazardClass" />
+    <input type="hidden" asp-for="PackingGroup" id="PackingGroup" />
+    <input type="hidden" asp-for="EnvironmentalHazardsTransport" id="EnvironmentalHazardsTransport" />
+
+    <div class="col-12"><h5 class="sds-subheading mt-2">Additional information</h5></div>
+    <div class="col-12"><label asp-for="TransportDotClassification" class="form-label">DOT classification (limited quantity, quantity limitation, special provisions)</label><textarea asp-for="TransportDotClassification" class="form-control" rows="3"></textarea></div>
+    <div class="col-12"><label asp-for="TransportTdgClassification" class="form-label">TDG classification</label><textarea asp-for="TransportTdgClassification" class="form-control" rows="3"></textarea></div>
+    <div class="col-12"><label asp-for="TransportIataClassification" class="form-label">IATA (quantity limitation, limited quantities)</label><textarea asp-for="TransportIataClassification" class="form-control" rows="3"></textarea></div>
+
+    <div class="col-12"><h5 class="sds-subheading mt-2">Special precautions &amp; bulk transport</h5></div>
     <div class="col-12"><label asp-for="TransportSpecialPrecautions" class="form-label">Special precautions for user</label><textarea asp-for="TransportSpecialPrecautions" class="form-control" rows="3"></textarea></div>
+    <div class="col-12"><label asp-for="TransportBulkMarpol" class="form-label">Transport in bulk according to Annex II of MARPOL and the IBC Code</label><textarea asp-for="TransportBulkMarpol" class="form-control" rows="2" placeholder="Not available."></textarea></div>
 </div>

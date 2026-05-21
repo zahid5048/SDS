@@ -6,8 +6,8 @@
         <textarea asp-for="OSHASstatus" class="form-control" rows="2"></textarea>
     </div>
     <div class="col-md-6">
-        <label asp-for="Classification" class="form-label">Classification</label>
-        <input asp-for="Classification" class="form-control" />
+        <label asp-for="Classification" class="form-label">Classification of the substance/mixture</label>
+        <input asp-for="Classification" class="form-control" placeholder="e.g. FLAMMABLE LIQUIDS - Category 2" />
     </div>
     <div class="col-md-6">
         <label asp-for="SignalWord" class="form-label">Signal word</label>
@@ -17,6 +17,9 @@
             <option value="Warning">Warning</option>
         </select>
     </div>
+
+    <partial name="Sections/_GhsPictogramPicker" model="Model" />
+
     <div class="col-12">
         <label asp-for="HazardStatements" class="form-label">Hazard statements</label>
         <textarea asp-for="HazardStatements" class="form-control" rows="3"></textarea>
@@ -26,7 +29,7 @@
     <div class="col-12"><label asp-for="PrecautionaryResponse" class="form-label">Precautionary — Response</label><textarea asp-for="PrecautionaryResponse" class="form-control" rows="2"></textarea></div>
     <div class="col-md-6"><label asp-for="PrecautionaryStorage" class="form-label">Precautionary — Storage</label><textarea asp-for="PrecautionaryStorage" class="form-control" rows="2"></textarea></div>
     <div class="col-md-6"><label asp-for="PrecautionaryDisposal" class="form-label">Precautionary — Disposal</label><textarea asp-for="PrecautionaryDisposal" class="form-control" rows="2"></textarea></div>
-    <div class="col-md-4"><label asp-for="HazardsNotOtherwiseClassified" class="form-label">Hazards not otherwise classified</label><input asp-for="HazardsNotOtherwiseClassified" class="form-control" /></div>
-    <div class="col-md-4"><label asp-for="DateOfRevision" class="form-label">Date of issue / revision</label><input asp-for="DateOfRevision" class="form-control" /></div>
-    <div class="col-md-4"><label asp-for="DateOfPreviousIssue" class="form-label">Date of previous issue</label><input asp-for="DateOfPreviousIssue" class="form-control" /></div>
+    <div class="col-md-6"><label asp-for="HazardsNotOtherwiseClassified" class="form-label">Hazards not otherwise classified</label><input asp-for="HazardsNotOtherwiseClassified" class="form-control" /></div>
+    <div class="col-md-3"><label asp-for="DateOfRevision" class="form-label">Date of issue / revision (optional)</label><input asp-for="DateOfRevision" class="form-control" /></div>
+    <div class="col-md-3"><label asp-for="DateOfPreviousIssue" class="form-label">Date of previous issue (optional)</label><input asp-for="DateOfPreviousIssue" class="form-control" /></div>
 </div>

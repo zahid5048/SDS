@@ -1,10 +1,17 @@
 @model ChemicalSDS.Models.Chemical
 <h3 class="sds-section-title"><i class="fas fa-kit-medical"></i> Section 4. First aid measures</h3>
 <div class="row sds-field-grid g-3">
+    <div class="col-12"><h5 class="sds-subheading">Description of first aid measures</h5></div>
     <div class="col-md-6"><label asp-for="EyeContactFirstAid" class="form-label">Eye contact</label><textarea asp-for="EyeContactFirstAid" class="form-control" rows="4"></textarea></div>
     <div class="col-md-6"><label asp-for="InhalationFirstAid" class="form-label">Inhalation</label><textarea asp-for="InhalationFirstAid" class="form-control" rows="4"></textarea></div>
     <div class="col-md-6"><label asp-for="SkinContactFirstAid" class="form-label">Skin contact</label><textarea asp-for="SkinContactFirstAid" class="form-control" rows="4"></textarea></div>
     <div class="col-md-6"><label asp-for="IngestionFirstAid" class="form-label">Ingestion</label><textarea asp-for="IngestionFirstAid" class="form-control" rows="4"></textarea></div>
-    <div class="col-12"><label asp-for="RoutesOfExposure" class="form-label">Routes of exposure / symptoms</label><textarea asp-for="RoutesOfExposure" class="form-control" rows="3"></textarea></div>
-    <div class="col-12"><label asp-for="ChronicHealthEffects" class="form-label">Chronic / delayed effects</label><textarea asp-for="ChronicHealthEffects" class="form-control" rows="2"></textarea></div>
+
+    <div class="col-12"><h5 class="sds-subheading mt-2">Most important symptoms and effects, both acute and delayed</h5></div>
+    <div class="col-12"><label asp-for="MedicalAttentionIndication" class="form-label">Indication of immediate medical attention and special treatment needed, if necessary</label><textarea asp-for="MedicalAttentionIndication" class="form-control" rows="3"></textarea></div>
+
+    <div class="col-12"><h5 class="sds-subheading mt-2">Notes to physician / treatment</h5></div>
+    <div class="col-md-6"><label asp-for="NotesToPhysician" class="form-label">Notes to physician</label><textarea asp-for="NotesToPhysician" class="form-control" rows="3"></textarea></div>
+    <div class="col-md-6"><label asp-for="SpecificTreatments" class="form-label">Specific treatments</label><textarea asp-for="SpecificTreatments" class="form-control" rows="3"></textarea></div>
+    <div class="col-12"><label asp-for="ProtectionOfFirstAiders" class="form-label">Protection of first-aiders</label><textarea asp-for="ProtectionOfFirstAiders" class="form-control" rows="3"></textarea></div>
 </div>

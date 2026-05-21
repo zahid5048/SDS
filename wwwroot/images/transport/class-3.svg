@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 126 126">
+  <polygon points="63,4 122,63 63,122 4,63" fill="#e3000f" stroke="#fff" stroke-width="3"/>
+  <path d="M63 88 C63 88 48 72 48 58 C48 50 54 44 63 44 C72 44 78 50 78 58 C78 72 63 88 63 88Z" fill="#fff"/>
+  <path d="M63 44 C63 34 59 26 52 20 M63 44 C63 34 67 26 74 20" stroke="#fff" stroke-width="3" stroke-linecap="round" fill="none"/>
+  <text x="63" y="112" text-anchor="middle" font-size="22" font-weight="bold" fill="#fff" font-family="Arial,sans-serif">3</text>
+</svg>

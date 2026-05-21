@@ -1,0 +1,39 @@
+@model ChemicalSDS.Models.Chemical
+@{
+    var rows = new List<string[]>();
+    if (!string.IsNullOrWhiteSpace(Model.BioaccumulativePotential) && Model.BioaccumulativePotential.Contains('|'))
+    {
+        foreach (var line in Model.BioaccumulativePotential.Split('\n', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries))
+            rows.Add(line.Split('|').Select(x => x.Trim()).ToArray());
+    }
+    if (rows.Count == 0) rows.Add(new[] { "", "", "", "" });
+}
+<div class="sds-grid-editor" data-grid="dynamic" data-cols="4" data-target="#BioaccumulativePotential">
+    <input type="hidden" asp-for="BioaccumulativePotential" id="BioaccumulativePotential" />
+    <div class="table-responsive">
+        <table class="table table-bordered sds-data-grid-table mb-2">
+            <thead>
+                <tr>
+                    <th>Product/ingredient name</th>
+                    <th>LogP<sub>ow</sub></th>
+                    <th>BCF</th>
+                    <th>Potential</th>
+                    <th class="sds-grid-actions-col"></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var r in rows)
+                {
+                    <tr>
+                        <td><input type="text" class="form-control form-control-sm" data-col="0" value="@(r.Length > 0 ? r[0] : "")" /></td>
+                        <td><input type="text" class="form-control form-control-sm" data-col="1" value="@(r.Length > 1 ? r[1] : "")" /></td>
+                        <td><input type="text" class="form-control form-control-sm" data-col="2" value="@(r.Length > 2 ? r[2] : "")" /></td>
+                        <td><input type="text" class="form-control form-control-sm" data-col="3" value="@(r.Length > 3 ? r[3] : "")" /></td>
+                        <td class="sds-grid-actions"><button type="button" class="btn btn-sm btn-outline-danger sds-grid-remove"><i class="fas fa-times"></i></button></td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    <button type="button" class="btn btn-sm btn-outline-success sds-grid-add"><i class="fas fa-plus"></i> Add row</button>
+</div>
