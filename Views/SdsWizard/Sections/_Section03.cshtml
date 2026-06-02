@@ -1,11 +1,173 @@
 @model ChemicalSDS.Models.Chemical
 <h3 class="sds-section-title"><i class="fas fa-flask"></i> Section 3. Composition/information on ingredients</h3>
+@{
+    var ingredientRows = new List<(string Ingredient, string Cas, string Percentage, string Classification)>();
+    var ingredients = (Model.IngredientName ?? string.Empty).Split('\n', StringSplitOptions.TrimEntries);
+    var casNumbers = (Model.CASNumber ?? string.Empty).Split('\n', StringSplitOptions.TrimEntries);
+    var percentages = (Model.Percentage ?? string.Empty).Split('\n', StringSplitOptions.TrimEntries);
+    var classifications = (Model.ProductCode ?? string.Empty).Split('\n', StringSplitOptions.TrimEntries);
+    var rowCount = Math.Max(Math.Max(ingredients.Length, casNumbers.Length), Math.Max(percentages.Length, classifications.Length));
+    if (rowCount == 0) rowCount = 1;
+
+    for (var i = 0; i < rowCount; i++)
+    {
+        ingredientRows.Add((
+            i < ingredients.Length ? ingredients[i] : string.Empty,
+            i < casNumbers.Length ? casNumbers[i] : string.Empty,
+            i < percentages.Length ? percentages[i] : string.Empty,
+            i < classifications.Length ? classifications[i] : string.Empty
+        ));
+    }
+}
 <div class="row sds-field-grid g-3">
-    <div class="col-md-4"><label asp-for="SubstanceMixture" class="form-label">Substance/mixture</label><input asp-for="SubstanceMixture" class="form-control" placeholder="Substance" /></div>
-    <div class="col-md-4"><label asp-for="ChemicalName" class="form-label">Chemical name</label><input asp-for="ChemicalName" class="form-control" /></div>
-    <div class="col-md-4"><label asp-for="ProductCode" class="form-label">Product code</label><input asp-for="ProductCode" class="form-control" placeholder="001114" /></div>
-    <div class="col-md-4"><label asp-for="CASNumber" class="form-label">CAS number</label><input asp-for="CASNumber" class="form-control" placeholder="64-17-5" /></div>
-    <div class="col-md-4"><label asp-for="IngredientName" class="form-label">Ingredient name</label><input asp-for="IngredientName" class="form-control" /></div>
-    <div class="col-md-4"><label asp-for="Percentage" class="form-label">%</label><input asp-for="Percentage" class="form-control" placeholder="100" /></div>
-    <div class="col-12"><label asp-for="OtherMeansOfId" class="form-label">Other means of identification</label><textarea asp-for="OtherMeansOfId" class="form-control" rows="2"></textarea></div>
+    <div class="col-12">
+        <label class="form-label">Ingredients</label>
+        <input type="hidden" asp-for="IngredientName" id="IngredientName" />
+        <input type="hidden" asp-for="CASNumber" id="CASNumber" />
+        <input type="hidden" asp-for="Percentage" id="Percentage" />
+        <input type="hidden" asp-for="ProductCode" id="ProductCode" />
+        <div class="d-flex flex-wrap align-items-center gap-2 mb-2">
+            <button type="button" class="btn btn-sm btn-outline-success" id="section3AddRow"><i class="fas fa-plus"></i> Add ingredient row</button>
+            <label for="section3ImportFile" class="btn btn-sm btn-outline-primary mb-0"><i class="fas fa-file-import"></i> Import Excel/CSV</label>
+            <input type="file" id="section3ImportFile" class="d-none" accept=".csv,.txt,.tsv" />
+            <span class="text-muted small">Excel file ko CSV format mein save karke upload karein.</span>
+        </div>
+
+        <div class="table-responsive">
+            <table class="table table-bordered sds-data-grid-table mb-2" id="section3IngredientsTable">
+                <thead>
+                    <tr>
+                        <th>Ingredient name</th>
+                        <th>CAS number</th>
+                        <th>%</th>
+                        <th>Category classification</th>
+                        <th class="sds-grid-actions-col"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var row in ingredientRows)
+                    {
+                        <tr>
+                            <td><input type="text" class="form-control form-control-sm s3-ingredient" value="@row.Ingredient" placeholder="e.g. ethanol" /></td>
+                            <td><input type="text" class="form-control form-control-sm s3-cas" value="@row.Cas" placeholder="64-17-5" /></td>
+                            <td><input type="text" class="form-control form-control-sm s3-percentage" value="@row.Percentage" placeholder="100" /></td>
+                            <td><input type="text" class="form-control form-control-sm s3-classification" value="@row.Classification" placeholder="001114" /></td>
+                            <td class="sds-grid-actions"><button type="button" class="btn btn-sm btn-outline-danger s3-remove-row" title="Remove row"><i class="fas fa-times"></i></button></td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="col-12">
+        <label asp-for="OtherMeansOfId" class="form-label">Other means of identification</label>
+        <textarea asp-for="OtherMeansOfId" class="form-control" rows="2"></textarea>
+    </div>
 </div>
+<script>
+    (() => {
+        const table = document.getElementById('section3IngredientsTable');
+        if (!table || table.dataset.initialized === '1') return;
+        table.dataset.initialized = '1';
+
+        const tbody = table.querySelector('tbody');
+        const ingredientHidden = document.getElementById('IngredientName');
+        const casHidden = document.getElementById('CASNumber');
+        const percentageHidden = document.getElementById('Percentage');
+        const classificationHidden = document.getElementById('ProductCode');
+        const addButton = document.getElementById('section3AddRow');
+        const importFileInput = document.getElementById('section3ImportFile');
+
+        function collectRows() {
+            return Array.from(tbody.querySelectorAll('tr'))
+                .map(tr => ({
+                    ingredient: tr.querySelector('.s3-ingredient')?.value?.trim() ?? '',
+                    cas: tr.querySelector('.s3-cas')?.value?.trim() ?? '',
+                    percentage: tr.querySelector('.s3-percentage')?.value?.trim() ?? '',
+                    classification: tr.querySelector('.s3-classification')?.value?.trim() ?? ''
+                }))
+                .filter(r => r.ingredient || r.cas || r.percentage || r.classification);
+        }
+
+        function syncHiddenFields() {
+            const rows = collectRows();
+            ingredientHidden.value = rows.map(r => r.ingredient).join('\n');
+            casHidden.value = rows.map(r => r.cas).join('\n');
+            percentageHidden.value = rows.map(r => r.percentage).join('\n');
+            classificationHidden.value = rows.map(r => r.classification).join('\n');
+        }
+
+        function buildRow(values) {
+            const row = values ?? {};
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td><input type="text" class="form-control form-control-sm s3-ingredient" value="${row.ingredient ?? ''}" placeholder="e.g. ethanol" /></td>
+                <td><input type="text" class="form-control form-control-sm s3-cas" value="${row.cas ?? ''}" placeholder="64-17-5" /></td>
+                <td><input type="text" class="form-control form-control-sm s3-percentage" value="${row.percentage ?? ''}" placeholder="100" /></td>
+                <td><input type="text" class="form-control form-control-sm s3-classification" value="${row.classification ?? ''}" placeholder="001114" /></td>
+                <td class="sds-grid-actions"><button type="button" class="btn btn-sm btn-outline-danger s3-remove-row" title="Remove row"><i class="fas fa-times"></i></button></td>`;
+            return tr;
+        }
+
+        function splitLine(line) {
+            return (line.includes('\t') ? line.split('\t') : line.split(',')).map(c => c.trim().replace(/^"|"$/g, ''));
+        }
+
+        function isHeaderRow(cols) {
+            const c0 = (cols[0] ?? '').toLowerCase();
+            const c1 = (cols[1] ?? '').toLowerCase();
+            return c0.includes('ingredient') && (c1.includes('cas') || c1 === 'cas number');
+        }
+
+        function parseDelimitedText(text) {
+            const lines = text.replace(/\r/g, '').split('\n').map(l => l.trim()).filter(Boolean);
+            const parsed = lines.map(line => {
+                const cols = splitLine(line);
+                return {
+                    ingredient: cols[0] ?? '',
+                    cas: cols[1] ?? '',
+                    percentage: cols[2] ?? '',
+                    classification: cols[3] ?? ''
+                };
+            });
+            if (parsed.length && isHeaderRow(splitLine(lines[0]))) parsed.shift();
+            return parsed;
+        }
+
+        tbody.addEventListener('input', syncHiddenFields);
+        tbody.addEventListener('click', (event) => {
+            const removeButton = event.target.closest('.s3-remove-row');
+            if (!removeButton) return;
+
+            const rows = tbody.querySelectorAll('tr');
+            if (rows.length === 1) {
+                rows[0].querySelectorAll('input').forEach(input => input.value = '');
+            } else {
+                removeButton.closest('tr')?.remove();
+            }
+            syncHiddenFields();
+        });
+
+        addButton?.addEventListener('click', () => {
+            tbody.appendChild(buildRow());
+        });
+
+        importFileInput?.addEventListener('change', (event) => {
+            const file = event.target.files?.[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = () => {
+                const rows = parseDelimitedText(String(reader.result ?? '')).filter(r => r.ingredient || r.cas || r.percentage || r.classification);
+                if (!rows.length) return;
+                tbody.innerHTML = '';
+                rows.forEach(row => tbody.appendChild(buildRow(row)));
+                syncHiddenFields();
+            };
+            reader.readAsText(file);
+            importFileInput.value = '';
+        });
+
+        syncHiddenFields();
+    })();
+</script>

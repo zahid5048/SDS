@@ -113,12 +113,49 @@
     <div id="sec3" class="sds-section">
         <div class="section-header"><h4><i class="fas fa-flask"></i> Section 3: Composition / Ingredients</h4></div>
         <div class="section-body">
-            <table class="table table-bordered mb-0">
-                <tr><th>Substance/Mixture</th><td>@Model.SubstanceMixture</td></tr>
-                <tr><th>Ingredient Name</th><td>@Model.IngredientName</td></tr>
-                <tr><th>CAS Number</th><td>@Model.CASNumber</td></tr>
-                <tr><th>Percentage</th><td>@Model.Percentage</td></tr>
-            </table>
+            @{
+                var s3Ingredients = (Model.IngredientName ?? string.Empty).Split('\n', StringSplitOptions.TrimEntries);
+                var s3CasNumbers = (Model.CASNumber ?? string.Empty).Split('\n', StringSplitOptions.TrimEntries);
+                var s3Percentages = (Model.Percentage ?? string.Empty).Split('\n', StringSplitOptions.TrimEntries);
+                var s3Classifications = (Model.ProductCode ?? string.Empty).Split('\n', StringSplitOptions.TrimEntries);
+                var hasMultiIngredients = s3Ingredients.Length > 1 || s3CasNumbers.Length > 1 || s3Percentages.Length > 1 || s3Classifications.Length > 1;
+            }
+            @if (hasMultiIngredients)
+            {
+                var s3RowCount = Math.Max(Math.Max(s3Ingredients.Length, s3CasNumbers.Length), Math.Max(s3Percentages.Length, s3Classifications.Length));
+                <table class="table table-bordered mb-2">
+                    <thead>
+                        <tr>
+                            <th>Ingredient Name</th>
+                            <th>CAS Number</th>
+                            <th>Percentage</th>
+                            <th>Category Classification</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @for (var i = 0; i < s3RowCount; i++)
+                        {
+                            <tr>
+                                <td>@(i < s3Ingredients.Length ? s3Ingredients[i] : "-")</td>
+                                <td>@(i < s3CasNumbers.Length ? s3CasNumbers[i] : "-")</td>
+                                <td>@(i < s3Percentages.Length ? s3Percentages[i] : "-")</td>
+                                <td>@(i < s3Classifications.Length ? s3Classifications[i] : "-")</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+                <div><strong>Substance/Mixture:</strong> @(string.IsNullOrWhiteSpace(Model.SubstanceMixture) ? "-" : Model.SubstanceMixture)</div>
+            }
+            else
+            {
+                <table class="table table-bordered mb-0">
+                    <tr><th>Substance/Mixture</th><td>@Model.SubstanceMixture</td></tr>
+                    <tr><th>Ingredient Name</th><td>@Model.IngredientName</td></tr>
+                    <tr><th>CAS Number</th><td>@Model.CASNumber</td></tr>
+                    <tr><th>Percentage</th><td>@Model.Percentage</td></tr>
+                    <tr><th>Category Classification</th><td>@Model.ProductCode</td></tr>
+                </table>
+            }
         </div>
     </div>
 
