@@ -64,7 +64,7 @@ namespace ChemicalSDS.Services
                 row.RelativeItem().Column(col =>
                 {
                     col.Item().Text("SAFETY DATA SHEET").FontSize(14).Bold().FontColor(Colors.White);
-                    col.Item().Text("C.I.W.C&E — DGJW Govt of Punjab").FontSize(8).FontColor("#c8e6c9");
+                    col.Item().Text("C.I.W.C&E — DGLW Govt of Punjab").FontSize(8).FontColor("#c8e6c9");
                 });
                 row.ConstantItem(130).AlignRight().Column(col =>
                 {
@@ -128,13 +128,80 @@ namespace ChemicalSDS.Services
             });
         }
 
-        private static void RenderSection3(ColumnDescriptor col, Chemical c) =>
-            Section(col, "3", "Composition / information on ingredients",
-                Row("Substance/Mixture", c.SubstanceMixture),
-                Row("Product code", c.ProductCode),
-                Row("Ingredient name", c.IngredientName),
-                Row("CAS number", c.CASNumber),
-                Row("Percentage", c.Percentage));
+        private static void RenderSection3(ColumnDescriptor col, Chemical c)
+        {
+            SectionStart(col, "3", "Composition / information on ingredients", body =>
+            {
+                AddRow(body, "Substance/Mixture", c.SubstanceMixture);
+                AddIngredientsTable(body, c);
+            });
+        }
+
+        private static void AddIngredientsTable(ColumnDescriptor body, Chemical c)
+        {
+            var rows = ParseIngredientRows(c);
+            if (rows.Count == 0) return;
+
+            body.Item().PaddingTop(4).PaddingBottom(4).Table(table =>
+            {
+                table.ColumnsDefinition(cols =>
+                {
+                    cols.RelativeColumn(2);
+                    cols.RelativeColumn(1.2f);
+                    cols.RelativeColumn(0.6f);
+                    cols.RelativeColumn(1.2f);
+                });
+
+                table.Header(header =>
+                {
+                    header.Cell().Background("#e8f5e9").Border(0.5f).BorderColor("#ccc")
+                        .Padding(3).Text("Ingredient name").Bold().FontSize(7);
+                    header.Cell().Background("#e8f5e9").Border(0.5f).BorderColor("#ccc")
+                        .Padding(3).Text("CAS number").Bold().FontSize(7);
+                    header.Cell().Background("#e8f5e9").Border(0.5f).BorderColor("#ccc")
+                        .Padding(3).Text("%").Bold().FontSize(7);
+                    header.Cell().Background("#e8f5e9").Border(0.5f).BorderColor("#ccc")
+                        .Padding(3).Text("Category classification").Bold().FontSize(7);
+                });
+
+                foreach (var row in rows)
+                {
+                    table.Cell().Border(0.5f).BorderColor("#ddd").Padding(3)
+                        .Text(row.Ingredient).FontSize(7);
+                    table.Cell().Border(0.5f).BorderColor("#ddd").Padding(3)
+                        .Text(row.Cas).FontSize(7);
+                    table.Cell().Border(0.5f).BorderColor("#ddd").Padding(3)
+                        .Text(row.Percentage).FontSize(7);
+                    table.Cell().Border(0.5f).BorderColor("#ddd").Padding(3)
+                        .Text(row.Classification).FontSize(7);
+                }
+            });
+        }
+
+        private static List<(string Ingredient, string Cas, string Percentage, string Classification)> ParseIngredientRows(Chemical c)
+        {
+            var ingredients = (c.IngredientName ?? string.Empty).Split('\n', StringSplitOptions.TrimEntries);
+            var casNumbers = (c.CASNumber ?? string.Empty).Split('\n', StringSplitOptions.TrimEntries);
+            var percentages = (c.Percentage ?? string.Empty).Split('\n', StringSplitOptions.TrimEntries);
+            var classifications = (c.ProductCode ?? string.Empty).Split('\n', StringSplitOptions.TrimEntries);
+            var rowCount = Math.Max(Math.Max(ingredients.Length, casNumbers.Length),
+                Math.Max(percentages.Length, classifications.Length));
+
+            var rows = new List<(string Ingredient, string Cas, string Percentage, string Classification)>();
+            for (var i = 0; i < rowCount; i++)
+            {
+                var ingredient = i < ingredients.Length ? ingredients[i] : "";
+                var cas = i < casNumbers.Length ? casNumbers[i] : "";
+                var percentage = i < percentages.Length ? percentages[i] : "";
+                var classification = i < classifications.Length ? classifications[i] : "";
+                if (string.IsNullOrWhiteSpace(ingredient) && string.IsNullOrWhiteSpace(cas)
+                    && string.IsNullOrWhiteSpace(percentage) && string.IsNullOrWhiteSpace(classification))
+                    continue;
+                rows.Add((ingredient, cas, percentage, classification));
+            }
+
+            return rows;
+        }
 
         private static void RenderSection4(ColumnDescriptor col, Chemical c) =>
             Section(col, "4", "First aid measures",
@@ -407,33 +474,13 @@ namespace ChemicalSDS.Services
         {
             SectionStart(col, "16", "Other information", body =>
             {
-                var hmisH = c.HmisHealth ?? ParseRating(c.HMISRatings, "Health");
-                var hmisF = c.HmisFlammability ?? ParseRating(c.HMISRatings, "Flammability");
-                var hmisP = c.HmisPhysicalHazards ?? ParseRating(c.HMISRatings, "Physical");
-                if (!string.IsNullOrWhiteSpace(hmisH) || !string.IsNullOrWhiteSpace(hmisF) || !string.IsNullOrWhiteSpace(hmisP))
-                {
-                    body.Item().Text("Hazardous Material Information System (U.S.A.)").Bold().FontSize(8);
-                    AddPipeTable(body, "", ["Category", "Rating"],
-                        $"Health|{hmisH ?? "—"}\nFlammability|{hmisF ?? "—"}\nPhysical hazards|{hmisP ?? "—"}");
-                    if (!string.IsNullOrWhiteSpace(c.HmisCautionNote))
-                        body.Item().PaddingBottom(4).Text(c.HmisCautionNote).FontSize(7).Italic();
-                }
-
-                var nfpaH = c.NfpaHealth ?? ParseRating(c.NFPARatings, "Health");
-                var nfpaF = c.NfpaFlammability ?? ParseRating(c.NFPARatings, "Flammability");
-                var nfpaR = c.NfpaReactivity ?? ParseRating(c.NFPARatings, "Instability") ?? ParseRating(c.NFPARatings, "Reactivity");
-                if (!string.IsNullOrWhiteSpace(nfpaH) || !string.IsNullOrWhiteSpace(nfpaF))
-                {
-                    body.Item().PaddingTop(4).Text("NFPA 704 (U.S.A.)").Bold().FontSize(8);
-                    body.Item().Text($"Health: {nfpaH}  |  Flammability: {nfpaF}  |  Reactivity: {nfpaR}  |  Special: {c.NfpaSpecial ?? "—"}").FontSize(8);
-                    if (!string.IsNullOrWhiteSpace(c.NfpaCopyrightNote))
-                        body.Item().Text(c.NfpaCopyrightNote).FontSize(7).Italic();
-                }
+                AddHmisBlock(body, c);
+                AddNfpa704Block(body, c);
 
                 if (!string.IsNullOrWhiteSpace(c.ClassificationProcedure))
                     AddPipeTable(body, "Procedure used to derive the classification",
                         ["Classification", "Justification"],
-                        $"{c.ClassificationProcedure}|{c.ClassificationJustification}");
+                        $"{c.ClassificationProcedure}|{c.ClassificationJustification ?? ""}");
 
                 AddRows(body, c,
                     Row("Date of printing", c.DateOfPrinting),
@@ -441,26 +488,85 @@ namespace ChemicalSDS.Services
                     Row("Date of previous issue", c.DateOfPreviousIssue),
                     Row("Version", c.Version));
 
-                if (c.Quantity > 0 || !string.IsNullOrWhiteSpace(c.StorageLocation) || !string.IsNullOrWhiteSpace(c.Unit))
-                {
-                    body.Item().PaddingTop(4).Text("Lab inventory (internal)").Bold().FontColor("#1565c0").FontSize(8);
-                    AddRows(body, c,
-                        Row("Quantity", c.Quantity > 0 ? $"{c.Quantity} {c.Unit}".Trim() : c.Unit),
-                        Row("Storage location", c.StorageLocation));
-                }
-
-                body.Item().PaddingTop(6).AlignCenter().Text("UN = United Nations").FontSize(8);
-                AddRow(body, "References", string.IsNullOrWhiteSpace(c.References) ? "Not available." : c.References);
-
                 if (!string.IsNullOrWhiteSpace(c.Abbreviations))
                 {
                     body.Item().PaddingTop(4).Text("Key to abbreviations").Bold().FontColor("#1565c0").FontSize(8);
-                    body.Item().Text(c.Abbreviations).FontSize(7);
+                    body.Item().Text(c.Abbreviations.Replace("\r\n", "\n")).FontSize(7).LineHeight(1.25f);
                 }
 
+                body.Item().PaddingTop(8).AlignCenter().Text("UN = United Nations").FontSize(8);
+                AddRow(body, "References", string.IsNullOrWhiteSpace(c.References) ? "Not available." : c.References);
+
                 body.Item().PaddingTop(6).Text("Notice to reader").Bold().FontColor("#1565c0").FontSize(8);
-                body.Item().Text(c.NoticeToReader ?? DefaultNotice).FontSize(8).Bold();
+                body.Item().Text(c.NoticeToReader ?? DefaultNotice).FontSize(8).LineHeight(1.35f);
             });
+        }
+
+        private static void AddHmisBlock(ColumnDescriptor body, Chemical c)
+        {
+            var hmisH = c.HmisHealth ?? ParseRating(c.HMISRatings, "Health");
+            var hmisF = c.HmisFlammability ?? ParseRating(c.HMISRatings, "Flammability");
+            var hmisP = c.HmisPhysicalHazards ?? ParseRating(c.HMISRatings, "Physical");
+            if (string.IsNullOrWhiteSpace(hmisH) && string.IsNullOrWhiteSpace(hmisF) && string.IsNullOrWhiteSpace(hmisP))
+                return;
+
+            body.Item().Text("Hazardous Material Information System (U.S.A.)").Bold().FontSize(8);
+            AddHmisRatingTable(body, hmisH ?? "—", hmisF ?? "—", hmisP ?? "—");
+
+            if (!string.IsNullOrWhiteSpace(c.HmisCautionNote))
+                body.Item().PaddingTop(4).PaddingBottom(4).Text(c.HmisCautionNote).FontSize(7).FontColor(Colors.Grey.Medium);
+        }
+
+        private static void AddHmisRatingTable(ColumnDescriptor body, string health, string flammability, string physical)
+        {
+            body.Item().PaddingTop(4).PaddingBottom(4).Width(210).Table(table =>
+            {
+                table.ColumnsDefinition(cols =>
+                {
+                    cols.ConstantColumn(105);
+                    cols.ConstantColumn(105);
+                });
+
+                table.Cell().Background("#00bcd4").Border(0.5f).BorderColor("#cccccc").Padding(5)
+                    .Text("Health").Bold().FontSize(8).FontColor(Colors.White);
+                table.Cell().Background(Colors.White).Border(0.5f).BorderColor("#cccccc").Padding(5)
+                    .AlignCenter().AlignMiddle().Text(health).Bold().FontSize(12);
+
+                table.Cell().Background("#e53935").Border(0.5f).BorderColor("#cccccc").Padding(5)
+                    .Text("Flammability").Bold().FontSize(8).FontColor(Colors.White);
+                table.Cell().Background(Colors.White).Border(0.5f).BorderColor("#cccccc").Padding(5)
+                    .AlignCenter().AlignMiddle().Text(flammability).Bold().FontSize(12);
+
+                table.Cell().Background("#ff9800").Border(0.5f).BorderColor("#cccccc").Padding(5)
+                    .Text("Physical hazards").Bold().FontSize(8).FontColor("#222222");
+                table.Cell().Background(Colors.White).Border(0.5f).BorderColor("#cccccc").Padding(5)
+                    .AlignCenter().AlignMiddle().Text(physical).Bold().FontSize(12);
+            });
+        }
+
+        private static void AddNfpa704Block(ColumnDescriptor body, Chemical c)
+        {
+            var nfpaH = c.NfpaHealth ?? ParseRatingContains(c.NFPARatings, "Health");
+            var nfpaF = c.NfpaFlammability ?? ParseRatingContains(c.NFPARatings, "Flammability");
+            var nfpaR = c.NfpaReactivity
+                ?? ParseRatingContains(c.NFPARatings, "Instability")
+                ?? ParseRatingContains(c.NFPARatings, "Reactivity");
+            var nfpaSpecial = c.NfpaSpecial;
+
+            if (string.IsNullOrWhiteSpace(nfpaH) && string.IsNullOrWhiteSpace(nfpaF) && string.IsNullOrWhiteSpace(nfpaR)
+                && string.IsNullOrWhiteSpace(nfpaSpecial))
+                return;
+
+            body.Item().PaddingTop(6).Text("National Fire Protection Association (U.S.A.)").Bold().FontSize(8);
+
+            var diamondPng = Nfpa704PdfRenderer.Render(nfpaF, nfpaH, nfpaR, nfpaSpecial);
+            if (diamondPng is { Length: > 0 })
+            {
+                body.Item().PaddingTop(6).PaddingBottom(4).Width(146).Image(diamondPng).FitWidth();
+            }
+
+            if (!string.IsNullOrWhiteSpace(c.NfpaCopyrightNote))
+                body.Item().PaddingTop(2).Text(c.NfpaCopyrightNote).FontSize(7).FontColor(Colors.Grey.Medium);
         }
 
         private void RenderGhsPictograms(ColumnDescriptor body, Chemical chem)
@@ -709,6 +815,20 @@ namespace ChemicalSDS.Services
             foreach (var part in text.Split(',', StringSplitOptions.TrimEntries))
             {
                 if (part.StartsWith(key, StringComparison.OrdinalIgnoreCase))
+                {
+                    var idx = part.IndexOf(':');
+                    return idx >= 0 ? part[(idx + 1)..].Trim() : part;
+                }
+            }
+            return null;
+        }
+
+        private static string? ParseRatingContains(string? text, string key)
+        {
+            if (string.IsNullOrWhiteSpace(text)) return null;
+            foreach (var part in text.Split(',', StringSplitOptions.TrimEntries))
+            {
+                if (part.Contains(key, StringComparison.OrdinalIgnoreCase))
                 {
                     var idx = part.IndexOf(':');
                     return idx >= 0 ? part[(idx + 1)..].Trim() : part;

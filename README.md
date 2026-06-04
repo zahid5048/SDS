@@ -1,6 +1,6 @@
 # Chemical SDS System
 
-Chemical Safety Data Sheet (SDS) management for **C.I.W.C&E — DGJW Govt of Punjab**.
+Chemical Safety Data Sheet (SDS) management for **C.I.W.C&E — DGLW Govt of Punjab**.
 
 ASP.NET Core MVC app with 16-section SDS wizard, dashboard, PDF export, and user management.
 
