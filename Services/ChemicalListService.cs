@@ -123,7 +123,8 @@ namespace ChemicalSDS.Services
             var lateProgress = await activeQuery.CountAsync(c => c.IsDraft && c.LastCompletedSection >= 9 && c.LastCompletedSection <= 15);
             charts.ProgressValues = [notStarted, midProgress, lateProgress, model.CompletedCount];
 
-            var startMonth = new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1).AddMonths(-5);
+            var utcNow = DateTime.UtcNow;
+            var startMonth = new DateTime(utcNow.Year, utcNow.Month, 1, 0, 0, 0, DateTimeKind.Utc).AddMonths(-5);
             var chemicals = await activeQuery
                 .Where(c => c.CreatedAt >= startMonth)
                 .Select(c => c.CreatedAt)

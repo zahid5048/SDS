@@ -13,6 +13,38 @@ namespace ChemicalSDS.Data
         public DbSet<Chemical> Chemicals { get; set; }
         public DbSet<User> Users { get; set; }
 
+        public override int SaveChanges()
+        {
+            NormalizeDateTimes();
+            return base.SaveChanges();
+        }
+
+        public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+        {
+            NormalizeDateTimes();
+            return base.SaveChangesAsync(cancellationToken);
+        }
+
+        private void NormalizeDateTimes()
+        {
+            foreach (var entry in ChangeTracker.Entries())
+            {
+                foreach (var property in entry.Properties)
+                {
+                    if (property.CurrentValue is DateTime dt)
+                        property.CurrentValue = ToUtc(dt);
+                }
+            }
+        }
+
+        private static DateTime ToUtc(DateTime value) =>
+            value.Kind switch
+            {
+                DateTimeKind.Utc => value,
+                DateTimeKind.Local => value.ToUniversalTime(),
+                _ => DateTime.SpecifyKind(value, DateTimeKind.Utc)
+            };
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -186,7 +218,7 @@ namespace ChemicalSDS.Data
                 Quantity = 5.5m,
                 Unit = "Liters",
                 StorageLocation = "Flammable Cabinet A-12",
-                CreatedAt = new DateTime(2024, 1, 1),
+                CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, DateTimeKind.Utc),
                 LastCompletedSection = 16,
                 IsDraft = false,
                 SubstanceMixture = "Substance",

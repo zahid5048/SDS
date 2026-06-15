@@ -252,7 +252,7 @@ namespace ChemicalSDS.Models
         public decimal Quantity { get; set; }
         public string? Unit { get; set; } = "Liters";
         public string? StorageLocation { get; set; }
-        public DateTime CreatedAt { get; set; } = DateTime.Now;
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
         // Soft delete
         public bool IsDeleted { get; set; }
