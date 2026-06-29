@@ -64,7 +64,7 @@ namespace ChemicalSDS.Services
                 row.RelativeItem().Column(col =>
                 {
                     col.Item().Text("SAFETY DATA SHEET").FontSize(14).Bold().FontColor(Colors.White);
-                    col.Item().Text("C.I.W.C&E — DGJW Govt of Punjab").FontSize(8).FontColor("#c8e6c9");
+                    col.Item().Text("C.I.W.C&E — DGLW Govt of Punjab").FontSize(8).FontColor("#c8e6c9");
                 });
                 row.ConstantItem(130).AlignRight().Column(col =>
                 {
