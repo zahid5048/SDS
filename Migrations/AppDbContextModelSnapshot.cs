@@ -514,6 +514,75 @@ namespace ChemicalSDS.Migrations
                     b.Property<string>("SafeStorageConditions")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("Sec01Manufacturer")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Sec01Subsections")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Sec02Blocks")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Sec03Blocks")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Sec04Subsections")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Sec05Subsections")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Sec06Subsections")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Sec07Subsections")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Sec08Subsections")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Sec09SolventContent")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Sec09Subsections")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Sec09Voc")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Sec10Subsections")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Sec11Subsections")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Sec12Subsections")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Sec13Subsections")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Sec14Subsections")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Sec15Subsections")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Sec16FullTextGhsClassifications")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Sec16FullTextHPhrases")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Sec16RecommendedApplications")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Sec16RevisionPreparedFor")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Sec16Subsections")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Sensitization")
                         .HasColumnType("nvarchar(max)");
 
@@ -657,7 +726,7 @@ namespace ChemicalSDS.Migrations
                         new
                         {
                             Id = 1,
-                            Abbreviations = "ATE = Acute Toxicity Estimate\nBCF = Bioconcentration Factor\nGHS = Globally Harmonized System of Classification and Labelling of Chemicals\nIATA = International Air Transport Association\nIBC = Intermediate Bulk Container\nIMDG = International Maritime Dangerous Goods\nLogPow = logarithm of the octanol/water partition coefficient\nMARPOL = International Convention for the Prevention of Pollution From Ships, 1973 as modified by the Protocol of 1978. (\"Marpol\" = marine pollution)",
+                            Abbreviations = "• ADG: Australian Dangerous Goods Code\n• GHS: Globally Harmonized System of Classification and Labelling of Chemicals\n• HCIS: Hazardous Chemical Information System (Safe Work Australia)\n• WHS: Work Health and Safety",
                             AcuteToxicity = "Not available.",
                             AutoIgnitionTemp = "455°C (851°F)",
                             BioaccumulativePotential = "Not available.",
@@ -710,7 +779,7 @@ namespace ChemicalSDS.Migrations
                             NfpaFlammability = "4",
                             NfpaHealth = "1",
                             NfpaReactivity = "0",
-                            NoticeToReader = "To the best of our knowledge, the information contained herein is accurate. However, neither the above-named supplier, nor any of its subsidiaries, assumes any liability whatsoever for the accuracy or completeness of the information contained herein. Final determination of suitability of any material is the sole responsibility of the user. All materials may present unknown hazards and should be used with caution. Although certain hazards are described herein, we cannot guarantee that these are the only hazards that exist.",
+                            NoticeToReader = "To the best of our knowledge, the information contained herein is accurate.",
                             OSHASstatus = "This material is considered hazardous by the OSHA Hazard Communication Standard (29 CFR 1910.1200).",
                             Odor = "Characteristic.",
                             OtherMeansOfId = "ethyl alcohol; ALCOHOL; Ethyl alcohol (Ethanol); EtOH; Grain alcohol; Cologne spirit; Denatured Alcohol; METHYLCARBINOL",
@@ -765,6 +834,10 @@ namespace ChemicalSDS.Migrations
                             RespiratoryProtection = "Based on the hazard and potential for exposure, select a respirator that meets the appropriate standard or certification.",
                             SDSNumber = "001114",
                             SafeStorageConditions = "Store in accordance with local regulations. Store in a segregated and approved area. Store in original container protected from direct sunlight in a dry, cool and well-ventilated area, away from incompatible materials and food and drink. Eliminate all ignition sources. Separate from oxidizing materials. Keep container tightly closed and sealed until ready for use.",
+                            Sec16FullTextGhsClassifications = "• Skin Irrit. = Skin Irritation\n• Skin Sens. = Skin Sensitisation\n• Eye Irrit. = Eye Irritation\n• Aquatic Chronic = Chronic Aquatic Toxicity",
+                            Sec16FullTextHPhrases = "• H315: Causes skin irritation.\n• H317: May cause an allergic skin reaction.\n• H319: Causes serious eye irritation.\n• H411: Toxic to aquatic life with long lasting effects.",
+                            Sec16RecommendedApplications = "Concentrated perfumery raw material. Unsuitable for personal use as such.",
+                            Sec16RevisionPreparedFor = "Prepared for the Australian market.",
                             SignalWord = "Danger",
                             SkinContactFirstAid = "Flush contaminated skin with plenty of water. Remove contaminated clothing and shoes. Get medical attention if symptoms occur. Wash clothing before reuse. Clean shoes thoroughly before reuse.",
                             SmallSpillMethods = "Stop leak if without risk. Move containers from spill area. Use spark-proof tools and explosion-proof equipment. Dilute with water and mop up if water-soluble. Alternatively, or if water-insoluble, absorb with an inert dry material and place in an appropriate waste disposal container. Dispose of via a licensed waste disposal contractor.",

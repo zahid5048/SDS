@@ -26,10 +26,15 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 
 var app = builder.Build();
 
+// Dev: skip auto-migrate on every run (faster start). Run `dotnet ef database update` when schema changes.
+var applyMigrations = builder.Configuration.GetValue(
+    "Database:ApplyMigrationsOnStartup",
+    !app.Environment.IsDevelopment());
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-    db.Database.Migrate();
+    if (applyMigrations)
+        db.Database.Migrate();
     var auth = scope.ServiceProvider.GetRequiredService<ChemicalSDS.Services.UserAuthService>();
     await auth.EnsureAdminSeedAsync();
 }

@@ -9,244 +9,89 @@ namespace ChemicalSDS.Services
             switch (step)
             {
                 case 1:
-                    target.ProductIdentifier = source.ProductIdentifier;
-                    target.ChemicalName = source.ChemicalName;
-                    target.OtherMeansOfId = source.OtherMeansOfId;
-                    target.ProductType = source.ProductType;
-                    target.ProductUse = source.ProductUse;
-                    target.Synonym = source.Synonym;
-                    target.SDSNumber = source.SDSNumber;
-                    target.SupplierDetails = source.SupplierDetails;
-                    target.EmergencyPhone = source.EmergencyPhone;
+                    target.Sec01Subsections = source.Sec01Subsections;
+                    Sec01SubsectionCodec.SyncLegacyFields(target, source.Sec01Subsections);
+                    if (string.IsNullOrWhiteSpace(target.ProductIdentifier) &&
+                        !string.IsNullOrWhiteSpace(source.ProductIdentifier))
+                    {
+                        target.ProductIdentifier = source.ProductIdentifier.Trim();
+                    }
+                    if (!string.IsNullOrWhiteSpace(target.ProductIdentifier))
+                    {
+                        target.ChemicalName = string.IsNullOrWhiteSpace(source.ChemicalName)
+                            ? target.ProductIdentifier.Trim()
+                            : source.ChemicalName;
+                    }
                     break;
                 case 2:
-                    target.OSHASstatus = source.OSHASstatus;
-                    target.Classification = source.Classification;
-                    target.SignalWord = source.SignalWord;
-                    target.HazardStatements = source.HazardStatements;
-                    target.PrecautionaryGeneral = source.PrecautionaryGeneral;
-                    target.PrecautionaryPrevention = source.PrecautionaryPrevention;
-                    target.PrecautionaryResponse = source.PrecautionaryResponse;
-                    target.PrecautionaryStorage = source.PrecautionaryStorage;
-                    target.PrecautionaryDisposal = source.PrecautionaryDisposal;
-                    target.HazardsNotOtherwiseClassified = source.HazardsNotOtherwiseClassified;
-                    target.DateOfRevision = source.DateOfRevision;
-                    target.DateOfPreviousIssue = source.DateOfPreviousIssue;
-                    target.GhsPictogramCodes = source.GhsPictogramCodes;
+                    target.Sec02Blocks = source.Sec02Blocks;
+                    Sec02BlockCodec.SyncLegacyFields(target, source.Sec02Blocks);
+                    if (!string.IsNullOrWhiteSpace(source.GhsPictogramCodes))
+                        target.GhsPictogramCodes = source.GhsPictogramCodes;
+                    target.DateOfRevision = source.DateOfRevision ?? target.DateOfRevision;
+                    target.DateOfPreviousIssue = source.DateOfPreviousIssue ?? target.DateOfPreviousIssue;
                     if (!string.IsNullOrEmpty(source.GhsPictogramImagePath))
                         target.GhsPictogramImagePath = source.GhsPictogramImagePath;
                     break;
                 case 3:
-                    target.SubstanceMixture = source.SubstanceMixture;
+                    target.Sec03Blocks = source.Sec03Blocks;
+                    Sec03BlockCodec.SyncLegacyFields(target, source.Sec03Blocks);
                     target.ChemicalName = source.ChemicalName ?? target.ChemicalName;
-                    target.OtherMeansOfId = source.OtherMeansOfId ?? target.OtherMeansOfId;
-                    target.ProductCode = source.ProductCode;
-                    target.CASNumber = source.CASNumber;
-                    target.IngredientName = source.IngredientName;
-                    target.Percentage = source.Percentage;
+                    target.ProductCode = source.ProductCode ?? target.ProductCode;
                     break;
                 case 4:
-                    target.EyeContactFirstAid = source.EyeContactFirstAid;
-                    target.InhalationFirstAid = source.InhalationFirstAid;
-                    target.SkinContactFirstAid = source.SkinContactFirstAid;
-                    target.IngestionFirstAid = source.IngestionFirstAid;
-                    target.MedicalAttentionIndication = source.MedicalAttentionIndication;
-                    target.NotesToPhysician = source.NotesToPhysician;
-                    target.SpecificTreatments = source.SpecificTreatments;
-                    target.ProtectionOfFirstAiders = source.ProtectionOfFirstAiders;
+                    target.Sec04Subsections = source.Sec04Subsections;
+                    Sec04SubsectionCodec.SyncLegacyFields(target, source.Sec04Subsections);
                     break;
                 case 5:
-                    target.SuitableExtinguishingMedia = source.SuitableExtinguishingMedia;
-                    target.UnsuitableExtinguishingMedia = source.UnsuitableExtinguishingMedia;
-                    target.SpecificHazards = source.SpecificHazards;
-                    target.HazardousDecomposition = source.HazardousDecomposition ?? target.HazardousDecomposition;
-                    target.FlashPoint = source.FlashPoint;
-                    target.AutoIgnitionTemp = source.AutoIgnitionTemp;
-                    target.LowerExplosiveLimit = source.LowerExplosiveLimit;
-                    target.UpperExplosiveLimit = source.UpperExplosiveLimit;
-                    target.FirefighterProtectiveActions = source.FirefighterProtectiveActions;
-                    target.FirefighterProtectiveEquipment = source.FirefighterProtectiveEquipment;
+                    target.Sec05Subsections = source.Sec05Subsections;
+                    Sec05SubsectionCodec.SyncLegacyFields(target, source.Sec05Subsections);
                     break;
                 case 6:
-                    target.SpillNonEmergencyPersonnel = source.SpillNonEmergencyPersonnel;
-                    target.SpillEmergencyResponders = source.SpillEmergencyResponders;
-                    target.EnvironmentalPrecautionsSpill = source.EnvironmentalPrecautionsSpill;
-                    target.SmallSpillMethods = source.SmallSpillMethods;
-                    target.LargeSpillMethods = source.LargeSpillMethods;
+                    target.Sec06Subsections = source.Sec06Subsections;
+                    Sec06SubsectionCodec.SyncLegacyFields(target, source.Sec06Subsections);
                     break;
                 case 7:
-                    target.OccupationalHygiene = source.OccupationalHygiene;
-                    target.HandlingPrecautions = source.HandlingPrecautions;
-                    target.SafeStorageConditions = source.SafeStorageConditions;
+                    target.Sec07Subsections = source.Sec07Subsections;
+                    Sec07SubsectionCodec.SyncLegacyFields(target, source.Sec07Subsections);
                     break;
                 case 8:
-                    target.OccupationalExposureLimits = source.OccupationalExposureLimits;
-                    target.ExposureControls = source.ExposureControls;
-                    target.EnvironmentalExposureControls = source.EnvironmentalExposureControls;
-                    target.HygieneMeasures = source.HygieneMeasures;
-                    target.EyeProtection = source.EyeProtection;
-                    target.HandProtection = source.HandProtection;
-                    target.BodyProtection = source.BodyProtection;
-                    target.OtherSkinProtection = source.OtherSkinProtection;
-                    target.RespiratoryProtection = source.RespiratoryProtection;
+                    target.Sec08Subsections = source.Sec08Subsections;
+                    Sec08SubsectionCodec.SyncLegacyFields(target, source.Sec08Subsections);
                     break;
                 case 9:
-                    target.PhysicalState = source.PhysicalState;
-                    target.Color = source.Color;
-                    target.Odor = source.Odor;
-                    target.OdorThreshold = source.OdorThreshold;
-                    target.pH = source.pH;
-                    target.MeltingPoint = source.MeltingPoint;
-                    target.BoilingPoint = source.BoilingPoint;
-                    target.CriticalTemperature = source.CriticalTemperature;
-                    target.FlashPoint = source.FlashPoint ?? target.FlashPoint;
-                    target.EvaporationRate = source.EvaporationRate;
-                    target.Flammability = source.Flammability;
-                    target.LowerExplosiveLimit = source.LowerExplosiveLimit ?? target.LowerExplosiveLimit;
-                    target.UpperExplosiveLimit = source.UpperExplosiveLimit ?? target.UpperExplosiveLimit;
-                    target.VaporPressure = source.VaporPressure;
-                    target.VaporDensity = source.VaporDensity;
-                    target.SpecificVolume = source.SpecificVolume;
-                    target.GasDensity = source.GasDensity;
-                    target.RelativeDensity = source.RelativeDensity;
-                    target.Solubility = source.Solubility;
-                    target.SolubilityInWater = source.SolubilityInWater;
-                    target.PartitionCoefficient = source.PartitionCoefficient;
-                    target.AutoIgnitionTemp = source.AutoIgnitionTemp ?? target.AutoIgnitionTemp;
-                    target.DecompositionTemperature = source.DecompositionTemperature;
-                    target.Viscosity = source.Viscosity;
-                    target.FlowTimeIso2431 = source.FlowTimeIso2431;
-                    target.MolecularWeight = source.MolecularWeight;
+                    target.Sec09Subsections = source.Sec09Subsections;
+                    Sec09SubsectionCodec.SyncLegacyFields(target, source.Sec09Subsections);
                     break;
                 case 10:
-                    target.ChemicalStability = source.ChemicalStability;
-                    target.ConditionsToAvoid = source.ConditionsToAvoid;
-                    target.HazardousDecomposition = source.HazardousDecomposition;
-                    target.HazardousPolymerization = source.HazardousPolymerization;
-                    target.IncompatibleMaterials = source.IncompatibleMaterials ?? target.IncompatibleMaterials;
-                    target.PossibilityOfHazardousReactions = source.PossibilityOfHazardousReactions;
-                    target.Reactivity = source.Reactivity;
+                    target.Sec10Subsections = source.Sec10Subsections;
+                    Sec10SubsectionCodec.SyncLegacyFields(target, source.Sec10Subsections);
                     break;
                 case 11:
-                    target.AcuteToxicity = source.AcuteToxicity;
-                    target.IrritationCorrosion = source.IrritationCorrosion;
-                    target.Sensitization = source.Sensitization;
-                    target.Mutagenicity = source.Mutagenicity;
-                    target.Carcinogenicity = source.Carcinogenicity;
-                    target.CarcinogenicityClassification = source.CarcinogenicityClassification;
-                    target.ReproductiveToxicity = source.ReproductiveToxicity;
-                    target.Teratogenicity = source.Teratogenicity;
-                    target.TargetOrganToxicitySingle = source.TargetOrganToxicitySingle;
-                    target.TargetOrganToxicityRepeated = source.TargetOrganToxicityRepeated;
-                    target.AspirationHazard = source.AspirationHazard;
-                    target.RoutesOfExposure = source.RoutesOfExposure;
-                    target.AcuteHealthEffectsEye = source.AcuteHealthEffectsEye;
-                    target.AcuteHealthEffectsInhalation = source.AcuteHealthEffectsInhalation;
-                    target.AcuteHealthEffectsSkin = source.AcuteHealthEffectsSkin;
-                    target.AcuteHealthEffectsIngestion = source.AcuteHealthEffectsIngestion;
-                    target.ToxicologicalSymptomsEye = source.ToxicologicalSymptomsEye;
-                    target.ToxicologicalSymptomsInhalation = source.ToxicologicalSymptomsInhalation;
-                    target.ToxicologicalSymptomsSkin = source.ToxicologicalSymptomsSkin;
-                    target.ToxicologicalSymptomsIngestion = source.ToxicologicalSymptomsIngestion;
-                    target.ShortTermImmediateEffects = source.ShortTermImmediateEffects;
-                    target.ShortTermDelayedEffects = source.ShortTermDelayedEffects;
-                    target.LongTermImmediateEffects = source.LongTermImmediateEffects;
-                    target.LongTermDelayedEffects = source.LongTermDelayedEffects;
-                    target.ChronicHealthEffects = source.ChronicHealthEffects;
-                    target.ChronicEffectsGeneral = source.ChronicEffectsGeneral;
-                    target.ChronicCarcinogenicity = source.ChronicCarcinogenicity;
-                    target.ChronicMutagenicity = source.ChronicMutagenicity;
-                    target.ChronicTeratogenicity = source.ChronicTeratogenicity;
-                    target.DevelopmentalEffects = source.DevelopmentalEffects;
-                    target.FertilityEffects = source.FertilityEffects;
-                    target.AcuteToxicityEstimates = source.AcuteToxicityEstimates;
+                    target.Sec11Subsections = source.Sec11Subsections;
+                    Sec11SubsectionCodec.SyncLegacyFields(target, source.Sec11Subsections);
                     break;
                 case 12:
-                    target.Ecotoxicity = source.Ecotoxicity;
-                    target.BioaccumulativePotential = source.BioaccumulativePotential;
-                    target.PersistenceDegradability = source.PersistenceDegradability;
-                    target.MobilityInSoil = source.MobilityInSoil;
-                    target.OtherEcologicalEffects = source.OtherEcologicalEffects;
+                    target.Sec12Subsections = source.Sec12Subsections;
+                    Sec12SubsectionCodec.SyncLegacyFields(target, source.Sec12Subsections);
                     break;
                 case 13:
-                    target.DisposalMethods = source.DisposalMethods;
+                    target.Sec13Subsections = source.Sec13Subsections;
+                    Sec13SubsectionCodec.SyncLegacyFields(target, source.Sec13Subsections);
                     break;
                 case 14:
-                    target.TransportRegulations = source.TransportRegulations;
+                    target.Sec14Subsections = source.Sec14Subsections;
+                    Sec14SubsectionCodec.SyncLegacyFields(target, source.Sec14Subsections);
                     if (!string.IsNullOrEmpty(source.TransportHazardClassImages))
                         target.TransportHazardClassImages = source.TransportHazardClassImages;
-                    target.UNNumber = source.UNNumber;
-                    target.UNProperShippingName = source.UNProperShippingName;
-                    target.TransportHazardClass = source.TransportHazardClass;
-                    target.PackingGroup = source.PackingGroup;
-                    target.EnvironmentalHazardsTransport = source.EnvironmentalHazardsTransport;
-                    target.TransportDotClassification = source.TransportDotClassification;
-                    target.TransportTdgClassification = source.TransportTdgClassification;
-                    target.TransportIataClassification = source.TransportIataClassification;
-                    target.TransportSpecialPrecautions = source.TransportSpecialPrecautions;
-                    target.TransportBulkMarpol = source.TransportBulkMarpol;
                     break;
                 case 15:
-                    target.RegTscaCdrExempt = source.RegTscaCdrExempt;
-                    target.RegCleanAirActHaps = source.RegCleanAirActHaps;
-                    target.RegCleanAirActClassI = source.RegCleanAirActClassI;
-                    target.RegCleanAirActClassII = source.RegCleanAirActClassII;
-                    target.RegDeaListI = source.RegDeaListI;
-                    target.RegDeaListII = source.RegDeaListII;
-                    target.RegSara302Composition = source.RegSara302Composition;
-                    target.RegSara304RQ = source.RegSara304RQ;
-                    target.RegSara311312Classification = source.RegSara311312Classification;
-                    target.RegStateMassachusetts = source.RegStateMassachusetts;
-                    target.RegStateNewYork = source.RegStateNewYork;
-                    target.RegStateNewJersey = source.RegStateNewJersey;
-                    target.RegStatePennsylvania = source.RegStatePennsylvania;
-                    target.RegChemWeaponConvention = source.RegChemWeaponConvention;
-                    target.RegMontrealProtocol = source.RegMontrealProtocol;
-                    target.RegStockholmConvention = source.RegStockholmConvention;
-                    target.RegRotterdamConvention = source.RegRotterdamConvention;
-                    target.RegUneceAarhus = source.RegUneceAarhus;
-                    target.RegInventoryAustralia = source.RegInventoryAustralia;
-                    target.RegInventoryCanada = source.RegInventoryCanada;
-                    target.RegInventoryChina = source.RegInventoryChina;
-                    target.RegInventoryEurope = source.RegInventoryEurope;
-                    target.RegInventoryJapanEncs = source.RegInventoryJapanEncs;
-                    target.RegInventoryJapanIshl = source.RegInventoryJapanIshl;
-                    target.RegInventoryMalaysia = source.RegInventoryMalaysia;
-                    target.RegInventoryNewZealand = source.RegInventoryNewZealand;
-                    target.RegInventoryPhilippines = source.RegInventoryPhilippines;
-                    target.RegInventoryKorea = source.RegInventoryKorea;
-                    target.RegInventoryTaiwan = source.RegInventoryTaiwan;
-                    target.RegInventoryThailand = source.RegInventoryThailand;
-                    target.RegInventoryTurkey = source.RegInventoryTurkey;
-                    target.RegInventoryUnitedStates = source.RegInventoryUnitedStates;
-                    target.RegInventoryVietnam = source.RegInventoryVietnam;
-                    target.SARA302304 = source.RegSara302Composition ?? source.SARA302304;
-                    target.USFederalRegulations = source.USFederalRegulations;
-                    target.StateRegulations = source.StateRegulations;
-                    target.InternationalRegulations = source.InternationalRegulations;
-                    target.InventoryList = source.InventoryList;
+                    target.Sec15Subsections = source.Sec15Subsections;
+                    Sec15SubsectionCodec.SyncLegacyFields(target, source.Sec15Subsections);
                     break;
                 case 16:
-                    target.HmisHealth = source.HmisHealth;
-                    target.HmisFlammability = source.HmisFlammability;
-                    target.HmisPhysicalHazards = source.HmisPhysicalHazards;
-                    target.HmisCautionNote = source.HmisCautionNote;
-                    target.NfpaHealth = source.NfpaHealth;
-                    target.NfpaFlammability = source.NfpaFlammability;
-                    target.NfpaReactivity = source.NfpaReactivity;
-                    target.NfpaSpecial = source.NfpaSpecial;
-                    target.NfpaCopyrightNote = source.NfpaCopyrightNote;
-                    target.ClassificationProcedure = source.ClassificationProcedure ?? target.ClassificationProcedure;
-                    target.ClassificationJustification = source.ClassificationJustification;
-                    target.References = source.References;
-                    target.HMISRatings = BuildHmisString(source);
-                    target.NFPARatings = BuildNfpaString(source);
-                    target.Version = source.Version;
-                    target.DateOfRevision = source.DateOfRevision ?? target.DateOfRevision;
-                    target.DateOfPreviousIssue = source.DateOfPreviousIssue ?? target.DateOfPreviousIssue;
-                    target.DateOfPrinting = source.DateOfPrinting;
-                    target.NoticeToReader = source.NoticeToReader;
-                    target.Abbreviations = source.Abbreviations;
+                    target.Sec16Subsections = source.Sec16Subsections;
+                    Sec16SubsectionCodec.SyncLegacyFields(target, source.Sec16Subsections);
                     target.Quantity = source.Quantity;
                     target.Unit = source.Unit;
                     target.StorageLocation = source.StorageLocation;
@@ -268,14 +113,10 @@ namespace ChemicalSDS.Services
             error = null;
             if (step == 1)
             {
+                Sec01SubsectionCodec.SyncLegacyFields(model, model.Sec01Subsections);
                 if (string.IsNullOrWhiteSpace(model.ProductIdentifier))
                 {
-                    error = "GHS product identifier is required.";
-                    return false;
-                }
-                if (string.IsNullOrWhiteSpace(model.ChemicalName))
-                {
-                    error = "Chemical name is required.";
+                    error = "Section 1.1 Product identifier (description) is required.";
                     return false;
                 }
             }

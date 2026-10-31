@@ -163,7 +163,14 @@ namespace ChemicalSDS.Data
                 StateRegulations = "Massachusetts: This material is listed. New Jersey: This material is listed. Pennsylvania: This material is listed.",
                 InventoryList = "Australia: Listed. Canada: Listed. China: Listed. Europe: Listed. Japan: Listed. United States: Listed.",
 
-                // SECTION 16: OTHER INFORMATION
+                // SECTION 16: OTHER INFORMATION (Australian subsections)
+                Sec16FullTextHPhrases = "• H315: Causes skin irritation.\n• H317: May cause an allergic skin reaction.\n• H319: Causes serious eye irritation.\n• H411: Toxic to aquatic life with long lasting effects.",
+                Sec16FullTextGhsClassifications = "• Skin Irrit. = Skin Irritation\n• Skin Sens. = Skin Sensitisation\n• Eye Irrit. = Eye Irritation\n• Aquatic Chronic = Chronic Aquatic Toxicity",
+                Abbreviations = "• ADG: Australian Dangerous Goods Code\n• GHS: Globally Harmonized System of Classification and Labelling of Chemicals\n• HCIS: Hazardous Chemical Information System (Safe Work Australia)\n• WHS: Work Health and Safety",
+                Sec16RecommendedApplications = "Concentrated perfumery raw material. Unsuitable for personal use as such.",
+                Sec16RevisionPreparedFor = "Prepared for the Australian market.",
+                Version = "1",
+                DateOfRevision = "4/8/2019",
                 HmisHealth = "1",
                 HmisFlammability = "4",
                 HmisPhysicalHazards = "0",
@@ -175,12 +182,9 @@ namespace ChemicalSDS.Data
                 References = "Not available.",
                 HMISRatings = "Health: 1, Flammability: 4, Physical hazards: 0",
                 NFPARatings = "Health: 1, Flammability: 4, Instability/Reactivity: 0",
-                Version = "1",
-                DateOfRevision = "4/8/2019",
                 DateOfPrinting = "4/8/2019",
                 DateOfPreviousIssue = "No previous validation",
-                NoticeToReader = "To the best of our knowledge, the information contained herein is accurate. However, neither the above-named supplier, nor any of its subsidiaries, assumes any liability whatsoever for the accuracy or completeness of the information contained herein. Final determination of suitability of any material is the sole responsibility of the user. All materials may present unknown hazards and should be used with caution. Although certain hazards are described herein, we cannot guarantee that these are the only hazards that exist.",
-                Abbreviations = "ATE = Acute Toxicity Estimate\nBCF = Bioconcentration Factor\nGHS = Globally Harmonized System of Classification and Labelling of Chemicals\nIATA = International Air Transport Association\nIBC = Intermediate Bulk Container\nIMDG = International Maritime Dangerous Goods\nLogPow = logarithm of the octanol/water partition coefficient\nMARPOL = International Convention for the Prevention of Pollution From Ships, 1973 as modified by the Protocol of 1978. (\"Marpol\" = marine pollution)",
+                NoticeToReader = "To the best of our knowledge, the information contained herein is accurate.",
 
                 // Inventory
                 Quantity = 5.5m,

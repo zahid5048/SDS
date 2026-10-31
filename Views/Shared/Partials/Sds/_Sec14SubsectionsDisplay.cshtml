@@ -1,0 +1,31 @@
+@model ChemicalSDS.Models.Chemical
+@using ChemicalSDS.Models
+@{
+    var rows = Sec14SubsectionCodec.Parse(Sec14SubsectionCodec.ResolveStoredJson(Model));
+}
+@foreach (var row in rows)
+{
+    if (string.IsNullOrWhiteSpace(row.Heading) &&
+        string.IsNullOrWhiteSpace(row.Description) &&
+        !Sec01SubsectionCodec.HasFieldContent(row))
+    {
+        continue;
+    }
+    <div class="sds-regulatory-group"><strong class="sds-regulatory-group-title">@row.Heading</strong></div>
+    @if (!string.IsNullOrWhiteSpace(row.Description))
+    {
+        @foreach (var line in row.Description.Split('\n'))
+        {
+            if (string.IsNullOrWhiteSpace(line)) { continue; }
+            var trimmed = line.Trim();
+            if (trimmed.StartsWith("ADR /", StringComparison.OrdinalIgnoreCase))
+            {
+                <partial name="Partials/Sds/_SdsDetailBlock" model="@(new SdsDetailRow { Label = trimmed, Value = "" })" />
+            }
+            else
+            {
+                <partial name="Partials/Sds/_SdsDetailBlock" model="@(new SdsDetailRow { Label = "", Value = trimmed })" />
+            }
+        }
+    }
+}

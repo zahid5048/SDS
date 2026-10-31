@@ -617,3 +617,11 @@ html {
         grid-template-columns: 1fr;
     }
 }
+
+.sds-fields-table .sds-fields-table-label {
+    font-weight: 600;
+    color: #1565c0;
+    white-space: nowrap;
+    vertical-align: top;
+    width: 28%;
+}

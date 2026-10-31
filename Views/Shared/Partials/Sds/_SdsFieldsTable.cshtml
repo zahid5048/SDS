@@ -1,0 +1,28 @@
+@model ChemicalSDS.Models.SdsFieldsTableModel
+@{
+    var rows = Model.Fields
+        .Where(f => !string.IsNullOrWhiteSpace(f.Label) || !string.IsNullOrWhiteSpace(f.Description))
+        .ToList();
+}
+@if (rows.Count > 0)
+{
+    <div class="table-responsive mb-3">
+        <table class="table table-bordered table-sm sds-cas-table sds-fields-table mb-0">
+            <thead class="table-primary">
+                <tr>
+                    <th>@Model.Column1Header</th>
+                    <th>@Model.Column2Header</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var field in rows)
+                {
+                    <tr>
+                        <td class="sds-fields-table-label">@field.Label</td>
+                        <td>@Html.Raw((field.Description ?? "").Replace("\n", "<br/>"))</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}

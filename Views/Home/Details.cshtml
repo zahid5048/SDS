@@ -1,4 +1,8 @@
 @model ChemicalSDS.Models.Chemical
+@using ChemicalSDS.Models
+@{
+    var sec01Rows = Sec01SubsectionCodec.Parse(Sec01SubsectionCodec.ResolveStoredJson(Model));
+}
 @{
     ViewData["Title"] = $"{Model.ProductIdentifier} - Safety Data Sheet";
     ViewBag.PageTitle = "Safety Data Sheet";
@@ -40,17 +44,8 @@
         <!-- Section 1 -->
         <div id="sec1" class="card mb-3">
             <div class="card-header bg-primary text-white"><h4>📋 Section 1: Identification</h4></div>
-            <div class="card-body">
-                <table class="table table-bordered">
-                    <tr><th style="width:200px">GHS Product Identifier</th><td>@Model.ProductIdentifier</td></tr>
-                    <tr><th>Chemical Name</th><td>@Model.ChemicalName</td></tr>
-                    <tr><th>Other Means of ID</th><td>@Model.OtherMeansOfId</td></tr>
-                    <tr><th>Product Type</th><td>@Model.ProductType</td></tr>
-                    <tr><th>Product Use</th><td>@Model.ProductUse</td></tr>
-                    <tr><th>SDS #</th><td>@Model.SDSNumber</td></tr>
-                    <tr><th>Supplier Details</th><td>@Html.Raw(Model.SupplierDetails?.Replace("\n", "<br/>"))</td></tr>
-                    <tr><th>Emergency Phone</th><td>@Model.EmergencyPhone</td></tr>
-                </table>
+            <div class="card-body sds-detail-layout">
+                <partial name="Partials/Sds/_Sec01SubsectionsDisplay" model="sec01Rows" />
             </div>
         </div>
 
@@ -58,27 +53,15 @@
         <div id="sec2" class="card mb-3">
             <div class="card-header bg-danger text-white"><h4>⚠️ Section 2: Hazards Identification</h4></div>
             <div class="card-body">
-                <p><strong>Signal Word:</strong> <span class="badge bg-danger">@Model.SignalWord</span></p>
-                <p><strong>Hazard Statements:</strong><br/>@Html.Raw(Model.HazardStatements?.Replace("\n", "<br/>"))</p>
-                <p><strong>Precautionary Statements:</strong></p>
-                <ul>
-                    <li><strong>General:</strong> @Model.PrecautionaryGeneral</li>
-                    <li><strong>Prevention:</strong> @Model.PrecautionaryPrevention</li>
-                    <li><strong>Response:</strong> @Model.PrecautionaryResponse</li>
-                    <li><strong>Storage:</strong> @Model.PrecautionaryStorage</li>
-                </ul>
+                <partial name="Partials/Sds/_Sec02BlocksDisplay" model="Model" />
             </div>
         </div>
 
         <!-- Section 3 -->
         <div id="sec3" class="card mb-3">
             <div class="card-header bg-info text-white"><h4>🧪 Section 3: Composition</h4></div>
-            <div class="card-body">
-                <table class="table">
-                    <tr><th>Ingredient</th><td>@Model.IngredientName</td></tr>
-                    <tr><th>CAS Number</th><td>@Model.CASNumber</td></tr>
-                    <tr><th>Percentage</th><td>@Model.Percentage</td></tr>
-                </table>
+            <div class="card-body sds-detail-layout">
+                <partial name="Partials/Sds/_Sec03BlocksDisplay" model="Model" />
             </div>
         </div>
 
@@ -86,10 +69,7 @@
         <div id="sec4" class="card mb-3">
             <div class="card-header bg-success text-white"><h4>🩺 Section 4: First Aid</h4></div>
             <div class="card-body">
-                <p><strong>Eye Contact:</strong> @Model.EyeContactFirstAid</p>
-                <p><strong>Inhalation:</strong> @Model.InhalationFirstAid</p>
-                <p><strong>Skin Contact:</strong> @Model.SkinContactFirstAid</p>
-                <p><strong>Ingestion:</strong> @Model.IngestionFirstAid</p>
+                <partial name="Partials/Sds/_Sec04SubsectionsDisplay" model="Model" />
             </div>
         </div>
 
@@ -97,10 +77,7 @@
         <div id="sec5" class="card mb-3">
             <div class="card-header bg-danger text-white"><h4>🔥 Section 5: Fire Fighting</h4></div>
             <div class="card-body">
-                <p><strong>Suitable Media:</strong> @Model.SuitableExtinguishingMedia</p>
-                <p><strong>Unsuitable Media:</strong> @Model.UnsuitableExtinguishingMedia</p>
-                <p><strong>Flash Point:</strong> @Model.FlashPoint</p>
-                <p><strong>Auto-ignition:</strong> @Model.AutoIgnitionTemp</p>
+                <partial name="Partials/Sds/_Sec05SubsectionsDisplay" model="Model" />
             </div>
         </div>
 
@@ -108,8 +85,7 @@
         <div id="sec6" class="card mb-3">
             <div class="card-header bg-warning"><h4>🧹 Section 6: Spill Measures</h4></div>
             <div class="card-body">
-                <p><strong>Small Spill:</strong> @Model.SmallSpillMethods</p>
-                <p><strong>Large Spill:</strong> @Model.LargeSpillMethods</p>
+                <partial name="Partials/Sds/_Sec06SubsectionsDisplay" model="Model" />
             </div>
         </div>
 
@@ -117,8 +93,7 @@
         <div id="sec7" class="card mb-3">
             <div class="card-header bg-primary text-white"><h4>📦 Section 7: Storage</h4></div>
             <div class="card-body">
-                <p>@Model.SafeStorageConditions</p>
-                <p><strong>Incompatible Materials:</strong> @Model.IncompatibleMaterials</p>
+                <partial name="Partials/Sds/_Sec07SubsectionsDisplay" model="Model" />
             </div>
         </div>
 
@@ -126,10 +101,7 @@
         <div id="sec8" class="card mb-3">
             <div class="card-header bg-secondary text-white"><h4>🧤 Section 8: PPE</h4></div>
             <div class="card-body">
-                <p><strong>Eye Protection:</strong> @Model.EyeProtection</p>
-                <p><strong>Hand Protection:</strong> @Model.HandProtection</p>
-                <p><strong>Body Protection:</strong> @Model.BodyProtection</p>
-                <p><strong>Respiratory:</strong> @Model.RespiratoryProtection</p>
+                <partial name="Partials/Sds/_Sec08SubsectionsDisplay" model="Model" />
             </div>
         </div>
 
@@ -137,15 +109,7 @@
         <div id="sec9" class="card mb-3">
             <div class="card-header bg-info text-white"><h4>📊 Section 9: Properties</h4></div>
             <div class="card-body">
-                <div class="row">
-                    <div class="col-md-6"><strong>Physical State:</strong> @Model.PhysicalState</div>
-                    <div class="col-md-6"><strong>Color:</strong> @Model.Color</div>
-                    <div class="col-md-6"><strong>Odor:</strong> @Model.Odor</div>
-                    <div class="col-md-6"><strong>Melting Point:</strong> @Model.MeltingPoint</div>
-                    <div class="col-md-6"><strong>Boiling Point:</strong> @Model.BoilingPoint</div>
-                    <div class="col-md-6"><strong>Vapor Density:</strong> @Model.VaporDensity</div>
-                    <div class="col-md-6"><strong>Solubility:</strong> @Model.Solubility</div>
-                </div>
+                <partial name="Partials/Sds/_Sec09SubsectionsDisplay" model="Model" />
             </div>
         </div>
 
@@ -153,8 +117,7 @@
         <div id="sec10" class="card mb-3">
             <div class="card-header bg-dark text-white"><h4>⚡ Section 10: Stability</h4></div>
             <div class="card-body">
-                <p><strong>Stability:</strong> @Model.ChemicalStability</p>
-                <p><strong>Conditions to Avoid:</strong> @Model.ConditionsToAvoid</p>
+                <partial name="Partials/Sds/_Sec10SubsectionsDisplay" model="Model" />
             </div>
         </div>
 
@@ -162,7 +125,7 @@
         <div id="sec11" class="card mb-3">
             <div class="card-header bg-danger text-white"><h4>⚠️ Section 11: Toxicological</h4></div>
             <div class="card-body">
-                <p>@Model.AcuteToxicity</p>
+                <partial name="Partials/Sds/_Sec11SubsectionsDisplay" model="Model" />
             </div>
         </div>
 
@@ -170,7 +133,7 @@
         <div id="sec12" class="card mb-3">
             <div class="card-header bg-success text-white"><h4>🌿 Section 12: Ecological</h4></div>
             <div class="card-body">
-                <p>@Model.Ecotoxicity</p>
+                <partial name="Partials/Sds/_Sec12SubsectionsDisplay" model="Model" />
             </div>
         </div>
 
@@ -178,7 +141,7 @@
         <div id="sec13" class="card mb-3">
             <div class="card-header bg-warning"><h4>🗑️ Section 13: Disposal</h4></div>
             <div class="card-body">
-                <p>@Model.DisposalMethods</p>
+                <partial name="Partials/Sds/_Sec13SubsectionsDisplay" model="Model" />
             </div>
         </div>
 
@@ -186,9 +149,7 @@
         <div id="sec14" class="card mb-3">
             <div class="card-header bg-primary text-white"><h4>🚚 Section 14: Transport</h4></div>
             <div class="card-body">
-                <p><strong>UN Number:</strong> @Model.UNNumber</p>
-                <p><strong>Hazard Class:</strong> @Model.TransportHazardClass</p>
-                <p><strong>Packing Group:</strong> @Model.PackingGroup</p>
+                <partial name="Partials/Sds/_Sec14SubsectionsDisplay" model="Model" />
             </div>
         </div>
 
@@ -196,7 +157,7 @@
         <div id="sec15" class="card mb-3">
             <div class="card-header bg-secondary text-white"><h4>📜 Section 15: Regulatory</h4></div>
             <div class="card-body">
-                <p>@Model.USFederalRegulations</p>
+                <partial name="Partials/Sds/_Sec15SubsectionsDisplay" model="Model" />
             </div>
         </div>
 
@@ -204,9 +165,7 @@
         <div id="sec16" class="card mb-3">
             <div class="card-header bg-info text-white"><h4>ℹ️ Section 16: Other Info</h4></div>
             <div class="card-body">
-                <p><strong>NFPA Ratings:</strong> @Model.NFPARatings</p>
-                <p><strong>HMIS Ratings:</strong> @Model.HMISRatings</p>
-                <p><strong>Version:</strong> @Model.Version</p>
+                <partial name="Partials/Sds/_Sec16SubsectionsDisplay" model="Model" />
             </div>
         </div>
     </div>

@@ -1,0 +1,21 @@
+@model IReadOnlyList<ChemicalSDS.Models.Sec01SubsectionItem>
+@using ChemicalSDS.Models
+@foreach (var row in Model)
+{
+    if (string.IsNullOrWhiteSpace(row.Heading) &&
+        string.IsNullOrWhiteSpace(row.Description) &&
+        !Sec01SubsectionCodec.HasFieldContent(row))
+    {
+        continue;
+    }
+    <div class="sds-regulatory-group"><strong class="sds-regulatory-group-title">@row.Heading</strong></div>
+    @if (row.Fields is { Count: > 0 })
+    {
+        var (c1, c2) = SdsSubsectionTableHeaders.ForHeading(row.Heading);
+        <partial name="Partials/Sds/_SdsFieldsTable" model="@(new SdsFieldsTableModel { Column1Header = c1, Column2Header = c2, Fields = row.Fields })" />
+    }
+    else if (!string.IsNullOrWhiteSpace(row.Description))
+    {
+        <partial name="Partials/Sds/_SdsDetailBlock" model="@(new SdsDetailRow { Label = "", Value = row.Description })" />
+    }
+}

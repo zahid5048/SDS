@@ -1,0 +1,51 @@
+@model ChemicalSDS.Models.Chemical
+@using ChemicalSDS.Models
+@{
+    var rows = Sec16SubsectionCodec.Parse(Sec16SubsectionCodec.ResolveStoredJson(Model));
+}
+@foreach (var row in rows)
+{
+    if (string.IsNullOrWhiteSpace(row.Heading) &&
+        string.IsNullOrWhiteSpace(row.Description) &&
+        !Sec01SubsectionCodec.HasFieldContent(row))
+    {
+        continue;
+    }
+    <div class="sds-regulatory-group"><strong class="sds-regulatory-group-title">@row.Heading</strong></div>
+    @if (row.Fields is { Count: > 0 })
+    {
+        var heading = row.Heading.TrimStart();
+        if (heading.StartsWith("16.1", StringComparison.OrdinalIgnoreCase) ||
+            heading.StartsWith("16.2", StringComparison.OrdinalIgnoreCase) ||
+            heading.StartsWith("16.3", StringComparison.OrdinalIgnoreCase))
+        {
+            var (c1, c2) = SdsSubsectionTableHeaders.ForHeading(row.Heading);
+            <partial name="Partials/Sds/_SdsFieldsTable" model="@(new SdsFieldsTableModel { Column1Header = c1, Column2Header = c2, Fields = row.Fields })" />
+        }
+        else if (heading.StartsWith("16.5", StringComparison.OrdinalIgnoreCase))
+        {
+            var rev = Sec16SubsectionCodec.ComposeRevisionParagraph(Model, row);
+            if (!string.IsNullOrWhiteSpace(rev))
+            {
+                <partial name="Partials/Sds/_SdsDetailBlock" model="@(new SdsDetailRow { Label = "", Value = rev })" />
+            }
+        }
+        else
+        {
+            var (c1, c2) = SdsSubsectionTableHeaders.ForHeading(row.Heading);
+            <partial name="Partials/Sds/_SdsFieldsTable" model="@(new SdsFieldsTableModel { Column1Header = c1, Column2Header = c2, Fields = row.Fields })" />
+        }
+    }
+    else if (row.Heading.TrimStart().StartsWith("16.5", StringComparison.OrdinalIgnoreCase))
+    {
+        var rev = Sec16SubsectionCodec.ComposeRevisionParagraph(Model, row);
+        if (!string.IsNullOrWhiteSpace(rev))
+        {
+            <partial name="Partials/Sds/_SdsDetailBlock" model="@(new SdsDetailRow { Label = "", Value = rev })" />
+        }
+    }
+    else if (!string.IsNullOrWhiteSpace(row.Description))
+    {
+        <partial name="Partials/Sds/_SdsDetailBlock" model="@(new SdsDetailRow { Label = "", Value = row.Description })" />
+    }
+}

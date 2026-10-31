@@ -94,246 +94,304 @@ namespace ChemicalSDS.Services
             });
         }
 
-        private static void RenderSection1(ColumnDescriptor col, Chemical c) =>
-            Section(col, "1", "Identification",
-                Row("GHS Product Identifier", c.ProductIdentifier),
-                Row("Chemical Name", c.ChemicalName),
-                Row("Other Means of Identification", c.OtherMeansOfId),
-                Row("Product Type", c.ProductType),
-                Row("Product Use", c.ProductUse),
-                Row("Synonym", c.Synonym),
-                Row("SDS #", c.SDSNumber),
-                Row("Supplier Details", c.SupplierDetails),
-                Row("24-Hour Emergency Phone", c.EmergencyPhone));
+        private static void RenderSection1(ColumnDescriptor col, Chemical c)
+        {
+            SectionStart(col, "1", "Identification", body =>
+            {
+                var rows = Sec01SubsectionCodec.Parse(Sec01SubsectionCodec.ResolveStoredJson(c));
+                if (rows.Count == 0)
+                {
+                    AddRow(body, "Product identifier / No.", c.ProductIdentifier);
+                    return;
+                }
+                foreach (var row in rows)
+                    RenderSubsectionItem(body, row);
+            });
+        }
 
         private void RenderSection2(ColumnDescriptor col, Chemical c)
         {
-            SectionStart(col, "2", "Hazards identification", body =>
+            SectionStart(col, "2", "Hazard(s) identification", body =>
             {
-                AddRows(body, c,
-                    Row("OSHA/HCS status", c.OSHASstatus),
-                    Row("Classification", c.Classification),
-                    Row("Signal word", c.SignalWord),
-                    Row("Hazards not otherwise classified", c.HazardsNotOtherwiseClassified));
-
-                RenderGhsPictograms(body, c);
-
-                AddRows(body, c,
-                    Row("Hazard statements", c.HazardStatements),
-                    Row("Precautionary — General", c.PrecautionaryGeneral),
-                    Row("Precautionary — Prevention", c.PrecautionaryPrevention),
-                    Row("Precautionary — Response", c.PrecautionaryResponse),
-                    Row("Precautionary — Storage", c.PrecautionaryStorage),
-                    Row("Precautionary — Disposal", c.PrecautionaryDisposal));
+                var blocks = Sec02BlockCodec.Parse(Sec02BlockCodec.ResolveStoredJson(c));
+                var pictogramRendered = false;
+                foreach (var block in blocks)
+                {
+                    if (block.Type == "text")
+                    {
+                        if (string.IsNullOrWhiteSpace(block.Heading) && string.IsNullOrWhiteSpace(block.Description))
+                            continue;
+                        body.Item().PaddingTop(4).Text(block.Heading).Bold().FontColor("#1565c0").FontSize(8);
+                        if (!string.IsNullOrWhiteSpace(block.Description))
+                            body.Item().Text(block.Description).FontSize(8);
+                        continue;
+                    }
+                    if (block.Type == "pictograms")
+                    {
+                        body.Item().PaddingTop(4).Text("Hazard pictograms").Bold().FontColor("#1565c0").FontSize(8);
+                        RenderGhsPictograms(body, c, block.Codes);
+                        if (!string.IsNullOrWhiteSpace(block.CustomImagePath))
+                        {
+                            body.Item().PaddingTop(2).Row(row =>
+                            {
+                                row.ConstantItem(68).Padding(2).Column(fig =>
+                                {
+                                    fig.Item().Element(cell => EmbedImage(cell, block.CustomImagePath, 56));
+                                    fig.Item().AlignCenter().Text("Custom pictogram").FontSize(6);
+                                });
+                            });
+                        }
+                        pictogramRendered = true;
+                        continue;
+                    }
+                    if (block.Type == "table" && block.Rows.Any(r =>
+                            !string.IsNullOrWhiteSpace(r.Cas) || !string.IsNullOrWhiteSpace(r.ChemicalName)))
+                    {
+                        var data = string.Join("\n", block.Rows
+                            .Where(r => !string.IsNullOrWhiteSpace(r.Cas) || !string.IsNullOrWhiteSpace(r.ChemicalName))
+                            .Select(r => $"{r.Cas}|{r.ChemicalName}"));
+                        AddPipeTable(body, block.Title, ["CAS No.", "Chemical name"], data);
+                    }
+                }
+                if (!pictogramRendered && (!string.IsNullOrWhiteSpace(c.GhsPictogramCodes) || !string.IsNullOrWhiteSpace(c.GhsPictogramImagePath)))
+                    RenderGhsPictograms(body, c, c.GhsPictogramCodes);
             });
         }
 
-        private static void RenderSection3(ColumnDescriptor col, Chemical c) =>
-            Section(col, "3", "Composition / information on ingredients",
-                Row("Substance/Mixture", c.SubstanceMixture),
-                Row("Product code", c.ProductCode),
-                Row("Ingredient name", c.IngredientName),
-                Row("CAS number", c.CASNumber),
-                Row("Percentage", c.Percentage));
+        private static void RenderSection3(ColumnDescriptor col, Chemical c)
+        {
+            SectionStart(col, "3", "Composition / information on ingredients", body =>
+            {
+                var blocks = Sec03BlockCodec.Parse(Sec03BlockCodec.ResolveStoredJson(c));
+                if (blocks.Count == 0)
+                {
+                    AddRows(body, c,
+                        Row("Substance/Mixture", c.SubstanceMixture),
+                        Row("CAS number", c.CASNumber),
+                        Row("Ingredient name", c.IngredientName),
+                        Row("Percentage", c.Percentage));
+                    return;
+                }
+                foreach (var block in blocks)
+                {
+                    if (block.Type == "text")
+                    {
+                        if (string.IsNullOrWhiteSpace(block.Heading) && string.IsNullOrWhiteSpace(block.Description))
+                            continue;
+                        body.Item().PaddingTop(4).Text(block.Heading).Bold().FontColor("#1565c0").FontSize(8);
+                        if (!string.IsNullOrWhiteSpace(block.Description))
+                            body.Item().Text(block.Description).FontSize(8);
+                        continue;
+                    }
+                    if (block.Type == "mixtureTable" && block.Rows.Any(r =>
+                            !string.IsNullOrWhiteSpace(r.Cas) || !string.IsNullOrWhiteSpace(r.ChemicalName)))
+                    {
+                        var data = string.Join("\n", block.Rows
+                            .Where(r => !string.IsNullOrWhiteSpace(r.Cas) || !string.IsNullOrWhiteSpace(r.ChemicalName))
+                            .Select(r => $"{r.Cas}|{r.ChemicalName}|{r.Proportion}|{r.Classification}|{r.Source}"));
+                        AddPipeTable(body, "Mixture ingredients",
+                            ["CAS No.", "Chemical name", "Proportion (Sch 8)", "Classification (GHS)", "Source"],
+                            data);
+                        continue;
+                    }
+                    if (block.Type == "footnote" && !string.IsNullOrWhiteSpace(block.Description))
+                        body.Item().PaddingTop(4).Text(block.Description).FontSize(7).Italic();
+                }
+            });
+        }
 
-        private static void RenderSection4(ColumnDescriptor col, Chemical c) =>
-            Section(col, "4", "First aid measures",
-                Row("Eye contact", c.EyeContactFirstAid),
-                Row("Inhalation", c.InhalationFirstAid),
-                Row("Skin contact", c.SkinContactFirstAid),
-                Row("Ingestion", c.IngestionFirstAid),
-                Row("Indication of immediate medical attention and special treatment needed", c.MedicalAttentionIndication),
-                Row("Notes to physician", c.NotesToPhysician),
-                Row("Specific treatments", c.SpecificTreatments),
-                Row("Protection of first-aiders", c.ProtectionOfFirstAiders));
+        private static void RenderSection4(ColumnDescriptor col, Chemical c)
+        {
+            SectionStart(col, "4", "First aid measures", body =>
+            {
+                var rows = Sec04SubsectionCodec.Parse(Sec04SubsectionCodec.ResolveStoredJson(c));
+                if (rows.Count == 0)
+                {
+                    AddRow(body, "Inhalation", c.InhalationFirstAid);
+                    AddRow(body, "Eye contact", c.EyeContactFirstAid);
+                    return;
+                }
+                foreach (var row in rows)
+                    RenderSubsectionItem(body, row);
+            });
+        }
 
-        private static void RenderSection5(ColumnDescriptor col, Chemical c) =>
-            Section(col, "5", "Fire-fighting measures",
-                Row("Suitable extinguishing media", c.SuitableExtinguishingMedia),
-                Row("Unsuitable extinguishing media", c.UnsuitableExtinguishingMedia),
-                Row("Specific hazards arising from the chemical", c.SpecificHazards),
-                Row("Hazardous thermal decomposition products", c.HazardousDecomposition),
-                Row("Special protective actions for fire-fighters", c.FirefighterProtectiveActions),
-                Row("Special protective equipment for fire-fighters", c.FirefighterProtectiveEquipment),
-                Row("Flash point", c.FlashPoint),
-                Row("Auto-ignition temperature", c.AutoIgnitionTemp),
-                Row("Lower explosive limit", c.LowerExplosiveLimit),
-                Row("Upper explosive limit", c.UpperExplosiveLimit));
+        private static void RenderSection5(ColumnDescriptor col, Chemical c)
+        {
+            SectionStart(col, "5", "Firefighting measures", body =>
+            {
+                var rows = Sec05SubsectionCodec.Parse(Sec05SubsectionCodec.ResolveStoredJson(c));
+                if (rows.Count == 0)
+                {
+                    AddRow(body, "Suitable extinguishing agents", c.SuitableExtinguishingMedia);
+                    AddRow(body, "Unsuitable extinguishing agents", c.UnsuitableExtinguishingMedia);
+                    return;
+                }
+                foreach (var row in rows)
+                    RenderSubsectionItem(body, row);
+            });
+        }
 
-        private static void RenderSection6(ColumnDescriptor col, Chemical c) =>
-            Section(col, "6", "Accidental release measures",
-                Row("For non-emergency personnel", c.SpillNonEmergencyPersonnel),
-                Row("For emergency responders", c.SpillEmergencyResponders),
-                Row("Environmental precautions", c.EnvironmentalPrecautionsSpill),
-                Row("Small spill", c.SmallSpillMethods),
-                Row("Large spill", c.LargeSpillMethods));
+        private static void RenderSection6(ColumnDescriptor col, Chemical c)
+        {
+            SectionStart(col, "6", "Accidental release measures", body =>
+            {
+                var rows = Sec06SubsectionCodec.Parse(Sec06SubsectionCodec.ResolveStoredJson(c));
+                if (rows.Count == 0)
+                {
+                    AddRow(body, "For non-emergency personnel", c.SpillNonEmergencyPersonnel);
+                    AddRow(body, "Environmental precautions", c.EnvironmentalPrecautionsSpill);
+                    return;
+                }
+                foreach (var row in rows)
+                    RenderSubsectionItem(body, row);
+            });
+        }
 
-        private static void RenderSection7(ColumnDescriptor col, Chemical c) =>
-            Section(col, "7", "Handling and storage",
-                Row("Precautions for safe handling", c.HandlingPrecautions),
-                Row("Advice on general occupational hygiene", c.OccupationalHygiene),
-                Row("Conditions for safe storage", c.SafeStorageConditions));
+        private static void RenderSection7(ColumnDescriptor col, Chemical c)
+        {
+            SectionStart(col, "7", "Handling and storage", body =>
+            {
+                var rows = Sec07SubsectionCodec.Parse(Sec07SubsectionCodec.ResolveStoredJson(c));
+                if (rows.Count == 0)
+                {
+                    AddRow(body, "Precautions for safe handling", c.HandlingPrecautions);
+                    return;
+                }
+                foreach (var row in rows)
+                    RenderSubsectionItem(body, row);
+            });
+        }
 
-        private void RenderSection8(ColumnDescriptor col, Chemical c)
+        private static void RenderSection8(ColumnDescriptor col, Chemical c)
         {
             SectionStart(col, "8", "Exposure controls / personal protection", body =>
             {
-                AddOelTable(body, "Occupational exposure limits", c.OccupationalExposureLimits);
-
-                AddRows(body, c,
-                    Row("Appropriate engineering controls", c.ExposureControls),
-                    Row("Environmental exposure controls", c.EnvironmentalExposureControls),
-                    Row("Hygiene measures", c.HygieneMeasures),
-                    Row("Eye / face protection", c.EyeProtection),
-                    Row("Hand protection", c.HandProtection),
-                    Row("Body protection", c.BodyProtection),
-                    Row("Other skin protection", c.OtherSkinProtection),
-                    Row("Respiratory protection", c.RespiratoryProtection));
+                var rows = Sec08SubsectionCodec.Parse(Sec08SubsectionCodec.ResolveStoredJson(c));
+                if (rows.Count == 0)
+                {
+                    AddRow(body, "Control parameters", c.OccupationalExposureLimits);
+                    return;
+                }
+                foreach (var row in rows)
+                    RenderSubsectionItem(body, row);
             });
         }
 
-        private static void RenderSection9(ColumnDescriptor col, Chemical c) =>
-            Section(col, "9", "Physical and chemical properties",
-                Row("Physical state", c.PhysicalState),
-                Row("Color", c.Color),
-                Row("Odor", c.Odor),
-                Row("Odor threshold", c.OdorThreshold),
-                Row("pH", c.pH),
-                Row("Melting point / freezing point", c.MeltingPoint),
-                Row("Boiling point", c.BoilingPoint),
-                Row("Critical temperature", c.CriticalTemperature),
-                Row("Flash point", c.FlashPoint),
-                Row("Evaporation rate", c.EvaporationRate),
-                Row("Flammability (solid, gas)", c.Flammability),
-                Row("Lower explosive (flammable) limit", c.LowerExplosiveLimit),
-                Row("Upper explosive (flammable) limit", c.UpperExplosiveLimit),
-                Row("Vapor pressure", c.VaporPressure),
-                Row("Vapor density", c.VaporDensity),
-                Row("Specific volume (ft³/lb)", c.SpecificVolume),
-                Row("Gas density (lb/ft³)", c.GasDensity),
-                Row("Relative density", c.RelativeDensity),
-                Row("Solubility", c.Solubility),
-                Row("Solubility in water", c.SolubilityInWater),
-                Row("Partition coefficient: n-octanol/water", c.PartitionCoefficient),
-                Row("Auto-ignition temperature", c.AutoIgnitionTemp),
-                Row("Decomposition temperature", c.DecompositionTemperature),
-                Row("Viscosity", c.Viscosity),
-                Row("Flow time (ISO 2431)", c.FlowTimeIso2431),
-                Row("Molecular weight", c.MolecularWeight));
+        private static void RenderSection9(ColumnDescriptor col, Chemical c)
+        {
+            SectionStart(col, "9", "Physical and chemical properties", body =>
+            {
+                var rows = Sec09SubsectionCodec.Parse(Sec09SubsectionCodec.ResolveStoredJson(c));
+                if (rows.Count == 0)
+                {
+                    AddRow(body, "State of aggregation", c.PhysicalState);
+                    return;
+                }
+                foreach (var row in rows)
+                    RenderSubsectionItem(body, row);
+            });
+        }
 
-        private static void RenderSection10(ColumnDescriptor col, Chemical c) =>
-            Section(col, "10", "Stability and reactivity",
-                Row("Reactivity", c.Reactivity),
-                Row("Possibility of hazardous reactions", c.PossibilityOfHazardousReactions),
-                Row("Chemical stability", c.ChemicalStability),
-                Row("Conditions to avoid", c.ConditionsToAvoid),
-                Row("Incompatible materials", c.IncompatibleMaterials),
-                Row("Hazardous decomposition products", c.HazardousDecomposition),
-                Row("Hazardous polymerization", c.HazardousPolymerization));
+        private static void RenderSection10(ColumnDescriptor col, Chemical c)
+        {
+            SectionStart(col, "10", "Stability and reactivity", body =>
+            {
+                var rows = Sec10SubsectionCodec.Parse(Sec10SubsectionCodec.ResolveStoredJson(c));
+                if (rows.Count == 0)
+                {
+                    AddRow(body, "Reactivity", c.Reactivity);
+                    return;
+                }
+                foreach (var row in rows)
+                    RenderSubsectionItem(body, row);
+            });
+        }
 
-        private void RenderSection11(ColumnDescriptor col, Chemical c)
+        private static void RenderSection11(ColumnDescriptor col, Chemical c)
         {
             SectionStart(col, "11", "Toxicological information", body =>
             {
-                AddRows(body, c, Row("Acute toxicity", c.AcuteToxicity));
-
-                if (!string.IsNullOrWhiteSpace(c.IrritationCorrosion) && c.IrritationCorrosion.Contains('|'))
-                    AddPipeTable(body, "Irritation/Corrosion",
-                        ["Product/ingredient name", "Result", "Species", "Score", "Exposure", "Observation"], c.IrritationCorrosion);
-                else
-                    AddRow(body, "Irritation/Corrosion", c.IrritationCorrosion);
-
-                AddRows(body, c,
-                    Row("Sensitization", c.Sensitization),
-                    Row("Mutagenicity", c.Mutagenicity),
-                    Row("Carcinogenicity", c.Carcinogenicity));
-
-                if (!string.IsNullOrWhiteSpace(c.CarcinogenicityClassification) && c.CarcinogenicityClassification.Contains('|'))
-                    AddPipeTable(body, "Classification",
-                        ["Product/ingredient name", "OSHA", "IARC", "NTP"], c.CarcinogenicityClassification);
-
-                AddRows(body, c,
-                    Row("Reproductive toxicity", c.ReproductiveToxicity),
-                    Row("Teratogenicity", c.Teratogenicity),
-                    Row("Specific target organ toxicity (single exposure)", c.TargetOrganToxicitySingle),
-                    Row("Specific target organ toxicity (repeated exposure)", c.TargetOrganToxicityRepeated),
-                    Row("Aspiration hazard", c.AspirationHazard),
-                    Row("Routes of exposure", c.RoutesOfExposure),
-                    Row("Potential acute health effects — Eye", c.AcuteHealthEffectsEye),
-                    Row("Potential acute health effects — Inhalation", c.AcuteHealthEffectsInhalation),
-                    Row("Potential acute health effects — Skin", c.AcuteHealthEffectsSkin),
-                    Row("Potential acute health effects — Ingestion", c.AcuteHealthEffectsIngestion),
-                    Row("Symptoms — Eye", c.ToxicologicalSymptomsEye),
-                    Row("Symptoms — Inhalation", c.ToxicologicalSymptomsInhalation),
-                    Row("Symptoms — Skin", c.ToxicologicalSymptomsSkin),
-                    Row("Symptoms — Ingestion", c.ToxicologicalSymptomsIngestion),
-                    Row("Short term — Immediate effects", c.ShortTermImmediateEffects),
-                    Row("Short term — Delayed effects", c.ShortTermDelayedEffects),
-                    Row("Long term — Immediate effects", c.LongTermImmediateEffects),
-                    Row("Long term — Delayed effects", c.LongTermDelayedEffects),
-                    Row("Potential chronic health effects", c.ChronicHealthEffects),
-                    Row("Chronic — General", c.ChronicEffectsGeneral),
-                    Row("Chronic — Carcinogenicity", c.ChronicCarcinogenicity),
-                    Row("Chronic — Mutagenicity", c.ChronicMutagenicity),
-                    Row("Chronic — Teratogenicity", c.ChronicTeratogenicity),
-                    Row("Developmental effects", c.DevelopmentalEffects),
-                    Row("Fertility effects", c.FertilityEffects),
-                    Row("Acute toxicity estimates", c.AcuteToxicityEstimates));
+                var rows = Sec11SubsectionCodec.Parse(Sec11SubsectionCodec.ResolveStoredJson(c));
+                if (rows.Count == 0)
+                {
+                    AddRow(body, "Acute toxicity", c.AcuteToxicity);
+                    return;
+                }
+                foreach (var row in rows)
+                    RenderSubsectionItem(body, row);
             });
         }
 
-        private void RenderSection12(ColumnDescriptor col, Chemical c)
+        private static void RenderSection12(ColumnDescriptor col, Chemical c)
         {
             SectionStart(col, "12", "Ecological information", body =>
             {
-                if (!string.IsNullOrWhiteSpace(c.Ecotoxicity) && c.Ecotoxicity.Contains('|'))
-                    AddPipeTable(body, "Toxicity",
-                        ["Product/ingredient name", "Result", "Species", "Exposure"], c.Ecotoxicity);
-                else
+                var rows = Sec12SubsectionCodec.Parse(Sec12SubsectionCodec.ResolveStoredJson(c));
+                if (rows.Count == 0)
+                {
                     AddRow(body, "Toxicity", c.Ecotoxicity);
-
-                AddRows(body, c,
-                    Row("Persistence and degradability", c.PersistenceDegradability));
-
-                if (!string.IsNullOrWhiteSpace(c.BioaccumulativePotential) && c.BioaccumulativePotential.Contains('|'))
-                    AddPipeTable(body, "Bioaccumulative potential",
-                        ["Product/ingredient name", "LogP\u2080w", "BCF", "Potential"], c.BioaccumulativePotential);
-                else
-                    AddRow(body, "Bioaccumulative potential", c.BioaccumulativePotential);
-
-                AddRows(body, c,
-                    Row("Soil/water partition coefficient (Koc)", c.MobilityInSoil),
-                    Row("Other adverse effects", c.OtherEcologicalEffects));
+                    return;
+                }
+                foreach (var row in rows)
+                    RenderSubsectionItem(body, row);
             });
         }
 
-        private static void RenderSection13(ColumnDescriptor col, Chemical c) =>
-            Section(col, "13", "Disposal considerations",
-                Row("Disposal methods", c.DisposalMethods));
+        private static void RenderSection13(ColumnDescriptor col, Chemical c)
+        {
+            SectionStart(col, "13", "Disposal considerations", body =>
+            {
+                var rows = Sec13SubsectionCodec.Parse(Sec13SubsectionCodec.ResolveStoredJson(c));
+                if (rows.Count == 0)
+                {
+                    AddRow(body, "Waste treatment methods", c.DisposalMethods);
+                    return;
+                }
+                foreach (var row in rows)
+                {
+                    if (string.IsNullOrWhiteSpace(row.Heading) &&
+                        string.IsNullOrWhiteSpace(row.Description) &&
+                        !Sec01SubsectionCodec.HasFieldContent(row))
+                        continue;
+                    body.Item().PaddingTop(4).Text(row.Heading).Bold().FontColor("#1565c0").FontSize(8);
+                    if (!string.IsNullOrWhiteSpace(row.Description))
+                        body.Item().Text(row.Description).FontSize(8);
+                }
+            });
+        }
 
         private void RenderSection14(ColumnDescriptor col, Chemical c)
         {
             SectionStart(col, "14", "Transport information", body =>
             {
-                if (!string.IsNullOrWhiteSpace(c.TransportRegulations) && c.TransportRegulations.Contains('|'))
-                    AddTransportRegulationsTable(body, c);
-                else
+                var rows = Sec14SubsectionCodec.Parse(Sec14SubsectionCodec.ResolveStoredJson(c));
+                if (rows.Count == 0)
                 {
-                    AddRows(body, c,
-                        Row("UN number", c.UNNumber),
-                        Row("UN proper shipping name", c.UNProperShippingName),
-                        Row("Transport hazard class(es)", c.TransportHazardClass),
-                        Row("Packing group", c.PackingGroup),
-                        Row("Environmental hazards", c.EnvironmentalHazardsTransport));
+                    AddRow(body, "UN number", c.UNNumber);
                     RenderTransportHazardClassImages(body, c);
+                    return;
                 }
-
-                AddRows(body, c,
-                    Row("DOT classification", c.TransportDotClassification),
-                    Row("TDG classification", c.TransportTdgClassification),
-                    Row("IATA", c.TransportIataClassification),
-                    Row("Special precautions for user", c.TransportSpecialPrecautions),
-                    Row("Transport in bulk (MARPOL / IBC Code)", c.TransportBulkMarpol));
+                foreach (var row in rows)
+                {
+                    if (string.IsNullOrWhiteSpace(row.Heading) &&
+                        string.IsNullOrWhiteSpace(row.Description) &&
+                        !Sec01SubsectionCodec.HasFieldContent(row))
+                        continue;
+                    body.Item().PaddingTop(4).Text(row.Heading).Bold().FontColor("#1565c0").FontSize(8);
+                    if (!string.IsNullOrWhiteSpace(row.Description))
+                    {
+                        foreach (var line in row.Description.Split('\n'))
+                        {
+                            if (string.IsNullOrWhiteSpace(line)) continue;
+                            if (line.TrimStart().StartsWith("ADR /", StringComparison.OrdinalIgnoreCase))
+                                body.Item().Text(line.Trim()).Bold().FontSize(8);
+                            else
+                                body.Item().Text(line.Trim()).FontSize(8);
+                        }
+                    }
+                }
+                RenderTransportHazardClassImages(body, c);
             });
         }
 
@@ -341,64 +399,29 @@ namespace ChemicalSDS.Services
         {
             SectionStart(col, "15", "Regulatory information", body =>
             {
-                body.Item().PaddingBottom(2).Text("U.S. Federal regulations").Bold().FontColor("#1565c0").FontSize(8);
-                AddRows(body, c,
-                    Row("TSCA 8(a) CDR Exempt/Partial exemption", c.RegTscaCdrExempt),
-                    Row("Clean Air Act Section 112 (b) HAPs", c.RegCleanAirActHaps),
-                    Row("Clean Air Act Section 602 Class I", c.RegCleanAirActClassI),
-                    Row("Clean Air Act Section 602 Class II", c.RegCleanAirActClassII),
-                    Row("DEA List I", c.RegDeaListI),
-                    Row("DEA List II", c.RegDeaListII));
-
-                body.Item().PaddingTop(4).Text("SARA").Bold().FontColor("#1565c0").FontSize(8);
-                AddRows(body, c,
-                    Row("SARA 302/304 — Composition", c.RegSara302Composition ?? c.SARA302304),
-                    Row("SARA 304 RQ", c.RegSara304RQ),
-                    Row("SARA 311/312 — Classification", c.RegSara311312Classification));
-
-                body.Item().PaddingTop(4).Text("State regulations").Bold().FontColor("#1565c0").FontSize(8);
-                AddRows(body, c,
-                    Row("Massachusetts", c.RegStateMassachusetts),
-                    Row("New York", c.RegStateNewYork),
-                    Row("New Jersey", c.RegStateNewJersey),
-                    Row("Pennsylvania", c.RegStatePennsylvania));
-
-                body.Item().PaddingTop(4).Text("International regulations").Bold().FontColor("#1565c0").FontSize(8);
-                AddRows(body, c,
-                    Row("Chemical Weapon Convention", c.RegChemWeaponConvention),
-                    Row("Montreal Protocol", c.RegMontrealProtocol),
-                    Row("Stockholm Convention", c.RegStockholmConvention),
-                    Row("Rotterdam Convention (PIC)", c.RegRotterdamConvention),
-                    Row("UNECE Aarhus Protocol", c.RegUneceAarhus));
-
-                body.Item().PaddingTop(4).Text("Inventory list").Bold().FontColor("#1565c0").FontSize(8);
-                AddRows(body, c,
-                    Row("Australia", c.RegInventoryAustralia),
-                    Row("Canada", c.RegInventoryCanada),
-                    Row("China", c.RegInventoryChina),
-                    Row("Europe", c.RegInventoryEurope),
-                    Row("Japan (ENCS)", c.RegInventoryJapanEncs),
-                    Row("Japan (ISHL)", c.RegInventoryJapanIshl),
-                    Row("Malaysia", c.RegInventoryMalaysia),
-                    Row("New Zealand", c.RegInventoryNewZealand),
-                    Row("Philippines", c.RegInventoryPhilippines),
-                    Row("Republic of Korea", c.RegInventoryKorea),
-                    Row("Taiwan", c.RegInventoryTaiwan),
-                    Row("Thailand", c.RegInventoryThailand),
-                    Row("Turkey", c.RegInventoryTurkey),
-                    Row("United States", c.RegInventoryUnitedStates),
-                    Row("Viet Nam", c.RegInventoryVietnam));
-
-                if (!string.IsNullOrWhiteSpace(c.InternationalRegulations))
+                var rows = Sec15SubsectionCodec.Parse(Sec15SubsectionCodec.ResolveStoredJson(c));
+                if (rows.Count == 0)
                 {
-                    body.Item().PaddingTop(4).Text("International regulations (summary)").Bold().FontColor("#1565c0").FontSize(8);
-                    body.Item().Text(c.InternationalRegulations).FontSize(8);
+                    if (!string.IsNullOrWhiteSpace(c.USFederalRegulations))
+                        body.Item().Text(c.USFederalRegulations).FontSize(8);
+                    return;
                 }
 
-                if (!string.IsNullOrWhiteSpace(c.InventoryList))
+                foreach (var row in rows)
                 {
-                    body.Item().PaddingTop(4).Text("Inventory list (summary)").Bold().FontColor("#1565c0").FontSize(8);
-                    body.Item().Text(c.InventoryList).FontSize(8);
+                    if (string.IsNullOrWhiteSpace(row.Heading) &&
+                        string.IsNullOrWhiteSpace(row.Description) &&
+                        !Sec01SubsectionCodec.HasFieldContent(row))
+                        continue;
+                    body.Item().PaddingTop(4).Text(row.Heading).Bold().FontColor("#1565c0").FontSize(8);
+                    if (!string.IsNullOrWhiteSpace(row.Description))
+                    {
+                        foreach (var line in row.Description.Split('\n'))
+                        {
+                            if (string.IsNullOrWhiteSpace(line)) continue;
+                            body.Item().Text(line.Trim()).FontSize(8);
+                        }
+                    }
                 }
             });
         }
@@ -407,39 +430,29 @@ namespace ChemicalSDS.Services
         {
             SectionStart(col, "16", "Other information", body =>
             {
-                var hmisH = c.HmisHealth ?? ParseRating(c.HMISRatings, "Health");
-                var hmisF = c.HmisFlammability ?? ParseRating(c.HMISRatings, "Flammability");
-                var hmisP = c.HmisPhysicalHazards ?? ParseRating(c.HMISRatings, "Physical");
-                if (!string.IsNullOrWhiteSpace(hmisH) || !string.IsNullOrWhiteSpace(hmisF) || !string.IsNullOrWhiteSpace(hmisP))
+                var rows = Sec16SubsectionCodec.Parse(Sec16SubsectionCodec.ResolveStoredJson(c));
+                foreach (var row in rows)
                 {
-                    body.Item().Text("Hazardous Material Information System (U.S.A.)").Bold().FontSize(8);
-                    AddPipeTable(body, "", ["Category", "Rating"],
-                        $"Health|{hmisH ?? "—"}\nFlammability|{hmisF ?? "—"}\nPhysical hazards|{hmisP ?? "—"}");
-                    if (!string.IsNullOrWhiteSpace(c.HmisCautionNote))
-                        body.Item().PaddingBottom(4).Text(c.HmisCautionNote).FontSize(7).Italic();
+                    if (string.IsNullOrWhiteSpace(row.Heading) &&
+                        string.IsNullOrWhiteSpace(row.Description) &&
+                        !Sec01SubsectionCodec.HasFieldContent(row))
+                        continue;
+
+                    body.Item().PaddingTop(4).Text(row.Heading).Bold().FontColor("#1565c0").FontSize(8);
+
+                    if (row.Heading.TrimStart().StartsWith("16.5", StringComparison.OrdinalIgnoreCase))
+                    {
+                        var rev = Sec16SubsectionCodec.ComposeRevisionParagraph(c, row);
+                        if (!string.IsNullOrWhiteSpace(rev))
+                            body.Item().Text(rev).FontSize(8);
+                        continue;
+                    }
+
+                    if (!string.IsNullOrWhiteSpace(row.Description))
+                        body.Item().Text(row.Description).FontSize(8);
+                    if (row.Fields is { Count: > 0 })
+                        AddSubsectionFieldsTable(body, row.Heading, row.Fields);
                 }
-
-                var nfpaH = c.NfpaHealth ?? ParseRating(c.NFPARatings, "Health");
-                var nfpaF = c.NfpaFlammability ?? ParseRating(c.NFPARatings, "Flammability");
-                var nfpaR = c.NfpaReactivity ?? ParseRating(c.NFPARatings, "Instability") ?? ParseRating(c.NFPARatings, "Reactivity");
-                if (!string.IsNullOrWhiteSpace(nfpaH) || !string.IsNullOrWhiteSpace(nfpaF))
-                {
-                    body.Item().PaddingTop(4).Text("NFPA 704 (U.S.A.)").Bold().FontSize(8);
-                    body.Item().Text($"Health: {nfpaH}  |  Flammability: {nfpaF}  |  Reactivity: {nfpaR}  |  Special: {c.NfpaSpecial ?? "—"}").FontSize(8);
-                    if (!string.IsNullOrWhiteSpace(c.NfpaCopyrightNote))
-                        body.Item().Text(c.NfpaCopyrightNote).FontSize(7).Italic();
-                }
-
-                if (!string.IsNullOrWhiteSpace(c.ClassificationProcedure))
-                    AddPipeTable(body, "Procedure used to derive the classification",
-                        ["Classification", "Justification"],
-                        $"{c.ClassificationProcedure}|{c.ClassificationJustification}");
-
-                AddRows(body, c,
-                    Row("Date of printing", c.DateOfPrinting),
-                    Row("Date of issue / revision", c.DateOfRevision),
-                    Row("Date of previous issue", c.DateOfPreviousIssue),
-                    Row("Version", c.Version));
 
                 if (c.Quantity > 0 || !string.IsNullOrWhiteSpace(c.StorageLocation) || !string.IsNullOrWhiteSpace(c.Unit))
                 {
@@ -448,24 +461,12 @@ namespace ChemicalSDS.Services
                         Row("Quantity", c.Quantity > 0 ? $"{c.Quantity} {c.Unit}".Trim() : c.Unit),
                         Row("Storage location", c.StorageLocation));
                 }
-
-                body.Item().PaddingTop(6).AlignCenter().Text("UN = United Nations").FontSize(8);
-                AddRow(body, "References", string.IsNullOrWhiteSpace(c.References) ? "Not available." : c.References);
-
-                if (!string.IsNullOrWhiteSpace(c.Abbreviations))
-                {
-                    body.Item().PaddingTop(4).Text("Key to abbreviations").Bold().FontColor("#1565c0").FontSize(8);
-                    body.Item().Text(c.Abbreviations).FontSize(7);
-                }
-
-                body.Item().PaddingTop(6).Text("Notice to reader").Bold().FontColor("#1565c0").FontSize(8);
-                body.Item().Text(c.NoticeToReader ?? DefaultNotice).FontSize(8).Bold();
             });
         }
 
-        private void RenderGhsPictograms(ColumnDescriptor body, Chemical chem)
+        private void RenderGhsPictograms(ColumnDescriptor body, Chemical chem, string? codesCsv = null)
         {
-            var codes = GhsPictogramCatalog.ParseCodes(chem.GhsPictogramCodes);
+            var codes = GhsPictogramCatalog.ParseCodes(codesCsv ?? chem.GhsPictogramCodes);
             var uploadPath = chem.GhsPictogramImagePath;
             var hasUpload = !string.IsNullOrWhiteSpace(uploadPath);
             if (codes.Count == 0 && !hasUpload)
@@ -662,6 +663,40 @@ namespace ChemicalSDS.Services
                         .Text(row.Limits).FontSize(7);
                 }
             });
+        }
+
+        private static string EscapeTableCell(string? value)
+        {
+            if (string.IsNullOrWhiteSpace(value)) return "";
+            return value.Replace("|", " / ").Replace("\r\n", " ").Replace("\n", " ").Trim();
+        }
+
+        private static void RenderSubsectionItem(ColumnDescriptor body, Sec01SubsectionItem row)
+        {
+            if (string.IsNullOrWhiteSpace(row.Heading) &&
+                string.IsNullOrWhiteSpace(row.Description) &&
+                !Sec01SubsectionCodec.HasFieldContent(row))
+                return;
+
+            body.Item().PaddingTop(4).Text(row.Heading).Bold().FontColor("#1565c0").FontSize(8);
+            if (!string.IsNullOrWhiteSpace(row.Description))
+                body.Item().Text(row.Description).FontSize(8);
+            if (row.Fields is { Count: > 0 })
+                AddSubsectionFieldsTable(body, row.Heading, row.Fields);
+        }
+
+        private static void AddSubsectionFieldsTable(ColumnDescriptor body, string heading, IEnumerable<Sec01SubsectionField> fields)
+        {
+            var rows = fields
+                .Where(f => !string.IsNullOrWhiteSpace(f.Label) || !string.IsNullOrWhiteSpace(f.Description))
+                .ToList();
+            if (rows.Count == 0)
+                return;
+
+            var (h1, h2) = SdsSubsectionTableHeaders.ForHeading(heading);
+            var data = string.Join("\n", rows.Select(f =>
+                $"{EscapeTableCell(f.Label.Trim().TrimEnd(':'))}|{EscapeTableCell(f.Description)}"));
+            AddPipeTable(body, "", [h1, h2], data);
         }
 
         private static void AddPipeTable(ColumnDescriptor body, string title, string[] headers, string? data)

@@ -126,11 +126,15 @@ namespace ChemicalSDS.Controllers
                 _wizard.ApplySection(entity, model, step);
             }
 
-            if (step == 2 && ghsPictogramImage != null && ghsPictogramImage.Length > 0)
+            if (step == 2)
             {
-                var path = await SaveGhsImageAsync(entity.Id, ghsPictogramImage);
-                if (path != null)
-                    entity.GhsPictogramImagePath = path;
+                if (ghsPictogramImage != null && ghsPictogramImage.Length > 0)
+                {
+                    var path = await SaveGhsImageAsync(entity.Id, ghsPictogramImage);
+                    if (path != null)
+                        entity.GhsPictogramImagePath = path;
+                }
+                await ApplySec02CustomPictogramUploadsAsync(entity);
             }
 
             if (step == 14)
@@ -146,6 +150,62 @@ namespace ChemicalSDS.Controllers
 
             TempData["Success"] = $"Section {step} saved.";
             return RedirectToAction(nameof(Step), new { id = entity.Id, step = step + 1 });
+        }
+
+        private async Task ApplySec02CustomPictogramUploadsAsync(Chemical entity)
+        {
+            var blocks = Sec02BlockCodec.Parse(entity.Sec02Blocks);
+            if (blocks.Count == 0)
+                return;
+
+            var changed = false;
+            foreach (var file in Request.Form.Files.Where(f =>
+                         f.Name.StartsWith("sec02CustomPic_", StringComparison.Ordinal) && f.Length > 0))
+            {
+                var blockId = file.Name["sec02CustomPic_".Length..];
+                if (string.IsNullOrWhiteSpace(blockId))
+                    continue;
+
+                var path = await SaveSec02CustomPictogramAsync(entity.Id, blockId, file);
+                if (path == null)
+                    continue;
+
+                var block = blocks.FirstOrDefault(b =>
+                    b.Type == "pictograms" && string.Equals(b.BlockId, blockId, StringComparison.Ordinal));
+                if (block == null)
+                    continue;
+
+                block.CustomImagePath = path;
+                changed = true;
+            }
+
+            if (changed)
+                entity.Sec02Blocks = Sec02BlockCodec.Serialize(blocks);
+        }
+
+        private async Task<string?> SaveSec02CustomPictogramAsync(int chemicalId, string blockId, IFormFile file)
+        {
+            if (!AllowedImageTypes.Contains(file.ContentType.ToLowerInvariant()))
+                return null;
+
+            var ext = Path.GetExtension(file.FileName).ToLowerInvariant();
+            if (string.IsNullOrEmpty(ext) || ext.Length > 5)
+                ext = ".png";
+
+            var safeId = string.Concat(blockId.Where(ch => char.IsLetterOrDigit(ch) || ch == '-'));
+            if (string.IsNullOrEmpty(safeId))
+                safeId = Guid.NewGuid().ToString("N");
+
+            var dir = Path.Combine(_env.WebRootPath, "uploads", "sds", chemicalId.ToString());
+            Directory.CreateDirectory(dir);
+
+            var fileName = $"sec02-pic-{safeId}{ext}";
+            var fullPath = Path.Combine(dir, fileName);
+
+            await using var stream = new FileStream(fullPath, FileMode.Create);
+            await file.CopyToAsync(stream);
+
+            return $"uploads/sds/{chemicalId}/{fileName}".Replace('\\', '/');
         }
 
         private async Task<string?> SaveGhsImageAsync(int chemicalId, IFormFile file)

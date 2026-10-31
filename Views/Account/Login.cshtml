@@ -104,9 +104,9 @@
                         <span asp-validation-for="CaptchaAnswer" class="text-danger small d-block text-center mt-1"></span>
                     </div>
 
-                    <button type="submit" class="btn-login-submit">
-                        <i class="fas fa-sign-in-alt"></i>
-                        Sign in
+                    <button type="submit" class="btn-login-submit" id="loginSubmitBtn">
+                        <i class="fas fa-sign-in-alt" id="loginSubmitIcon"></i>
+                        <span id="loginSubmitText">Sign in</span>
                     </button>
                 </form>
             </div>
@@ -129,6 +129,22 @@
                 icon.classList.toggle('fa-eye-slash', show);
                 btn.setAttribute('aria-label', show ? 'Hide password' : 'Show password');
             });
+
+            var form = document.querySelector('form[method="post"]');
+            var submitBtn = document.getElementById('loginSubmitBtn');
+            var submitIcon = document.getElementById('loginSubmitIcon');
+            var submitText = document.getElementById('loginSubmitText');
+            if (form && submitBtn) {
+                form.addEventListener('submit', function () {
+                    submitBtn.disabled = true;
+                    submitBtn.setAttribute('aria-busy', 'true');
+                    if (submitIcon) {
+                        submitIcon.classList.remove('fa-sign-in-alt');
+                        submitIcon.classList.add('fa-spinner', 'fa-spin');
+                    }
+                    if (submitText) submitText.textContent = 'Signing in…';
+                });
+            }
         })();
     </script>
 </body>

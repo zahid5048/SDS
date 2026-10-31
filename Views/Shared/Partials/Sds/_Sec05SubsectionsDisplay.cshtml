@@ -1,0 +1,6 @@
+@model ChemicalSDS.Models.Chemical
+@using ChemicalSDS.Models
+@{
+    var rows = Sec05SubsectionCodec.Parse(Sec05SubsectionCodec.ResolveStoredJson(Model));
+}
+<partial name="Partials/Sds/_Sec01SubsectionsDisplay" model="rows" />

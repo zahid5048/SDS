@@ -50,16 +50,19 @@ namespace ChemicalSDS.Services
                 Page = page,
                 PageSize = pageSize,
                 SortBy = sortBy,
-                SortDir = sortDir,
-                TotalChemicals = await activeQuery.CountAsync(),
-                DraftCount = await activeQuery.CountAsync(c => c.IsDraft),
-                DangerCount = await activeQuery.CountAsync(c => c.SignalWord == "Danger")
+                SortDir = sortDir
             };
-            model.CompletedCount = model.TotalChemicals - model.DraftCount;
-            model.WarningCount = await activeQuery.CountAsync(c => c.SignalWord == "Warning");
 
             if (listAction == "Dashboard")
-                await LoadChartStatsAsync(model, activeQuery);
+                await LoadDashboardStatsAsync(model, activeQuery);
+            else
+            {
+                model.TotalChemicals = await activeQuery.CountAsync();
+                model.DraftCount = await activeQuery.CountAsync(c => c.IsDraft);
+                model.DangerCount = await activeQuery.CountAsync(c => c.SignalWord == "Danger");
+                model.WarningCount = await activeQuery.CountAsync(c => c.SignalWord == "Warning");
+                model.CompletedCount = model.TotalChemicals - model.DraftCount;
+            }
 
             var query = allQuery.AsQueryable();
 
@@ -103,6 +106,21 @@ namespace ChemicalSDS.Services
 
             model.Page = page;
             model.Chemicals = await query
+                .Select(c => new Chemical
+                {
+                    Id = c.Id,
+                    ProductIdentifier = c.ProductIdentifier,
+                    ChemicalName = c.ChemicalName,
+                    CASNumber = c.CASNumber,
+                    IsDraft = c.IsDraft,
+                    LastCompletedSection = c.LastCompletedSection,
+                    SignalWord = c.SignalWord,
+                    FlashPoint = c.FlashPoint,
+                    StorageLocation = c.StorageLocation,
+                    DeletedAt = c.DeletedAt,
+                    DeletedBy = c.DeletedBy,
+                    IsDeleted = c.IsDeleted
+                })
                 .Skip((page - 1) * pageSize)
                 .Take(pageSize)
                 .ToListAsync();
@@ -110,23 +128,55 @@ namespace ChemicalSDS.Services
             return model;
         }
 
-        private static async Task LoadChartStatsAsync(DashboardViewModel model, IQueryable<Chemical> activeQuery)
+        private static async Task LoadDashboardStatsAsync(DashboardViewModel model, IQueryable<Chemical> activeQuery)
         {
+            // Narrow columns only — full Chemical rows include huge SDS JSON/text and slow counts badly
+            var slim = activeQuery.Select(c => new
+            {
+                c.IsDraft,
+                c.SignalWord,
+                c.LastCompletedSection,
+                c.CreatedAt
+            });
+
+            var stats = await slim
+                .GroupBy(_ => 1)
+                .Select(g => new
+                {
+                    Total = g.Count(),
+                    Draft = g.Count(x => x.IsDraft),
+                    Danger = g.Count(x => x.SignalWord == "Danger"),
+                    Warning = g.Count(x => x.SignalWord == "Warning"),
+                    NotStarted = g.Count(x => x.IsDraft && x.LastCompletedSection <= 0),
+                    MidProgress = g.Count(x => x.IsDraft && x.LastCompletedSection >= 1 && x.LastCompletedSection <= 8),
+                    LateProgress = g.Count(x => x.IsDraft && x.LastCompletedSection >= 9 && x.LastCompletedSection <= 15)
+                })
+                .FirstOrDefaultAsync();
+
+            model.TotalChemicals = stats?.Total ?? 0;
+            model.DraftCount = stats?.Draft ?? 0;
+            model.DangerCount = stats?.Danger ?? 0;
+            model.WarningCount = stats?.Warning ?? 0;
+            model.CompletedCount = model.TotalChemicals - model.DraftCount;
+
             var charts = model.Charts;
             charts.StatusValues = [model.CompletedCount, model.DraftCount];
 
             var otherSignal = Math.Max(0, model.TotalChemicals - model.DangerCount - model.WarningCount);
             charts.SignalValues = [model.DangerCount, model.WarningCount, otherSignal];
 
-            var notStarted = await activeQuery.CountAsync(c => c.IsDraft && c.LastCompletedSection <= 0);
-            var midProgress = await activeQuery.CountAsync(c => c.IsDraft && c.LastCompletedSection >= 1 && c.LastCompletedSection <= 8);
-            var lateProgress = await activeQuery.CountAsync(c => c.IsDraft && c.LastCompletedSection >= 9 && c.LastCompletedSection <= 15);
-            charts.ProgressValues = [notStarted, midProgress, lateProgress, model.CompletedCount];
+            charts.ProgressValues =
+            [
+                stats?.NotStarted ?? 0,
+                stats?.MidProgress ?? 0,
+                stats?.LateProgress ?? 0,
+                model.CompletedCount
+            ];
 
             var startMonth = new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1).AddMonths(-5);
-            var chemicals = await activeQuery
-                .Where(c => c.CreatedAt >= startMonth)
-                .Select(c => c.CreatedAt)
+            var createdDates = await slim
+                .Where(x => x.CreatedAt >= startMonth)
+                .Select(x => x.CreatedAt)
                 .ToListAsync();
 
             var labels = new List<string>();
@@ -136,7 +186,7 @@ namespace ChemicalSDS.Services
                 var monthStart = startMonth.AddMonths(i);
                 var monthEnd = monthStart.AddMonths(1);
                 labels.Add(monthStart.ToString("MMM yyyy"));
-                values.Add(chemicals.Count(d => d >= monthStart && d < monthEnd));
+                values.Add(createdDates.Count(d => d >= monthStart && d < monthEnd));
             }
 
             charts.MonthlyLabels = labels.ToArray();

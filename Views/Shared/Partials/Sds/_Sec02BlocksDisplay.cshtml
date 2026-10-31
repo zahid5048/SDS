@@ -1,0 +1,83 @@
+@model ChemicalSDS.Models.Chemical
+@using ChemicalSDS.Models
+@{
+    var blocks = Sec02BlockCodec.Parse(Sec02BlockCodec.ResolveStoredJson(Model));
+    var ghsCodes = GhsPictogramCatalog.ParseCodes(Sec02BlockCodec.MergePictogramCodes(Model));
+}
+@foreach (var block in blocks)
+{
+    if (block.Type == "text")
+    {
+        if (string.IsNullOrWhiteSpace(block.Heading) && string.IsNullOrWhiteSpace(block.Description))
+        {
+            continue;
+        }
+        <div class="sds-regulatory-group"><strong class="sds-regulatory-group-title">@block.Heading</strong></div>
+        @if (block.Heading.Equals("Signal word", StringComparison.OrdinalIgnoreCase) && !string.IsNullOrWhiteSpace(block.Description))
+        {
+            var sw = block.Description.Trim();
+            <div class="sds-detail-row">
+                <span class="sds-detail-value">
+                    <span class="badge @(sw.Equals("Danger", StringComparison.OrdinalIgnoreCase) ? "bg-danger" : "bg-warning text-dark")">@sw</span>
+                </span>
+            </div>
+        }
+        else
+        {
+            <partial name="Partials/Sds/_SdsDetailBlock" model="@(new SdsDetailRow { Label = "", Value = block.Description })" />
+        }
+        continue;
+    }
+    if (block.Type == "pictograms")
+    {
+        var codes = GhsPictogramCatalog.ParseCodes(block.Codes);
+        if (codes.Count == 0) codes = ghsCodes;
+        if (codes.Count > 0 || !string.IsNullOrEmpty(block.CustomImagePath) || !string.IsNullOrEmpty(Model.GhsPictogramImagePath))
+        {
+            <div class="sds-regulatory-group"><strong class="sds-regulatory-group-title">Hazard pictograms</strong></div>
+            <div class="ghs-display-block mb-3">
+                <div class="ghs-display-row mt-2">
+                    @foreach (var ghs in GhsPictogramCatalog.All.Where(g => codes.Contains(g.Code)))
+                    {
+                        <figure class="ghs-display-item">
+                            <img src="@ghs.ImagePath" alt="@ghs.Label" />
+                            <figcaption>@ghs.Label</figcaption>
+                        </figure>
+                    }
+                    @if (!string.IsNullOrEmpty(block.CustomImagePath))
+                    {
+                        <figure class="ghs-display-item ghs-display-upload">
+                            <img src="~/@block.CustomImagePath" alt="Custom pictogram" />
+                            <figcaption>Custom pictogram</figcaption>
+                        </figure>
+                    }
+                    @if (!string.IsNullOrEmpty(Model.GhsPictogramImagePath) && string.IsNullOrEmpty(block.CustomImagePath))
+                    {
+                        <figure class="ghs-display-item ghs-display-upload">
+                            <img src="~/@Model.GhsPictogramImagePath" alt="GHS label" />
+                            <figcaption>Custom label image</figcaption>
+                        </figure>
+                    }
+                </div>
+            </div>
+        }
+        continue;
+    }
+    if (block.Type == "table" && block.Rows.Count > 0 && block.Rows.Any(r => !string.IsNullOrWhiteSpace(r.Cas) || !string.IsNullOrWhiteSpace(r.ChemicalName)))
+    {
+        <div class="sds-regulatory-group"><strong class="sds-regulatory-group-title">@block.Title</strong></div>
+        <div class="table-responsive mb-3">
+            <table class="table table-bordered table-sm sds-cas-table mb-0">
+                <thead class="table-primary">
+                    <tr><th>CAS No.</th><th>Chemical name</th></tr>
+                </thead>
+                <tbody>
+                    @foreach (var row in block.Rows.Where(r => !string.IsNullOrWhiteSpace(r.Cas) || !string.IsNullOrWhiteSpace(r.ChemicalName)))
+                    {
+                        <tr><td>@row.Cas</td><td>@row.ChemicalName</td></tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+}

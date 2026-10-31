@@ -7,8 +7,11 @@ namespace ChemicalSDS.Models
         [Key]
         public int Id { get; set; }
 
-        // Section 1: Identification
+        // Section 1: Identification (JSON array: heading + description per subsection)
+        public string? Sec01Subsections { get; set; }
         public string? ProductIdentifier { get; set; }
+        /// <summary>1.3 Manufacturer (optional).</summary>
+        public string? Sec01Manufacturer { get; set; }
         public string? ChemicalName { get; set; }
         public string? OtherMeansOfId { get; set; }
         public string? ProductType { get; set; }
@@ -22,7 +25,8 @@ namespace ChemicalSDS.Models
         public int LastCompletedSection { get; set; }
         public bool IsDraft { get; set; } = true;
 
-        // Section 2: Hazards
+        // Section 2: Hazards (JSON blocks: text, pictograms, CAS tables)
+        public string? Sec02Blocks { get; set; }
         public string? HazardsNotOtherwiseClassified { get; set; }
         public string? DateOfPreviousIssue { get; set; }
         public string? OSHASstatus { get; set; }
@@ -39,14 +43,16 @@ namespace ChemicalSDS.Models
         /// <summary>Uploaded GHS label / pictogram image (relative wwwroot path).</summary>
         public string? GhsPictogramImagePath { get; set; }
 
-        // Section 3: Composition
+        // Section 3: Composition (JSON blocks — 3.1, 3.2, mixture table, footnote)
+        public string? Sec03Blocks { get; set; }
         public string? SubstanceMixture { get; set; }
         public string? ProductCode { get; set; }
         public string? CASNumber { get; set; }
         public string? IngredientName { get; set; }
         public string? Percentage { get; set; }
 
-        // Section 4: First Aid
+        // Section 4: First aid (JSON subsections 4.1–4.3)
+        public string? Sec04Subsections { get; set; }
         public string? EyeContactFirstAid { get; set; }
         public string? InhalationFirstAid { get; set; }
         public string? SkinContactFirstAid { get; set; }
@@ -56,7 +62,8 @@ namespace ChemicalSDS.Models
         public string? SpecificTreatments { get; set; }
         public string? ProtectionOfFirstAiders { get; set; }
 
-        // Section 5: Fire Fighting
+        // Section 5: Firefighting (JSON subsections 5.1–5.3)
+        public string? Sec05Subsections { get; set; }
         public string? SuitableExtinguishingMedia { get; set; }
         public string? UnsuitableExtinguishingMedia { get; set; }
         public string? SpecificHazards { get; set; }
@@ -67,20 +74,23 @@ namespace ChemicalSDS.Models
         public string? FirefighterProtectiveActions { get; set; }
         public string? FirefighterProtectiveEquipment { get; set; }
 
-        // Section 6: Accidental release
+        // Section 6: Accidental release (JSON subsections 6.1–6.4)
+        public string? Sec06Subsections { get; set; }
         public string? SpillNonEmergencyPersonnel { get; set; }
         public string? SpillEmergencyResponders { get; set; }
         public string? EnvironmentalPrecautionsSpill { get; set; }
         public string? SmallSpillMethods { get; set; }
         public string? LargeSpillMethods { get; set; }
 
-        // Section 7: Handling & Storage
+        // Section 7: Handling and storage (JSON subsections 7.1–7.3)
+        public string? Sec07Subsections { get; set; }
         public string? HandlingPrecautions { get; set; }
         public string? OccupationalHygiene { get; set; }
         public string? SafeStorageConditions { get; set; }
         public string? IncompatibleMaterials { get; set; }
 
-        // Section 8: Exposure controls / PPE
+        // Section 8: Exposure controls / personal protection (JSON 8.1–8.3)
+        public string? Sec08Subsections { get; set; }
         public string? OccupationalExposureLimits { get; set; }
         public string? ExposureControls { get; set; }
         public string? EnvironmentalExposureControls { get; set; }
@@ -91,7 +101,10 @@ namespace ChemicalSDS.Models
         public string? OtherSkinProtection { get; set; }
         public string? RespiratoryProtection { get; set; }
 
-        // Section 9: Physical Properties
+        // Section 9: Physical and chemical properties (JSON 9.1–9.2)
+        public string? Sec09Subsections { get; set; }
+        public string? Sec09SolventContent { get; set; }
+        public string? Sec09Voc { get; set; }
         public string? PhysicalState { get; set; }
         public string? Color { get; set; }
         public string? Odor { get; set; }
@@ -115,7 +128,8 @@ namespace ChemicalSDS.Models
         public string? FlowTimeIso2431 { get; set; }
         public string? MolecularWeight { get; set; }
 
-        // Section 10: Stability
+        // Section 10: Stability and reactivity (JSON 10.1–10.6)
+        public string? Sec10Subsections { get; set; }
         public string? Reactivity { get; set; }
         public string? PossibilityOfHazardousReactions { get; set; }
         public string? ChemicalStability { get; set; }
@@ -123,7 +137,8 @@ namespace ChemicalSDS.Models
         public string? HazardousDecomposition { get; set; }
         public string? HazardousPolymerization { get; set; }
 
-        // Section 11: Toxicological
+        // Section 11: Toxicological information (JSON 11.1–11.2)
+        public string? Sec11Subsections { get; set; }
         public string? AcuteToxicity { get; set; }
         /// <summary>Rows: ingredient | result | species | score | exposure | observation</summary>
         public string? IrritationCorrosion { get; set; }
@@ -159,7 +174,8 @@ namespace ChemicalSDS.Models
         public string? FertilityEffects { get; set; }
         public string? AcuteToxicityEstimates { get; set; }
 
-        // Section 12: Ecological
+        // Section 12: Ecological information (JSON 12.1–12.7)
+        public string? Sec12Subsections { get; set; }
         /// <summary>Rows: ingredient | result | species | exposure</summary>
         public string? Ecotoxicity { get; set; }
         public string? PersistenceDegradability { get; set; }
@@ -168,10 +184,12 @@ namespace ChemicalSDS.Models
         public string? MobilityInSoil { get; set; }
         public string? OtherEcologicalEffects { get; set; }
 
-        // Section 13: Disposal
+        // Section 13: Disposal considerations (JSON 13.1+)
+        public string? Sec13Subsections { get; set; }
         public string? DisposalMethods { get; set; }
 
-        // Section 14: Transport
+        // Section 14: Transport information (JSON 14.1–14.7)
+        public string? Sec14Subsections { get; set; }
         /// <summary>Rows: field | DOT | TDG | Mexico | IMDG | IATA</summary>
         public string? TransportRegulations { get; set; }
         /// <summary>JSON: authority → custom pictogram path (e.g. DOT, TDG, Mexico, IMDG, IATA)</summary>
@@ -187,7 +205,8 @@ namespace ChemicalSDS.Models
         public string? TransportSpecialPrecautions { get; set; }
         public string? TransportBulkMarpol { get; set; }
 
-        // Section 15: Regulatory
+        // Section 15: Regulatory information (JSON 15.1–15.5 Australian WHS / AICIS)
+        public string? Sec15Subsections { get; set; }
         public string? RegTscaCdrExempt { get; set; }
         public string? RegCleanAirActHaps { get; set; }
         public string? RegCleanAirActClassI { get; set; }
@@ -227,7 +246,17 @@ namespace ChemicalSDS.Models
         public string? StateRegulations { get; set; }
         public string? InventoryList { get; set; }
 
-        // Section 16: Other
+        // Section 16: Other information (JSON 16.1–16.5)
+        public string? Sec16Subsections { get; set; }
+        /// <summary>16.1 Full text of abbreviated H-phrases (synced from JSON).</summary>
+        public string? Sec16FullTextHPhrases { get; set; }
+        /// <summary>16.2 Full text of abbreviated classifications (GHS).</summary>
+        public string? Sec16FullTextGhsClassifications { get; set; }
+        /// <summary>16.4 Recommended applications.</summary>
+        public string? Sec16RecommendedApplications { get; set; }
+        /// <summary>16.5 Additional revision note (e.g. prepared for Australian market).</summary>
+        public string? Sec16RevisionPreparedFor { get; set; }
+
         public string? HmisHealth { get; set; }
         public string? HmisFlammability { get; set; }
         public string? HmisPhysicalHazards { get; set; }

@@ -1,35 +1,24 @@
 @model ChemicalSDS.Models.Chemical
-<h3 class="sds-section-title"><i class="fas fa-exclamation-triangle"></i> Section 2. Hazards identification</h3>
-<div class="row sds-field-grid g-3">
-    <div class="col-12">
-        <label asp-for="OSHASstatus" class="form-label">OSHA/HCS status</label>
-        <textarea asp-for="OSHASstatus" class="form-control" rows="2"></textarea>
-    </div>
-    <div class="col-md-6">
-        <label asp-for="Classification" class="form-label">Classification of the substance/mixture</label>
-        <input asp-for="Classification" class="form-control" placeholder="e.g. FLAMMABLE LIQUIDS - Category 2" />
-    </div>
-    <div class="col-md-6">
-        <label asp-for="SignalWord" class="form-label">Signal word</label>
-        <select asp-for="SignalWord" class="form-select">
-            <option value="">-- Select --</option>
-            <option value="Danger">Danger</option>
-            <option value="Warning">Warning</option>
-        </select>
-    </div>
+@using System.Text.Json
+@using ChemicalSDS.Models
+@{
+    var sec02Json = Sec02BlockCodec.ResolveStoredJson(Model);
+    var ghsJson = JsonSerializer.Serialize(GhsPictogramCatalog.All.Select(g => new { code = g.Code, label = g.Label, imagePath = g.ImagePath }));
+}
+<h3 class="sds-section-title"><i class="fas fa-exclamation-triangle"></i> Section 2: Hazard(s) identification</h3>
+<p class="text-muted small mb-3">Add <strong>text subsections</strong> (heading + description), <strong>GHS pictogram</strong> blocks (select icons), or <strong>CAS tables</strong> (title + rows). Reorder by removing and re-adding if needed.</p>
 
-    <partial name="Sections/_GhsPictogramPicker" model="Model" />
+<script type="application/json" id="Sec02BlocksInitial">@Html.Raw(sec02Json)</script>
+<script>window.__sec02GhsCatalog = @Html.Raw(ghsJson);</script>
 
-    <div class="col-12">
-        <label asp-for="HazardStatements" class="form-label">Hazard statements</label>
-        <textarea asp-for="HazardStatements" class="form-control" rows="3"></textarea>
+<input type="hidden" asp-for="GhsPictogramCodes" id="GhsPictogramCodes" />
+
+<div class="sec02-blocks-editor">
+    <input type="hidden" asp-for="Sec02Blocks" id="Sec02Blocks" />
+    <div id="sec02BlocksContainer"></div>
+    <div class="d-flex flex-wrap gap-2 mt-2">
+        <button type="button" class="btn btn-outline-primary btn-sm sec02-add-text"><i class="fas fa-plus"></i> Add text subsection</button>
+        <button type="button" class="btn btn-outline-warning btn-sm sec02-add-pictograms"><i class="fas fa-image"></i> Add hazard pictograms</button>
+        <button type="button" class="btn btn-outline-info btn-sm sec02-add-table"><i class="fas fa-table"></i> Add CAS table</button>
     </div>
-    <div class="col-12"><label asp-for="PrecautionaryGeneral" class="form-label">Precautionary — General</label><textarea asp-for="PrecautionaryGeneral" class="form-control" rows="2"></textarea></div>
-    <div class="col-12"><label asp-for="PrecautionaryPrevention" class="form-label">Precautionary — Prevention</label><textarea asp-for="PrecautionaryPrevention" class="form-control" rows="3"></textarea></div>
-    <div class="col-12"><label asp-for="PrecautionaryResponse" class="form-label">Precautionary — Response</label><textarea asp-for="PrecautionaryResponse" class="form-control" rows="2"></textarea></div>
-    <div class="col-md-6"><label asp-for="PrecautionaryStorage" class="form-label">Precautionary — Storage</label><textarea asp-for="PrecautionaryStorage" class="form-control" rows="2"></textarea></div>
-    <div class="col-md-6"><label asp-for="PrecautionaryDisposal" class="form-label">Precautionary — Disposal</label><textarea asp-for="PrecautionaryDisposal" class="form-control" rows="2"></textarea></div>
-    <div class="col-md-6"><label asp-for="HazardsNotOtherwiseClassified" class="form-label">Hazards not otherwise classified</label><input asp-for="HazardsNotOtherwiseClassified" class="form-control" /></div>
-    <div class="col-md-3"><label asp-for="DateOfRevision" class="form-label">Date of issue / revision (optional)</label><input asp-for="DateOfRevision" class="form-control" /></div>
-    <div class="col-md-3"><label asp-for="DateOfPreviousIssue" class="form-label">Date of previous issue (optional)</label><input asp-for="DateOfPreviousIssue" class="form-control" /></div>
 </div>

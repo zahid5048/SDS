@@ -1,0 +1,51 @@
+@model ChemicalSDS.Models.Chemical
+@using ChemicalSDS.Models
+@{
+    var blocks = Sec03BlockCodec.Parse(Sec03BlockCodec.ResolveStoredJson(Model));
+}
+@foreach (var block in blocks)
+{
+    if (block.Type == "text")
+    {
+        if (string.IsNullOrWhiteSpace(block.Heading) && string.IsNullOrWhiteSpace(block.Description)) { continue; }
+        <div class="sds-regulatory-group"><strong class="sds-regulatory-group-title">@block.Heading</strong></div>
+        <partial name="Partials/Sds/_SdsDetailBlock" model="@(new SdsDetailRow { Label = "", Value = block.Description })" />
+        continue;
+    }
+    if (block.Type == "mixtureTable" && block.Rows.Any(r =>
+            !string.IsNullOrWhiteSpace(r.Cas) || !string.IsNullOrWhiteSpace(r.ChemicalName)))
+    {
+        <div class="table-responsive mb-3">
+            <table class="table table-bordered table-sm sds-cas-table mb-0">
+                <thead class="table-primary">
+                    <tr>
+                        <th>CAS No.</th>
+                        <th>Chemical name</th>
+                        <th>Proportion (Sch 8 disclosure)</th>
+                        <th>Classification (GHS)</th>
+                        <th>Source</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var row in block.Rows.Where(r => !string.IsNullOrWhiteSpace(r.Cas) || !string.IsNullOrWhiteSpace(r.ChemicalName)))
+                    {
+                        <tr>
+                            <td>@row.Cas</td>
+                            <td>@row.ChemicalName</td>
+                            <td>@row.Proportion</td>
+                            <td>@row.Classification</td>
+                            <td>@row.Source</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        continue;
+    }
+    if (block.Type == "footnote" && !string.IsNullOrWhiteSpace(block.Description))
+    {
+        <div class="sds-detail-row sds-detail-row-block sds-sec03-footnote mt-2">
+            <span class="sds-detail-value">@Html.Raw(block.Description.Replace("\n", "<br/>"))</span>
+        </div>
+    }
+}
