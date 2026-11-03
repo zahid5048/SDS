@@ -23,10 +23,6 @@ namespace ChemicalSDS.Services
 
         public byte[] Generate(Chemical c)
         {
-            var title = Sec01SubsectionCodec.ShortProductLabel(c.ProductIdentifier);
-            if (string.IsNullOrWhiteSpace(title))
-                title = "Chemical";
-
             return Document.Create(doc =>
             {
                 doc.Page(page =>
@@ -36,7 +32,7 @@ namespace ChemicalSDS.Services
                     page.MarginVertical(22);
                     page.DefaultTextStyle(x => x.FontSize(9).LineHeight(1.35f));
 
-                    page.Header().Element(h => RenderHeader(h, title));
+                    page.Header().Element(RenderHeader);
                     page.Footer().Element(RenderFooter);
 
                     page.Content().PaddingTop(8).Column(col =>
@@ -62,20 +58,10 @@ namespace ChemicalSDS.Services
             }).GeneratePdf();
         }
 
-        private void RenderHeader(IContainer container, string title)
+        private void RenderHeader(IContainer container)
         {
-            container.Background("#dc1147").Padding(10).Row(row =>
-            {
-                row.RelativeItem().Column(col =>
-                {
-                    col.Item().Text("SAFETY DATA SHEET").FontSize(14).Bold().FontColor(Colors.White);
-                    col.Item().Text("Chemical Safety Data Sheet System").FontSize(8).FontColor("#fdecef");
-                });
-                row.ConstantItem(130).AlignRight().Column(col =>
-                {
-                    col.Item().Text(title).FontSize(11).Bold().FontColor(Colors.White);
-                });
-            });
+            container.Background("#dc1147").Padding(10).Text("SAFETY DATA SHEET")
+                .FontSize(14).Bold().FontColor(Colors.White);
         }
 
         private void RenderFooter(IContainer container)
