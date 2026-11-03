@@ -29,7 +29,7 @@ namespace ChemicalSDS.Models
             JsonSerializer.Serialize(items.ToList(), JsonOptions);
 
         public static string ResolveStoredJson(Chemical c) =>
-            string.IsNullOrWhiteSpace(c.Sec06Subsections) ? FromLegacy(c) : c.Sec06Subsections!;
+            string.IsNullOrWhiteSpace(c.Sec06Subsections) ? "[]" : c.Sec06Subsections!;
 
         public static List<Sec01SubsectionItem> DefaultTemplate() =>
         [
@@ -84,29 +84,7 @@ namespace ChemicalSDS.Models
             }
         ];
 
-        public static string FromLegacy(Chemical c)
-        {
-            var items = DefaultTemplate();
-
-            var sec61 = items[0].Fields;
-            if (sec61 != null)
-            {
-                SetField(sec61, "non-emergency", c.SpillNonEmergencyPersonnel);
-                SetField(sec61, "emergency personnel", c.SpillEmergencyResponders);
-            }
-
-            if (!string.IsNullOrWhiteSpace(c.EnvironmentalPrecautionsSpill))
-                items[1].Description = c.EnvironmentalPrecautionsSpill.Trim();
-
-            var sec63 = items[2].Fields;
-            if (sec63 != null)
-            {
-                SetField(sec63, "containment", c.LargeSpillMethods);
-                SetField(sec63, "cleaning", c.SmallSpillMethods);
-            }
-
-            return Serialize(items);
-        }
+        
 
         private static void SetField(List<Sec01SubsectionField> fields, string labelPrefix, string? value)
         {
@@ -118,42 +96,6 @@ namespace ChemicalSDS.Models
                 field.Description = value.Trim();
         }
 
-        public static void SyncLegacyFields(Chemical target, string? json)
-        {
-            var rows = Parse(json);
-            if (rows.Count == 0)
-                return;
-
-            static string? FieldDesc(Sec01SubsectionItem? row, string labelPrefix)
-            {
-                if (row?.Fields == null) return null;
-                var f = row.Fields.FirstOrDefault(x =>
-                    x.Label.Contains(labelPrefix, StringComparison.OrdinalIgnoreCase));
-                return string.IsNullOrWhiteSpace(f?.Description) ? null : f.Description.Trim();
-            }
-
-            var sec61 = rows.FirstOrDefault(r =>
-                r.Heading.TrimStart().StartsWith("6.1", StringComparison.OrdinalIgnoreCase));
-
-            target.SpillNonEmergencyPersonnel =
-                FieldDesc(sec61, "non-emergency") ?? target.SpillNonEmergencyPersonnel;
-            target.SpillEmergencyResponders =
-                FieldDesc(sec61, "emergency") ?? target.SpillEmergencyResponders;
-
-            var sec62 = rows.FirstOrDefault(r =>
-                r.Heading.TrimStart().StartsWith("6.2", StringComparison.OrdinalIgnoreCase));
-            if (!string.IsNullOrWhiteSpace(sec62?.Description))
-                target.EnvironmentalPrecautionsSpill = sec62.Description.Trim();
-
-            var sec63 = rows.FirstOrDefault(r =>
-                r.Heading.TrimStart().StartsWith("6.3", StringComparison.OrdinalIgnoreCase));
-
-            var containment = FieldDesc(sec63, "containment");
-            var cleaning = FieldDesc(sec63, "cleaning");
-            if (!string.IsNullOrWhiteSpace(containment))
-                target.LargeSpillMethods = containment;
-            if (!string.IsNullOrWhiteSpace(cleaning))
-                target.SmallSpillMethods = cleaning;
-        }
+        
     }
 }

@@ -10,12 +10,12 @@
     }
 
     const green = {
-        dark: '#7a2e42',
-        mid: '#a84358',
-        base: '#d16b7f',
-        light: '#e895a3',
+        dark: '#dc1147',
+        mid: '#e60a36',
+        base: '#e3082c',
+        light: '#cd0d30',
         pale: '#fdecef',
-        gold: '#c9a227'
+        gold: '#c7a277'
     };
 
     const fontFamily = "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif";
@@ -36,11 +36,6 @@
                 cornerRadius: 8
             }
         }
-    };
-
-    const doughnutOptions = {
-        ...pieOptions,
-        cutout: '62%'
     };
 
     /** Chart 1 — full pie; show placeholder when all counts are zero */
@@ -83,7 +78,7 @@
             y: {
                 beginAtZero: true,
                 ticks: { stepSize: 1, precision: 0 },
-                grid: { color: 'rgba(122, 46, 66, 0.08)' }
+                grid: { color: 'rgba(220, 17, 71, 0.08)' }
             }
         }
     };
@@ -104,7 +99,7 @@
             y: {
                 beginAtZero: true,
                 ticks: { stepSize: 1, precision: 0 },
-                grid: { color: 'rgba(122, 46, 66, 0.08)' }
+                grid: { color: 'rgba(220, 17, 71, 0.08)' }
             }
         },
         elements: {
@@ -183,21 +178,6 @@
         }
     });
 
-    makeChart('chartSignal', {
-        type: 'doughnut',
-        data: {
-            labels: data.signalLabels,
-            datasets: [{
-                data: data.signalValues,
-                backgroundColor: ['#dc3545', '#f59e0b', '#94a3b8'],
-                borderColor: '#fff',
-                borderWidth: 3,
-                hoverOffset: 8
-            }]
-        },
-        options: doughnutOptions
-    });
-
     makeChart('chartProgress', {
         type: 'bar',
         data: {
@@ -206,8 +186,8 @@
                 data: data.progressValues,
                 backgroundColor: [
                     'rgba(148, 163, 184, 0.85)',
-                    'rgba(201, 162, 39, 0.85)',
-                    'rgba(168, 67, 88, 0.85)',
+                    'rgba(199, 162, 119, 0.85)',
+                    'rgba(230, 10, 54, 0.85)',
                     green.base
                 ],
                 borderRadius: 8,
@@ -224,7 +204,7 @@
             datasets: [{
                 data: data.monthlyValues,
                 borderColor: green.base,
-                backgroundColor: 'rgba(201, 77, 102, 0.15)',
+                backgroundColor: 'rgba(227, 8, 44, 0.15)',
                 fill: true,
                 pointBorderColor: green.base,
                 pointBackgroundColor: '#fff'

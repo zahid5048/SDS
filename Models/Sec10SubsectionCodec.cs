@@ -29,7 +29,7 @@ namespace ChemicalSDS.Models
             JsonSerializer.Serialize(items.ToList(), JsonOptions);
 
         public static string ResolveStoredJson(Chemical c) =>
-            string.IsNullOrWhiteSpace(c.Sec10Subsections) ? FromLegacy(c) : c.Sec10Subsections!;
+            string.IsNullOrWhiteSpace(c.Sec10Subsections) ? "[]" : c.Sec10Subsections!;
 
         public static List<Sec01SubsectionItem> DefaultTemplate() =>
         [
@@ -68,27 +68,7 @@ namespace ChemicalSDS.Models
             }
         ];
 
-        public static string FromLegacy(Chemical c)
-        {
-            var items = DefaultTemplate();
-            SetDesc(items, "10.1", c.Reactivity);
-            SetDesc(items, "10.2", c.ChemicalStability);
-            SetDesc(items, "10.3", c.PossibilityOfHazardousReactions);
-            SetDesc(items, "10.4", c.ConditionsToAvoid);
-            SetDesc(items, "10.5", c.IncompatibleMaterials);
-            SetDesc(items, "10.6", c.HazardousDecomposition);
-
-            if (!string.IsNullOrWhiteSpace(c.HazardousPolymerization))
-            {
-                items.Add(new Sec01SubsectionItem
-                {
-                    Heading = "10.7 Hazardous polymerization",
-                    Description = c.HazardousPolymerization.Trim()
-                });
-            }
-
-            return Serialize(items);
-        }
+        
 
         private static void SetDesc(List<Sec01SubsectionItem> items, string prefix, string? value)
         {
@@ -99,27 +79,6 @@ namespace ChemicalSDS.Models
                 row.Description = value.Trim();
         }
 
-        public static void SyncLegacyFields(Chemical target, string? json)
-        {
-            var rows = Parse(json);
-            if (rows.Count == 0)
-                return;
-
-            static string? Desc(IEnumerable<Sec01SubsectionItem> list, string prefix)
-            {
-                var row = list.FirstOrDefault(r =>
-                    r.Heading.TrimStart().StartsWith(prefix, StringComparison.OrdinalIgnoreCase));
-                return string.IsNullOrWhiteSpace(row?.Description) ? null : row.Description.Trim();
-            }
-
-            target.Reactivity = Desc(rows, "10.1") ?? target.Reactivity;
-            target.ChemicalStability = Desc(rows, "10.2") ?? target.ChemicalStability;
-            target.PossibilityOfHazardousReactions =
-                Desc(rows, "10.3") ?? target.PossibilityOfHazardousReactions;
-            target.ConditionsToAvoid = Desc(rows, "10.4") ?? target.ConditionsToAvoid;
-            target.IncompatibleMaterials = Desc(rows, "10.5") ?? target.IncompatibleMaterials;
-            target.HazardousDecomposition = Desc(rows, "10.6") ?? target.HazardousDecomposition;
-            target.HazardousPolymerization = Desc(rows, "10.7") ?? target.HazardousPolymerization;
-        }
+        
     }
 }

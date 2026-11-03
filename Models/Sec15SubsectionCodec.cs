@@ -29,7 +29,7 @@ namespace ChemicalSDS.Models
             JsonSerializer.Serialize(items.ToList(), JsonOptions);
 
         public static string ResolveStoredJson(Chemical c) =>
-            string.IsNullOrWhiteSpace(c.Sec15Subsections) ? FromLegacy(c) : c.Sec15Subsections!;
+            string.IsNullOrWhiteSpace(c.Sec15Subsections) ? "[]" : c.Sec15Subsections!;
 
         public static List<Sec01SubsectionItem> DefaultTemplate() =>
         [
@@ -69,128 +69,10 @@ namespace ChemicalSDS.Models
             }
         ];
 
-        public static string FromLegacy(Chemical c)
-        {
-            var items = DefaultTemplate();
+        
 
-            if (!string.IsNullOrWhiteSpace(c.RegInventoryAustralia))
-            {
-                var note = c.RegInventoryAustralia.Trim();
-                if (!note.Contains("AICIS", StringComparison.OrdinalIgnoreCase))
-                    note = "AICIS inventory: " + note;
-                items[2].Description = note + "\n\n" + items[2].Description;
-            }
+        
 
-            var legacy = BuildLegacyUsInventoryBlock(c);
-            if (!string.IsNullOrWhiteSpace(legacy))
-            {
-                items.Add(new Sec01SubsectionItem
-                {
-                    Heading = "Legacy regulatory information (previous US / multi-country format)",
-                    Description = legacy
-                });
-            }
-
-            if (!string.IsNullOrWhiteSpace(c.USFederalRegulations))
-            {
-                items.Add(new Sec01SubsectionItem
-                {
-                    Heading = "U.S. Federal regulations (legacy summary)",
-                    Description = c.USFederalRegulations.Trim()
-                });
-            }
-
-            if (!string.IsNullOrWhiteSpace(c.InternationalRegulations))
-            {
-                items.Add(new Sec01SubsectionItem
-                {
-                    Heading = "International regulations (legacy summary)",
-                    Description = c.InternationalRegulations.Trim()
-                });
-            }
-
-            if (!string.IsNullOrWhiteSpace(c.InventoryList))
-            {
-                items.Add(new Sec01SubsectionItem
-                {
-                    Heading = "Inventory list (legacy summary)",
-                    Description = c.InventoryList.Trim()
-                });
-            }
-
-            return Serialize(items);
-        }
-
-        private static string? BuildLegacyUsInventoryBlock(Chemical c)
-        {
-            var lines = new List<string>();
-            void Add(string label, string? value)
-            {
-                if (!string.IsNullOrWhiteSpace(value))
-                    lines.Add($"{label}: {value.Trim()}");
-            }
-
-            Add("TSCA 8(a) CDR Exempt/Partial exemption", c.RegTscaCdrExempt);
-            Add("Clean Air Act Section 112 (b) HAPs", c.RegCleanAirActHaps);
-            Add("Clean Air Act Section 602 Class I", c.RegCleanAirActClassI);
-            Add("Clean Air Act Section 602 Class II", c.RegCleanAirActClassII);
-            Add("DEA List I", c.RegDeaListI);
-            Add("DEA List II", c.RegDeaListII);
-            Add("SARA 302/304 — Composition", c.RegSara302Composition ?? c.SARA302304);
-            Add("SARA 304 RQ", c.RegSara304RQ);
-            Add("SARA 311/312 — Classification", c.RegSara311312Classification);
-            Add("Massachusetts", c.RegStateMassachusetts);
-            Add("New York", c.RegStateNewYork);
-            Add("New Jersey", c.RegStateNewJersey);
-            Add("Pennsylvania", c.RegStatePennsylvania);
-            Add("Chemical Weapon Convention", c.RegChemWeaponConvention);
-            Add("Montreal Protocol", c.RegMontrealProtocol);
-            Add("Stockholm Convention", c.RegStockholmConvention);
-            Add("Rotterdam Convention (PIC)", c.RegRotterdamConvention);
-            Add("UNECE Aarhus Protocol", c.RegUneceAarhus);
-            Add("Inventory — Canada", c.RegInventoryCanada);
-            Add("Inventory — China", c.RegInventoryChina);
-            Add("Inventory — Europe", c.RegInventoryEurope);
-            Add("Inventory — Japan (ENCS)", c.RegInventoryJapanEncs);
-            Add("Inventory — Japan (ISHL)", c.RegInventoryJapanIshl);
-            Add("Inventory — Malaysia", c.RegInventoryMalaysia);
-            Add("Inventory — New Zealand", c.RegInventoryNewZealand);
-            Add("Inventory — Philippines", c.RegInventoryPhilippines);
-            Add("Inventory — Republic of Korea", c.RegInventoryKorea);
-            Add("Inventory — Taiwan", c.RegInventoryTaiwan);
-            Add("Inventory — Thailand", c.RegInventoryThailand);
-            Add("Inventory — Turkey", c.RegInventoryTurkey);
-            Add("Inventory — United States", c.RegInventoryUnitedStates);
-            Add("Inventory — Viet Nam", c.RegInventoryVietnam);
-
-            return lines.Count == 0 ? null : string.Join("\n", lines);
-        }
-
-        public static void SyncLegacyFields(Chemical target, string? json)
-        {
-            var rows = Parse(json);
-            if (rows.Count == 0)
-                return;
-
-            static string? Desc(IEnumerable<Sec01SubsectionItem> list, string prefix)
-            {
-                var row = list.FirstOrDefault(r =>
-                    r.Heading.TrimStart().StartsWith(prefix, StringComparison.OrdinalIgnoreCase));
-                return string.IsNullOrWhiteSpace(row?.Description) ? null : row.Description.Trim();
-            }
-
-            var aicis = Desc(rows, "15.3");
-            if (!string.IsNullOrWhiteSpace(aicis))
-            {
-                var firstLine = aicis.Split('\n', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
-                    .FirstOrDefault();
-                if (!string.IsNullOrWhiteSpace(firstLine))
-                    target.RegInventoryAustralia = firstLine.Length > 500 ? firstLine[..500] : firstLine;
-            }
-
-            var susmp = Desc(rows, "15.4");
-            if (!string.IsNullOrWhiteSpace(susmp))
-                target.StateRegulations = susmp;
-        }
+        
     }
 }

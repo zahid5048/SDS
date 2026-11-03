@@ -13,14 +13,9 @@
 
 <div class="card mb-4">
     <div class="card-header bg-dark text-white">
-        <h3 class="mb-0">📄 @(string.IsNullOrEmpty(productLabel) ? "Chemical" : productLabel) (@Model.CASNumber)</h3>
+        <h3 class="mb-0">📄 @(string.IsNullOrEmpty(productLabel) ? "Chemical" : productLabel)</h3>
     </div>
     <div class="card-body">
-        <div class="alert alert-danger">
-            <strong>⚠️ Signal Word: @Model.SignalWord</strong> | 
-            <strong>🔥 Flash Point:</strong> @Model.FlashPoint
-        </div>
-
         <!-- Navigation to Sections -->
         <div class="row g-1 mb-4">
             <div class="col"><a href="#sec1" class="btn btn-sm btn-outline-primary w-100">Sec 1</a></div>

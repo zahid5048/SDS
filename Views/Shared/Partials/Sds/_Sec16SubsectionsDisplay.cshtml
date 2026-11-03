@@ -27,7 +27,7 @@
         }
         else if (heading.StartsWith("16.5", StringComparison.OrdinalIgnoreCase))
         {
-            var rev = Sec16SubsectionCodec.ComposeRevisionParagraph(Model, row);
+            var rev = Sec16SubsectionCodec.ComposeRevisionParagraph(row);
             if (!string.IsNullOrWhiteSpace(rev))
             {
                 <partial name="Partials/Sds/_SdsDetailBlock" model="@(new SdsDetailRow { Label = "", Value = rev })" />
@@ -41,7 +41,7 @@
     }
     else if (row.Heading.TrimStart().StartsWith("16.5", StringComparison.OrdinalIgnoreCase))
     {
-        var rev = Sec16SubsectionCodec.ComposeRevisionParagraph(Model, row);
+        var rev = Sec16SubsectionCodec.ComposeRevisionParagraph(row);
         if (!string.IsNullOrWhiteSpace(rev))
         {
             <partial name="Partials/Sds/_SdsDetailBlock" model="@(new SdsDetailRow { Label = "", Value = rev })" />

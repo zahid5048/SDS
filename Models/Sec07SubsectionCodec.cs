@@ -29,7 +29,7 @@ namespace ChemicalSDS.Models
             JsonSerializer.Serialize(items.ToList(), JsonOptions);
 
         public static string ResolveStoredJson(Chemical c) =>
-            string.IsNullOrWhiteSpace(c.Sec07Subsections) ? FromLegacy(c) : c.Sec07Subsections!;
+            string.IsNullOrWhiteSpace(c.Sec07Subsections) ? "[]" : c.Sec07Subsections!;
 
         public static List<Sec01SubsectionItem> DefaultTemplate() =>
         [
@@ -86,24 +86,7 @@ namespace ChemicalSDS.Models
             }
         ];
 
-        public static string FromLegacy(Chemical c)
-        {
-            var items = DefaultTemplate();
-
-            if (!string.IsNullOrWhiteSpace(c.HandlingPrecautions))
-                items[0].Description = c.HandlingPrecautions.Trim();
-            SetField(items[0].Fields, "Occupational hygiene", c.OccupationalHygiene);
-
-            if (!string.IsNullOrWhiteSpace(c.SafeStorageConditions))
-                SetField(items[1].Fields, "Store rooms", c.SafeStorageConditions);
-            if (!string.IsNullOrWhiteSpace(c.IncompatibleMaterials))
-                SetField(items[1].Fields, "Storage class", c.IncompatibleMaterials);
-
-            if (!string.IsNullOrWhiteSpace(c.ProductUse))
-                items[2].Description = c.ProductUse.Trim();
-
-            return Serialize(items);
-        }
+        
 
         private static void SetField(List<Sec01SubsectionField>? fields, string labelPrefix, string? value)
         {
@@ -114,38 +97,6 @@ namespace ChemicalSDS.Models
                 field.Description = value.Trim();
         }
 
-        public static void SyncLegacyFields(Chemical target, string? json)
-        {
-            var rows = Parse(json);
-            if (rows.Count == 0)
-                return;
-
-            static string? FieldDesc(Sec01SubsectionItem? row, string labelPrefix)
-            {
-                if (row?.Fields == null) return null;
-                var f = row.Fields.FirstOrDefault(x =>
-                    x.Label.Contains(labelPrefix, StringComparison.OrdinalIgnoreCase));
-                return string.IsNullOrWhiteSpace(f?.Description) ? null : f.Description.Trim();
-            }
-
-            var sec71 = rows.FirstOrDefault(r =>
-                r.Heading.TrimStart().StartsWith("7.1", StringComparison.OrdinalIgnoreCase));
-            if (!string.IsNullOrWhiteSpace(sec71?.Description))
-                target.HandlingPrecautions = sec71.Description.Trim();
-            target.OccupationalHygiene =
-                FieldDesc(sec71, "Occupational hygiene") ?? target.OccupationalHygiene;
-
-            var sec72 = rows.FirstOrDefault(r =>
-                r.Heading.TrimStart().StartsWith("7.2", StringComparison.OrdinalIgnoreCase));
-            target.SafeStorageConditions =
-                FieldDesc(sec72, "Store rooms") ?? target.SafeStorageConditions;
-            target.IncompatibleMaterials =
-                FieldDesc(sec72, "Storage class") ?? target.IncompatibleMaterials;
-
-            var sec73 = rows.FirstOrDefault(r =>
-                r.Heading.TrimStart().StartsWith("7.3", StringComparison.OrdinalIgnoreCase));
-            if (!string.IsNullOrWhiteSpace(sec73?.Description))
-                target.ProductUse = sec73.Description.Trim();
-        }
+        
     }
 }

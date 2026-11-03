@@ -35,7 +35,7 @@
     {
         var codes = GhsPictogramCatalog.ParseCodes(block.Codes);
         if (codes.Count == 0) codes = ghsCodes;
-        if (codes.Count > 0 || !string.IsNullOrEmpty(block.CustomImagePath) || !string.IsNullOrEmpty(Model.GhsPictogramImagePath))
+        if (codes.Count > 0 || !string.IsNullOrEmpty(block.CustomImagePath))
         {
             <div class="sds-regulatory-group"><strong class="sds-regulatory-group-title">Hazard pictograms</strong></div>
             <div class="ghs-display-block mb-3">
@@ -52,13 +52,6 @@
                         <figure class="ghs-display-item ghs-display-upload">
                             <img src="~/@block.CustomImagePath" alt="Custom pictogram" />
                             <figcaption>Custom pictogram</figcaption>
-                        </figure>
-                    }
-                    @if (!string.IsNullOrEmpty(Model.GhsPictogramImagePath) && string.IsNullOrEmpty(block.CustomImagePath))
-                    {
-                        <figure class="ghs-display-item ghs-display-upload">
-                            <img src="~/@Model.GhsPictogramImagePath" alt="GHS label" />
-                            <figcaption>Custom label image</figcaption>
                         </figure>
                     }
                 </div>

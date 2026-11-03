@@ -68,78 +68,19 @@ namespace ChemicalSDS.Models
             new() { Heading = "1.4 Emergency telephone number", Description = "" }
         ];
 
-        public static string FromLegacy(Chemical c)
-        {
-            var items = DefaultTemplate();
-            items[0].Description = c.ProductIdentifier ?? "";
-            items[1].Description = c.ProductUse ?? "";
-            var sec13Fields = items[2].Fields;
-            if (sec13Fields is { Count: >= 2 })
-            {
-                sec13Fields[0].Description = c.Sec01Manufacturer ?? "";
-                sec13Fields[1].Description = c.SupplierDetails ?? "";
-            }
-            items[3].Description = c.EmergencyPhone ?? "";
-            return Serialize(items);
-        }
-
         public static string ResolveStoredJson(Chemical c) =>
-            string.IsNullOrWhiteSpace(c.Sec01Subsections) ? FromLegacy(c) : c.Sec01Subsections!;
+            string.IsNullOrWhiteSpace(c.Sec01Subsections) ? "[]" : c.Sec01Subsections!;
 
-        public static void SyncLegacyFields(Chemical target, string? json)
+        public static void SyncProductIdentifier(Chemical target, string? json)
         {
             var rows = Parse(json);
-            if (rows.Count == 0)
+            var row = rows.FirstOrDefault(r =>
+                r.Heading.TrimStart().StartsWith("1.1", StringComparison.OrdinalIgnoreCase));
+            if (string.IsNullOrWhiteSpace(row?.Description))
                 return;
-
-            static string? FindDesc(IEnumerable<Sec01SubsectionItem> list, string prefix)
-            {
-                var row = list.FirstOrDefault(r =>
-                    r.Heading.TrimStart().StartsWith(prefix, StringComparison.OrdinalIgnoreCase));
-                if (row == null) return null;
-                if (row.Fields is { Count: > 0 })
-                    return null;
-                return string.IsNullOrWhiteSpace(row.Description) ? null : row.Description.Trim();
-            }
-
-            var productId = FindDesc(rows, "1.1");
-            if (!string.IsNullOrWhiteSpace(productId))
-            {
-                var plain = ToPlainText(productId);
-                var label = ShortProductLabel(plain);
-                if (!string.IsNullOrWhiteSpace(label))
-                {
-                    if (string.IsNullOrWhiteSpace(target.ChemicalName)
-                        || target.ChemicalName == plain
-                        || target.ChemicalName == target.ProductIdentifier)
-                        target.ChemicalName = label;
-                    target.ProductIdentifier = label;
-                }
-            }
-
-            target.ProductUse = FindDesc(rows, "1.2") ?? target.ProductUse;
-            target.EmergencyPhone = FindDesc(rows, "1.4") ?? target.EmergencyPhone;
-
-            var sec13 = rows.FirstOrDefault(r => r.Heading.TrimStart().StartsWith("1.3", StringComparison.OrdinalIgnoreCase));
-            if (sec13?.Fields is { Count: > 0 })
-            {
-                foreach (var f in sec13.Fields)
-                {
-                    if (string.IsNullOrWhiteSpace(f.Label)) continue;
-                    if (f.Label.Contains("Manufacturer", StringComparison.OrdinalIgnoreCase) &&
-                        !f.Label.Contains("Australian", StringComparison.OrdinalIgnoreCase))
-                        target.Sec01Manufacturer = f.Description?.Trim();
-                    else if (f.Label.Contains("Australian supplier", StringComparison.OrdinalIgnoreCase) ||
-                             f.Label.Contains("importer", StringComparison.OrdinalIgnoreCase))
-                        target.SupplierDetails = f.Description?.Trim();
-                }
-            }
-            else
-            {
-                var sec13Text = FindDesc(rows, "1.3");
-                if (!string.IsNullOrWhiteSpace(sec13Text))
-                    target.SupplierDetails = sec13Text;
-            }
+            var label = ShortProductLabel(ToPlainText(row.Description));
+            if (!string.IsNullOrWhiteSpace(label))
+                target.ProductIdentifier = label;
         }
 
         public static bool LooksLikeRichText(string? value) =>

@@ -29,7 +29,7 @@ namespace ChemicalSDS.Models
             JsonSerializer.Serialize(items.ToList(), JsonOptions);
 
         public static string ResolveStoredJson(Chemical c) =>
-            string.IsNullOrWhiteSpace(c.Sec08Subsections) ? FromLegacy(c) : c.Sec08Subsections!;
+            string.IsNullOrWhiteSpace(c.Sec08Subsections) ? "[]" : c.Sec08Subsections!;
 
         public static List<Sec01SubsectionItem> DefaultTemplate() =>
         [
@@ -98,49 +98,7 @@ namespace ChemicalSDS.Models
             }
         ];
 
-        public static string FromLegacy(Chemical c)
-        {
-            var items = DefaultTemplate();
-
-            var oelRows = OelLimitsFormatter.Parse(c.OccupationalExposureLimits);
-            if (oelRows.Count > 0)
-            {
-                var lines = oelRows
-                    .Where(r => !string.IsNullOrWhiteSpace(r.Ingredient) || !string.IsNullOrWhiteSpace(r.Limits))
-                    .Select(r => string.IsNullOrWhiteSpace(r.Ingredient)
-                        ? r.Limits.Trim()
-                        : $"{r.Ingredient.Trim()}: {r.Limits.Trim()}");
-                items[0].Description = string.Join("\n", lines);
-            }
-            else if (!string.IsNullOrWhiteSpace(c.OccupationalExposureLimits) &&
-                     !c.OccupationalExposureLimits.Contains(OelLimitsFormatter.RowSeparator, StringComparison.Ordinal))
-            {
-                items[0].Description = c.OccupationalExposureLimits.Trim();
-            }
-
-            var sec82 = items[1].Fields;
-            if (sec82 != null)
-            {
-                SetField(sec82, "Engineering measures", c.ExposureControls);
-                SetField(sec82, "Respiratory", c.RespiratoryProtection);
-                SetField(sec82, "Gloves", c.HandProtection);
-                SetField(sec82, "Eye protection", c.EyeProtection);
-                SetField(sec82, "Body protection", c.BodyProtection);
-                SetField(sec82, "Hygiene measures", c.HygieneMeasures);
-                if (!string.IsNullOrWhiteSpace(c.OtherSkinProtection))
-                {
-                    var gloves = FieldDesc(items[1], "Gloves");
-                    var extra = c.OtherSkinProtection.Trim();
-                    SetField(sec82, "Gloves",
-                        string.IsNullOrWhiteSpace(gloves) ? extra : gloves + "\n" + extra);
-                }
-            }
-
-            if (!string.IsNullOrWhiteSpace(c.EnvironmentalExposureControls))
-                items[2].Description = c.EnvironmentalExposureControls.Trim();
-
-            return Serialize(items);
-        }
+        
 
         private static void SetField(List<Sec01SubsectionField>? fields, string labelPrefix, string? value)
         {
@@ -159,39 +117,6 @@ namespace ChemicalSDS.Models
             return string.IsNullOrWhiteSpace(f?.Description) ? null : f.Description.Trim();
         }
 
-        public static void SyncLegacyFields(Chemical target, string? json)
-        {
-            var rows = Parse(json);
-            if (rows.Count == 0)
-                return;
-
-            static string? FieldDesc(Sec01SubsectionItem? row, string labelPrefix)
-            {
-                if (row?.Fields == null) return null;
-                var f = row.Fields.FirstOrDefault(x =>
-                    x.Label.Contains(labelPrefix, StringComparison.OrdinalIgnoreCase));
-                return string.IsNullOrWhiteSpace(f?.Description) ? null : f.Description.Trim();
-            }
-
-            var sec81 = rows.FirstOrDefault(r =>
-                r.Heading.TrimStart().StartsWith("8.1", StringComparison.OrdinalIgnoreCase));
-            if (!string.IsNullOrWhiteSpace(sec81?.Description))
-                target.OccupationalExposureLimits = sec81.Description.Trim();
-
-            var sec82 = rows.FirstOrDefault(r =>
-                r.Heading.TrimStart().StartsWith("8.2", StringComparison.OrdinalIgnoreCase));
-
-            target.ExposureControls = FieldDesc(sec82, "Engineering measures") ?? target.ExposureControls;
-            target.RespiratoryProtection = FieldDesc(sec82, "Respiratory") ?? target.RespiratoryProtection;
-            target.HandProtection = FieldDesc(sec82, "Gloves") ?? target.HandProtection;
-            target.EyeProtection = FieldDesc(sec82, "Eye protection") ?? target.EyeProtection;
-            target.BodyProtection = FieldDesc(sec82, "Body protection") ?? target.BodyProtection;
-            target.HygieneMeasures = FieldDesc(sec82, "Hygiene measures") ?? target.HygieneMeasures;
-
-            var sec83 = rows.FirstOrDefault(r =>
-                r.Heading.TrimStart().StartsWith("8.3", StringComparison.OrdinalIgnoreCase));
-            if (!string.IsNullOrWhiteSpace(sec83?.Description))
-                target.EnvironmentalExposureControls = sec83.Description.Trim();
-        }
+        
     }
 }

@@ -29,7 +29,7 @@ namespace ChemicalSDS.Models
             JsonSerializer.Serialize(items.ToList(), JsonOptions);
 
         public static string ResolveStoredJson(Chemical c) =>
-            string.IsNullOrWhiteSpace(c.Sec05Subsections) ? FromLegacy(c) : c.Sec05Subsections!;
+            string.IsNullOrWhiteSpace(c.Sec05Subsections) ? "[]" : c.Sec05Subsections!;
 
         public static List<Sec01SubsectionItem> DefaultTemplate() =>
         [
@@ -64,52 +64,7 @@ namespace ChemicalSDS.Models
             }
         ];
 
-        public static string FromLegacy(Chemical c)
-        {
-            var items = DefaultTemplate();
-            var sec51 = items[0].Fields;
-            if (sec51 != null)
-            {
-                SetField(sec51, "Suitable", c.SuitableExtinguishingMedia);
-                SetField(sec51, "Unsuitable", c.UnsuitableExtinguishingMedia);
-            }
-
-            var sec52Parts = new List<string>();
-            if (!string.IsNullOrWhiteSpace(c.SpecificHazards))
-                sec52Parts.Add(c.SpecificHazards.Trim());
-            if (!string.IsNullOrWhiteSpace(c.HazardousDecomposition))
-                sec52Parts.Add("Hazardous thermal decomposition products: " + c.HazardousDecomposition.Trim());
-            if (sec52Parts.Count > 0)
-                items[1].Description = string.Join("\n\n", sec52Parts);
-
-            var sec53Parts = new List<string>();
-            if (!string.IsNullOrWhiteSpace(c.FirefighterProtectiveActions))
-                sec53Parts.Add(c.FirefighterProtectiveActions.Trim());
-            if (!string.IsNullOrWhiteSpace(c.FirefighterProtectiveEquipment))
-                sec53Parts.Add(c.FirefighterProtectiveEquipment.Trim());
-            if (sec53Parts.Count > 0)
-                items[2].Description = string.Join("\n\n", sec53Parts);
-
-            var extra = new List<string>();
-            if (!string.IsNullOrWhiteSpace(c.FlashPoint))
-                extra.Add("Flash point: " + c.FlashPoint.Trim());
-            if (!string.IsNullOrWhiteSpace(c.AutoIgnitionTemp))
-                extra.Add("Auto-ignition temperature: " + c.AutoIgnitionTemp.Trim());
-            if (!string.IsNullOrWhiteSpace(c.LowerExplosiveLimit))
-                extra.Add("Lower explosive limit: " + c.LowerExplosiveLimit.Trim());
-            if (!string.IsNullOrWhiteSpace(c.UpperExplosiveLimit))
-                extra.Add("Upper explosive limit: " + c.UpperExplosiveLimit.Trim());
-            if (extra.Count > 0)
-            {
-                items.Add(new Sec01SubsectionItem
-                {
-                    Heading = "Additional fire-related data",
-                    Description = string.Join("\n", extra)
-                });
-            }
-
-            return Serialize(items);
-        }
+        
 
         private static void SetField(List<Sec01SubsectionField> fields, string labelPrefix, string? value)
         {
@@ -120,37 +75,6 @@ namespace ChemicalSDS.Models
                 field.Description = value.Trim();
         }
 
-        public static void SyncLegacyFields(Chemical target, string? json)
-        {
-            var rows = Parse(json);
-            if (rows.Count == 0)
-                return;
-
-            static string? FieldDesc(Sec01SubsectionItem? row, string labelPrefix)
-            {
-                if (row?.Fields == null) return null;
-                var f = row.Fields.FirstOrDefault(x =>
-                    x.Label.TrimStart().StartsWith(labelPrefix, StringComparison.OrdinalIgnoreCase));
-                return string.IsNullOrWhiteSpace(f?.Description) ? null : f.Description.Trim();
-            }
-
-            var sec51 = rows.FirstOrDefault(r =>
-                r.Heading.TrimStart().StartsWith("5.1", StringComparison.OrdinalIgnoreCase));
-
-            target.SuitableExtinguishingMedia =
-                FieldDesc(sec51, "Suitable") ?? target.SuitableExtinguishingMedia;
-            target.UnsuitableExtinguishingMedia =
-                FieldDesc(sec51, "Unsuitable") ?? target.UnsuitableExtinguishingMedia;
-
-            var sec52 = rows.FirstOrDefault(r =>
-                r.Heading.TrimStart().StartsWith("5.2", StringComparison.OrdinalIgnoreCase));
-            if (!string.IsNullOrWhiteSpace(sec52?.Description))
-                target.SpecificHazards = sec52.Description.Trim();
-
-            var sec53 = rows.FirstOrDefault(r =>
-                r.Heading.TrimStart().StartsWith("5.3", StringComparison.OrdinalIgnoreCase));
-            if (!string.IsNullOrWhiteSpace(sec53?.Description))
-                target.FirefighterProtectiveActions = sec53.Description.Trim();
-        }
+        
     }
 }

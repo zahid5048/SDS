@@ -15,9 +15,6 @@
             <thead>
                 <tr>
                     <th>Chemical</th>
-                    <th>Classification</th>
-                    <th>Signal Word</th>
-                    <th>Hazard Statements</th>
                     <th>Action</th>
                 </tr>
             </thead>
@@ -25,19 +22,7 @@
                 @foreach (var chemical in Model)
                 {
                     <tr>
-                        <td><strong>@Sec01SubsectionCodec.ShortProductLabel(chemical.ProductIdentifier)</strong></td>
-                        <td>@chemical.Classification</td>
-                        <td>
-                            @if (chemical.SignalWord == "Danger")
-                            {
-                                <span class="badge-danger">Danger</span>
-                            }
-                            else
-                            {
-                                <span class="badge-warning">@chemical.SignalWord</span>
-                            }
-                        </td>
-                        <td><small>@chemical.HazardStatements</small></td>
+                        <td><strong>@(string.IsNullOrWhiteSpace(Sec01SubsectionCodec.ShortProductLabel(chemical.ProductIdentifier)) ? "Untitled" : Sec01SubsectionCodec.ShortProductLabel(chemical.ProductIdentifier))</strong></td>
                         <td>
                             <a asp-action="SDSDetails" asp-route-id="@chemical.Id" class="btn btn-sm btn-primary">
                                 <i class="fas fa-file-alt"></i> SDS

@@ -3,8 +3,6 @@
 @{
     var product = Sec01SubsectionCodec.ShortProductLabel(Model.ProductIdentifier);
     if (string.IsNullOrWhiteSpace(product))
-        product = Sec01SubsectionCodec.ShortProductLabel(Model.ChemicalName);
-    if (string.IsNullOrWhiteSpace(product))
         product = "Chemical";
     ViewData["Title"] = $"{product} - Safety Data Sheet";
     var sec01Rows = Sec01SubsectionCodec.Parse(Sec01SubsectionCodec.ResolveStoredJson(Model));

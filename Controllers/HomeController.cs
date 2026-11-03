@@ -99,7 +99,7 @@ namespace ChemicalSDS.Controllers
                 return RedirectToList(returnAction);
             }
 
-            TempData["Success"] = $"\"{chemical.ProductIdentifier ?? chemical.ChemicalName}\" moved to deleted.";
+            TempData["Success"] = $"\"{chemical.ProductIdentifier}\" moved to deleted.";
             return RedirectToList(returnAction);
         }
 
@@ -117,7 +117,7 @@ namespace ChemicalSDS.Controllers
                 return RedirectToAction(nameof(Deleted));
             }
 
-            TempData["Success"] = $"\"{chemical.ProductIdentifier ?? chemical.ChemicalName}\" restored successfully.";
+            TempData["Success"] = $"\"{chemical.ProductIdentifier}\" restored successfully.";
             return RedirectToAction(nameof(Reports));
         }
 
@@ -135,7 +135,7 @@ namespace ChemicalSDS.Controllers
                 return RedirectToAction(nameof(Deleted));
             }
 
-            TempData["Success"] = $"\"{chemical.ProductIdentifier ?? chemical.ChemicalName}\" permanently removed.";
+            TempData["Success"] = $"\"{chemical.ProductIdentifier}\" permanently removed.";
             return RedirectToAction(nameof(Deleted));
         }
 
@@ -159,8 +159,6 @@ namespace ChemicalSDS.Controllers
                 return NotFound();
 
             var productLabel = Sec01SubsectionCodec.ShortProductLabel(chemical.ProductIdentifier);
-            if (string.IsNullOrWhiteSpace(productLabel))
-                productLabel = Sec01SubsectionCodec.ShortProductLabel(chemical.ChemicalName);
             ViewBag.PageTitle = $"{(string.IsNullOrWhiteSpace(productLabel) ? "Chemical" : productLabel)} - SDS";
             ViewBag.PageIcon = "fa-file-alt";
             return View(chemical);
@@ -178,8 +176,6 @@ namespace ChemicalSDS.Controllers
 
             var bytes = _pdfGenerator.Generate(chemical);
             var fileLabel = Sec01SubsectionCodec.ShortProductLabel(chemical.ProductIdentifier);
-            if (string.IsNullOrWhiteSpace(fileLabel))
-                fileLabel = Sec01SubsectionCodec.ShortProductLabel(chemical.ChemicalName);
             var name = $"{(string.IsNullOrWhiteSpace(fileLabel) ? "SDS" : fileLabel)}_SafetyDataSheet.pdf";
             name = string.Join("_", name.Split(Path.GetInvalidFileNameChars()));
 

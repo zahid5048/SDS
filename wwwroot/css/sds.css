@@ -3,10 +3,10 @@ html {
 }
 
 :root {
-    --sds-green-dark: #7a2e42;
-    --sds-green: #d16b7f;
+    --sds-green-dark: #dc1147;
+    --sds-green: #e3082c;
     --sds-green-light: #fdecef;
-    --sds-gradient: linear-gradient(135deg, #7a2e42 0%, #c94d66 50%, #e895a3 100%);
+    --sds-gradient: linear-gradient(135deg, #c60944 0%, #c4113a 50%, #e3082c 100%);
 }
 
 /* Centred SDS document column */
@@ -537,7 +537,7 @@ html {
 }
 
 .sds-regulatory-detail .sds-detail-label {
-    color: #a84358;
+    color: #e60a36;
 }
 
 /* Section 16 — HMIS table */
@@ -593,7 +593,7 @@ html {
 }
 
 .sds-nfpa-health {
-    background: #a84358;
+    background: #e60a36;
     color: #fff;
 }
 
@@ -636,7 +636,7 @@ html {
 
 .sds-sec16-blue-label,
 .sds-sec16-label {
-    color: #a84358;
+    color: #e60a36;
     font-weight: 700;
 }
 
@@ -650,7 +650,7 @@ html {
 }
 
 .sds-sec16-colon {
-    color: #a84358;
+    color: #e60a36;
     font-weight: 700;
 }
 
@@ -723,7 +723,7 @@ html {
 
 .sds-fields-table .sds-fields-table-label {
     font-weight: 600;
-    color: #a84358;
+    color: #e60a36;
     white-space: nowrap;
     vertical-align: top;
     width: 1%;

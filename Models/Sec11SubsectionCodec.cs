@@ -29,7 +29,7 @@ namespace ChemicalSDS.Models
             JsonSerializer.Serialize(items.ToList(), JsonOptions);
 
         public static string ResolveStoredJson(Chemical c) =>
-            string.IsNullOrWhiteSpace(c.Sec11Subsections) ? FromLegacy(c) : c.Sec11Subsections!;
+            string.IsNullOrWhiteSpace(c.Sec11Subsections) ? "[]" : c.Sec11Subsections!;
 
         public static List<Sec01SubsectionItem> DefaultTemplate() =>
         [
@@ -100,43 +100,7 @@ namespace ChemicalSDS.Models
             }
         ];
 
-        public static string FromLegacy(Chemical c)
-        {
-            var items = DefaultTemplate();
-            var f = items[0].Fields!;
-
-            SetField(f, "Acute toxicity", c.AcuteToxicity);
-            if (!string.IsNullOrWhiteSpace(c.IrritationCorrosion))
-            {
-                if (c.IrritationCorrosion.Contains('|'))
-                    SetField(f, "Skin corrosion", "See ingredient irritation/corrosion data on file.");
-                else
-                {
-                    SetField(f, "Skin corrosion", c.IrritationCorrosion);
-                    SetField(f, "Serious eye", c.IrritationCorrosion);
-                }
-            }
-            SetField(f, "sensitisation", c.Sensitization);
-            SetField(f, "Germ cell", c.Mutagenicity);
-            var carc = JoinNonEmpty(c.Carcinogenicity, c.CarcinogenicityClassification, "\n");
-            SetField(f, "Carcinogenicity:", carc);
-            SetField(f, "Reproductive toxicity", c.ReproductiveToxicity ?? c.Teratogenicity);
-            SetField(f, "single exposure", c.TargetOrganToxicitySingle);
-            SetField(f, "repeated exposure", c.TargetOrganToxicityRepeated);
-            SetField(f, "Aspiration", c.AspirationHazard);
-
-            var extra = CollectLegacyNotes(c);
-            if (!string.IsNullOrWhiteSpace(extra))
-            {
-                items.Add(new Sec01SubsectionItem
-                {
-                    Heading = "Additional toxicological information (legacy)",
-                    Description = extra
-                });
-            }
-
-            return Serialize(items);
-        }
+        
 
         private static string? JoinNonEmpty(string? a, string? b, string sep)
         {
@@ -144,19 +108,7 @@ namespace ChemicalSDS.Models
             return parts.Count == 0 ? null : string.Join(sep, parts);
         }
 
-        private static string? CollectLegacyNotes(Chemical c)
-        {
-            var parts = new List<string>();
-            void Add(string label, string? val)
-            {
-                if (!string.IsNullOrWhiteSpace(val))
-                    parts.Add($"{label}: {val.Trim()}");
-            }
-            Add("Routes of exposure", c.RoutesOfExposure);
-            Add("Acute toxicity estimates", c.AcuteToxicityEstimates);
-            Add("Chronic health effects", c.ChronicHealthEffects);
-            return parts.Count == 0 ? null : string.Join("\n\n", parts);
-        }
+        
 
         private static void SetField(List<Sec01SubsectionField> fields, string labelPart, string? value)
         {
@@ -167,36 +119,6 @@ namespace ChemicalSDS.Models
                 field.Description = value.Trim();
         }
 
-        public static void SyncLegacyFields(Chemical target, string? json)
-        {
-            var rows = Parse(json);
-            if (rows.Count == 0)
-                return;
-
-            static string? GetField(Sec01SubsectionItem? row, string labelPart)
-            {
-                if (row?.Fields == null) return null;
-                var f = row.Fields.FirstOrDefault(x =>
-                    x.Label.Contains(labelPart, StringComparison.OrdinalIgnoreCase));
-                return string.IsNullOrWhiteSpace(f?.Description) ? null : f.Description.Trim();
-            }
-
-            var sec111 = rows.FirstOrDefault(r =>
-                r.Heading.TrimStart().StartsWith("11.1", StringComparison.OrdinalIgnoreCase));
-
-            target.AcuteToxicity = GetField(sec111, "Acute toxicity") ?? target.AcuteToxicity;
-            target.IrritationCorrosion =
-                GetField(sec111, "Skin corrosion") ?? target.IrritationCorrosion;
-            target.Sensitization = GetField(sec111, "sensitisation") ?? target.Sensitization;
-            target.Mutagenicity = GetField(sec111, "Germ cell") ?? target.Mutagenicity;
-            target.Carcinogenicity = GetField(sec111, "Carcinogenicity:") ?? target.Carcinogenicity;
-            target.ReproductiveToxicity =
-                GetField(sec111, "Reproductive toxicity") ?? target.ReproductiveToxicity;
-            target.TargetOrganToxicitySingle =
-                GetField(sec111, "single exposure") ?? target.TargetOrganToxicitySingle;
-            target.TargetOrganToxicityRepeated =
-                GetField(sec111, "repeated exposure") ?? target.TargetOrganToxicityRepeated;
-            target.AspirationHazard = GetField(sec111, "Aspiration") ?? target.AspirationHazard;
-        }
+        
     }
 }

@@ -29,7 +29,7 @@ namespace ChemicalSDS.Models
             JsonSerializer.Serialize(items.ToList(), JsonOptions);
 
         public static string ResolveStoredJson(Chemical c) =>
-            string.IsNullOrWhiteSpace(c.Sec12Subsections) ? FromLegacy(c) : c.Sec12Subsections!;
+            string.IsNullOrWhiteSpace(c.Sec12Subsections) ? "[]" : c.Sec12Subsections!;
 
         public static List<Sec01SubsectionItem> DefaultTemplate() =>
         [
@@ -72,16 +72,7 @@ namespace ChemicalSDS.Models
             }
         ];
 
-        public static string FromLegacy(Chemical c)
-        {
-            var items = DefaultTemplate();
-            SetDesc(items, "12.1", FormatLegacyText(c.Ecotoxicity, items[0].Description));
-            SetDesc(items, "12.2", c.PersistenceDegradability);
-            SetDesc(items, "12.3", FormatLegacyText(c.BioaccumulativePotential, items[2].Description));
-            SetDesc(items, "12.4", c.MobilityInSoil);
-            SetDesc(items, "12.7", c.OtherEcologicalEffects);
-            return Serialize(items);
-        }
+        
 
         private static string? FormatLegacyText(string? value, string? fallback)
         {
@@ -101,24 +92,6 @@ namespace ChemicalSDS.Models
                 row.Description = value.Trim();
         }
 
-        public static void SyncLegacyFields(Chemical target, string? json)
-        {
-            var rows = Parse(json);
-            if (rows.Count == 0)
-                return;
-
-            static string? Desc(IEnumerable<Sec01SubsectionItem> list, string prefix)
-            {
-                var row = list.FirstOrDefault(r =>
-                    r.Heading.TrimStart().StartsWith(prefix, StringComparison.OrdinalIgnoreCase));
-                return string.IsNullOrWhiteSpace(row?.Description) ? null : row.Description.Trim();
-            }
-
-            target.Ecotoxicity = Desc(rows, "12.1") ?? target.Ecotoxicity;
-            target.PersistenceDegradability = Desc(rows, "12.2") ?? target.PersistenceDegradability;
-            target.BioaccumulativePotential = Desc(rows, "12.3") ?? target.BioaccumulativePotential;
-            target.MobilityInSoil = Desc(rows, "12.4") ?? target.MobilityInSoil;
-            target.OtherEcologicalEffects = Desc(rows, "12.7") ?? target.OtherEcologicalEffects;
-        }
+        
     }
 }

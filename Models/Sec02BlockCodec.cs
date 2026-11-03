@@ -65,7 +65,7 @@ namespace ChemicalSDS.Models
             JsonSerializer.Serialize(blocks.ToList(), JsonOptions);
 
         public static string ResolveStoredJson(Chemical c) =>
-            string.IsNullOrWhiteSpace(c.Sec02Blocks) ? FromLegacy(c) : c.Sec02Blocks!;
+            string.IsNullOrWhiteSpace(c.Sec02Blocks) ? "[]" : c.Sec02Blocks!;
 
         public static List<Sec02Block> DefaultTemplate() =>
         [
@@ -114,31 +114,7 @@ namespace ChemicalSDS.Models
             }
         ];
 
-        public static string FromLegacy(Chemical c)
-        {
-            var blocks = DefaultTemplate();
-            if (!string.IsNullOrWhiteSpace(c.Classification) || !string.IsNullOrWhiteSpace(c.OSHASstatus))
-            {
-                var intro = string.IsNullOrWhiteSpace(c.OSHASstatus)
-                    ? c.Classification
-                    : c.OSHASstatus + "\n" + c.Classification;
-                blocks[0].Description = intro?.Trim() ?? blocks[0].Description;
-            }
-            if (!string.IsNullOrWhiteSpace(c.GhsPictogramCodes))
-            {
-                var pic = blocks.FirstOrDefault(b => b.Type == "pictograms");
-                if (pic != null) pic.Codes = c.GhsPictogramCodes;
-            }
-            SetTextDesc(blocks, "Signal word", c.SignalWord);
-            SetTextDesc(blocks, "Hazard statements", c.HazardStatements);
-            SetTextDesc(blocks, "Precautionary statements — General", c.PrecautionaryGeneral);
-            SetTextDesc(blocks, "Precautionary statements — Prevention", c.PrecautionaryPrevention);
-            SetTextDesc(blocks, "Precautionary statements — Response", c.PrecautionaryResponse);
-            SetTextDesc(blocks, "Precautionary statements — Storage", c.PrecautionaryStorage);
-            SetTextDesc(blocks, "Precautionary statements — Disposal", c.PrecautionaryDisposal);
-            SetTextDesc(blocks, "2.3 Other hazards", c.HazardsNotOtherwiseClassified);
-            return Serialize(blocks);
-        }
+        
 
         private static void SetTextDesc(List<Sec02Block> blocks, string heading, string? value)
         {
@@ -148,30 +124,7 @@ namespace ChemicalSDS.Models
             if (block != null) block.Description = value.Trim();
         }
 
-        public static void SyncLegacyFields(Chemical target, string? json)
-        {
-            var blocks = Parse(json);
-            if (blocks.Count == 0) return;
-
-            var classification = blocks.FirstOrDefault(b =>
-                b.Type == "text" && b.Heading.StartsWith("2.1", StringComparison.OrdinalIgnoreCase));
-            if (classification != null && !string.IsNullOrWhiteSpace(classification.Description))
-                target.Classification = classification.Description.Trim();
-
-            var pictograms = blocks.Where(b => b.Type == "pictograms").Select(b => b.Codes).Where(c => !string.IsNullOrWhiteSpace(c));
-            var mergedCodes = string.Join(",", pictograms.SelectMany(c => c!.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)).Distinct(StringComparer.OrdinalIgnoreCase));
-            if (!string.IsNullOrWhiteSpace(mergedCodes))
-                target.GhsPictogramCodes = mergedCodes;
-
-            target.SignalWord = FindText(blocks, "Signal word") ?? target.SignalWord;
-            target.HazardStatements = FindText(blocks, "Hazard statements") ?? target.HazardStatements;
-            target.PrecautionaryGeneral = FindText(blocks, "Precautionary statements — General") ?? target.PrecautionaryGeneral;
-            target.PrecautionaryPrevention = FindText(blocks, "Precautionary statements — Prevention") ?? target.PrecautionaryPrevention;
-            target.PrecautionaryResponse = FindText(blocks, "Precautionary statements — Response") ?? target.PrecautionaryResponse;
-            target.PrecautionaryStorage = FindText(blocks, "Precautionary statements — Storage") ?? target.PrecautionaryStorage;
-            target.PrecautionaryDisposal = FindText(blocks, "Precautionary statements — Disposal") ?? target.PrecautionaryDisposal;
-            target.HazardsNotOtherwiseClassified = FindText(blocks, "2.3 Other hazards") ?? target.HazardsNotOtherwiseClassified;
-        }
+        
 
         private static string? FindText(List<Sec02Block> blocks, string heading)
         {
@@ -187,7 +140,6 @@ namespace ChemicalSDS.Models
                 .SelectMany(b => b.Codes.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries));
             var set = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
             foreach (var code in fromBlocks) set.Add(code);
-            foreach (var code in GhsPictogramCatalog.ParseCodes(c.GhsPictogramCodes)) set.Add(code);
             return set.Count == 0 ? "" : string.Join(",", set);
         }
     }

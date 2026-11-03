@@ -1,12 +1,12 @@
-/* SDS wizard — light red accent theme */
+/* SDS wizard — crimson accent theme */
 :root {
-    --punjab-green-dark: #7a2e42;
-    --punjab-green: #d16b7f;
-    --punjab-green-mid: #e895a3;
-    --punjab-green-light: #f0a8b5;
-    --punjab-gold: #d4a017;
-    --punjab-gradient: linear-gradient(90deg, #7a2e42 0%, #c94d66 35%, #d16b7f 65%, #e895a3 100%);
-    --punjab-gradient-ring: linear-gradient(135deg, #7a2e42, #d16b7f, #d4a017);
+    --punjab-green-dark: #dc1147;
+    --punjab-green: #e3082c;
+    --punjab-green-mid: #cd0d30;
+    --punjab-green-light: #f6c2cc;
+    --punjab-gold: #c7a277;
+    --punjab-gradient: linear-gradient(90deg, #c61045, #cd0d30, #db1131);
+    --punjab-gradient-ring: linear-gradient(135deg, #c60944, #e3082c, #c7a277);
 }
 
 .sds-wizard-card {
@@ -288,7 +288,7 @@
 }
 
 .wizard-actions .btn-primary:hover {
-    background: linear-gradient(90deg, #7a2e42, #d16b7f);
+    background: linear-gradient(90deg, #c60944, #e3082c);
     border: none;
 }
 
@@ -550,7 +550,7 @@
 }
 
 .sds-sec16-wizard-label {
-    color: #a84358 !important;
+    color: #e60a36 !important;
     font-weight: 700;
 }
 

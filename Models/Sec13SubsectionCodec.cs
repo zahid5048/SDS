@@ -29,7 +29,7 @@ namespace ChemicalSDS.Models
             JsonSerializer.Serialize(items.ToList(), JsonOptions);
 
         public static string ResolveStoredJson(Chemical c) =>
-            string.IsNullOrWhiteSpace(c.Sec13Subsections) ? FromLegacy(c) : c.Sec13Subsections!;
+            string.IsNullOrWhiteSpace(c.Sec13Subsections) ? "[]" : c.Sec13Subsections!;
 
         public static List<Sec01SubsectionItem> DefaultTemplate() =>
         [
@@ -41,26 +41,8 @@ namespace ChemicalSDS.Models
             }
         ];
 
-        public static string FromLegacy(Chemical c)
-        {
-            var items = DefaultTemplate();
-            if (!string.IsNullOrWhiteSpace(c.DisposalMethods))
-                items[0].Description = c.DisposalMethods.Trim();
-            return Serialize(items);
-        }
+        
 
-        public static void SyncLegacyFields(Chemical target, string? json)
-        {
-            var rows = Parse(json);
-            if (rows.Count == 0)
-                return;
-
-            var sec131 = rows.FirstOrDefault(r =>
-                r.Heading.TrimStart().StartsWith("13.1", StringComparison.OrdinalIgnoreCase))
-                ?? rows.FirstOrDefault(r => !string.IsNullOrWhiteSpace(r.Description));
-
-            if (!string.IsNullOrWhiteSpace(sec131?.Description))
-                target.DisposalMethods = sec131.Description.Trim();
-        }
+        
     }
 }

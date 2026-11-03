@@ -25,8 +25,6 @@ namespace ChemicalSDS.Services
         {
             var title = Sec01SubsectionCodec.ShortProductLabel(c.ProductIdentifier);
             if (string.IsNullOrWhiteSpace(title))
-                title = Sec01SubsectionCodec.ShortProductLabel(c.ChemicalName);
-            if (string.IsNullOrWhiteSpace(title))
                 title = "Chemical";
 
             return Document.Create(doc =>
@@ -38,7 +36,7 @@ namespace ChemicalSDS.Services
                     page.MarginVertical(22);
                     page.DefaultTextStyle(x => x.FontSize(9).LineHeight(1.35f));
 
-                    page.Header().Element(h => RenderHeader(h, title, c.SDSNumber));
+                    page.Header().Element(h => RenderHeader(h, title));
                     page.Footer().Element(RenderFooter);
 
                     page.Content().PaddingTop(8).Column(col =>
@@ -64,9 +62,9 @@ namespace ChemicalSDS.Services
             }).GeneratePdf();
         }
 
-        private void RenderHeader(IContainer container, string title, string? sdsNumber)
+        private void RenderHeader(IContainer container, string title)
         {
-            container.Background("#7a2e42").Padding(10).Row(row =>
+            container.Background("#dc1147").Padding(10).Row(row =>
             {
                 row.RelativeItem().Column(col =>
                 {
@@ -76,8 +74,6 @@ namespace ChemicalSDS.Services
                 row.ConstantItem(130).AlignRight().Column(col =>
                 {
                     col.Item().Text(title).FontSize(11).Bold().FontColor(Colors.White);
-                    if (!string.IsNullOrWhiteSpace(sdsNumber))
-                        col.Item().Text($"SDS #{sdsNumber}").FontSize(8).FontColor("#fdecef");
                 });
             });
         }
@@ -121,7 +117,6 @@ namespace ChemicalSDS.Services
             SectionStart(col, "2", "Hazard(s) identification", body =>
             {
                 var blocks = Sec02BlockCodec.Parse(Sec02BlockCodec.ResolveStoredJson(c));
-                var pictogramRendered = false;
                 foreach (var block in blocks)
                 {
                     if (block.Type == "text")
@@ -129,13 +124,13 @@ namespace ChemicalSDS.Services
                         if (string.IsNullOrWhiteSpace(block.Heading) && string.IsNullOrWhiteSpace(block.Description))
                             continue;
                         if (ShouldPrintHeading(block.Heading, block.Description))
-                            body.Item().PaddingTop(4).Text(block.Heading).Bold().FontColor("#a84358").FontSize(8);
+                            body.Item().PaddingTop(4).Text(block.Heading).Bold().FontColor("#e60a36").FontSize(8);
                         WriteRichText(body, block.Description);
                         continue;
                     }
                     if (block.Type == "pictograms")
                     {
-                        body.Item().PaddingTop(4).Text("Hazard pictograms").Bold().FontColor("#a84358").FontSize(8);
+                        body.Item().PaddingTop(4).Text("Hazard pictograms").Bold().FontColor("#e60a36").FontSize(8);
                         RenderGhsPictograms(body, c, block.Codes);
                         if (!string.IsNullOrWhiteSpace(block.CustomImagePath))
                         {
@@ -148,7 +143,6 @@ namespace ChemicalSDS.Services
                                 });
                             });
                         }
-                        pictogramRendered = true;
                         continue;
                     }
                     if (block.Type == "table" && block.Rows.Any(r =>
@@ -160,8 +154,6 @@ namespace ChemicalSDS.Services
                         AddPipeTable(body, block.Title, ["CAS No.", "Chemical name"], data);
                     }
                 }
-                if (!pictogramRendered && (!string.IsNullOrWhiteSpace(c.GhsPictogramCodes) || !string.IsNullOrWhiteSpace(c.GhsPictogramImagePath)))
-                    RenderGhsPictograms(body, c, c.GhsPictogramCodes);
             });
         }
 
@@ -171,14 +163,7 @@ namespace ChemicalSDS.Services
             {
                 var blocks = Sec03BlockCodec.Parse(Sec03BlockCodec.ResolveStoredJson(c));
                 if (blocks.Count == 0)
-                {
-                    AddRows(body, c,
-                        Row("Substance/Mixture", c.SubstanceMixture),
-                        Row("CAS number", c.CASNumber),
-                        Row("Ingredient name", c.IngredientName),
-                        Row("Percentage", c.Percentage));
                     return;
-                }
                 foreach (var block in blocks)
                 {
                     if (block.Type == "text")
@@ -186,7 +171,7 @@ namespace ChemicalSDS.Services
                         if (string.IsNullOrWhiteSpace(block.Heading) && string.IsNullOrWhiteSpace(block.Description))
                             continue;
                         if (ShouldPrintHeading(block.Heading, block.Description))
-                            body.Item().PaddingTop(4).Text(block.Heading).Bold().FontColor("#a84358").FontSize(8);
+                            body.Item().PaddingTop(4).Text(block.Heading).Bold().FontColor("#e60a36").FontSize(8);
                         WriteRichText(body, block.Description);
                         continue;
                     }
@@ -218,11 +203,7 @@ namespace ChemicalSDS.Services
             {
                 var rows = Sec04SubsectionCodec.Parse(Sec04SubsectionCodec.ResolveStoredJson(c));
                 if (rows.Count == 0)
-                {
-                    AddRow(body, "Inhalation", c.InhalationFirstAid);
-                    AddRow(body, "Eye contact", c.EyeContactFirstAid);
                     return;
-                }
                 foreach (var row in rows)
                     RenderSubsectionItem(body, row);
             });
@@ -234,11 +215,7 @@ namespace ChemicalSDS.Services
             {
                 var rows = Sec05SubsectionCodec.Parse(Sec05SubsectionCodec.ResolveStoredJson(c));
                 if (rows.Count == 0)
-                {
-                    AddRow(body, "Suitable extinguishing agents", c.SuitableExtinguishingMedia);
-                    AddRow(body, "Unsuitable extinguishing agents", c.UnsuitableExtinguishingMedia);
                     return;
-                }
                 foreach (var row in rows)
                     RenderSubsectionItem(body, row);
             });
@@ -250,11 +227,7 @@ namespace ChemicalSDS.Services
             {
                 var rows = Sec06SubsectionCodec.Parse(Sec06SubsectionCodec.ResolveStoredJson(c));
                 if (rows.Count == 0)
-                {
-                    AddRow(body, "For non-emergency personnel", c.SpillNonEmergencyPersonnel);
-                    AddRow(body, "Environmental precautions", c.EnvironmentalPrecautionsSpill);
                     return;
-                }
                 foreach (var row in rows)
                     RenderSubsectionItem(body, row);
             });
@@ -266,10 +239,7 @@ namespace ChemicalSDS.Services
             {
                 var rows = Sec07SubsectionCodec.Parse(Sec07SubsectionCodec.ResolveStoredJson(c));
                 if (rows.Count == 0)
-                {
-                    AddRow(body, "Precautions for safe handling", c.HandlingPrecautions);
                     return;
-                }
                 foreach (var row in rows)
                     RenderSubsectionItem(body, row);
             });
@@ -281,10 +251,7 @@ namespace ChemicalSDS.Services
             {
                 var rows = Sec08SubsectionCodec.Parse(Sec08SubsectionCodec.ResolveStoredJson(c));
                 if (rows.Count == 0)
-                {
-                    AddRow(body, "Control parameters", c.OccupationalExposureLimits);
                     return;
-                }
                 foreach (var row in rows)
                     RenderSubsectionItem(body, row);
             });
@@ -296,10 +263,7 @@ namespace ChemicalSDS.Services
             {
                 var rows = Sec09SubsectionCodec.Parse(Sec09SubsectionCodec.ResolveStoredJson(c));
                 if (rows.Count == 0)
-                {
-                    AddRow(body, "State of aggregation", c.PhysicalState);
                     return;
-                }
                 foreach (var row in rows)
                     RenderSubsectionItem(body, row);
             });
@@ -311,10 +275,7 @@ namespace ChemicalSDS.Services
             {
                 var rows = Sec10SubsectionCodec.Parse(Sec10SubsectionCodec.ResolveStoredJson(c));
                 if (rows.Count == 0)
-                {
-                    AddRow(body, "Reactivity", c.Reactivity);
                     return;
-                }
                 foreach (var row in rows)
                     RenderSubsectionItem(body, row);
             });
@@ -326,10 +287,7 @@ namespace ChemicalSDS.Services
             {
                 var rows = Sec11SubsectionCodec.Parse(Sec11SubsectionCodec.ResolveStoredJson(c));
                 if (rows.Count == 0)
-                {
-                    AddRow(body, "Acute toxicity", c.AcuteToxicity);
                     return;
-                }
                 foreach (var row in rows)
                     RenderSubsectionItem(body, row);
             });
@@ -341,10 +299,7 @@ namespace ChemicalSDS.Services
             {
                 var rows = Sec12SubsectionCodec.Parse(Sec12SubsectionCodec.ResolveStoredJson(c));
                 if (rows.Count == 0)
-                {
-                    AddRow(body, "Toxicity", c.Ecotoxicity);
                     return;
-                }
                 foreach (var row in rows)
                     RenderSubsectionItem(body, row);
             });
@@ -356,10 +311,7 @@ namespace ChemicalSDS.Services
             {
                 var rows = Sec13SubsectionCodec.Parse(Sec13SubsectionCodec.ResolveStoredJson(c));
                 if (rows.Count == 0)
-                {
-                    AddRow(body, "Waste treatment methods", c.DisposalMethods);
                     return;
-                }
                 foreach (var row in rows)
                 {
                     if (string.IsNullOrWhiteSpace(row.Heading) &&
@@ -367,7 +319,7 @@ namespace ChemicalSDS.Services
                         !Sec01SubsectionCodec.HasFieldContent(row))
                         continue;
                     if (ShouldPrintHeading(row.Heading, row.Description))
-                        body.Item().PaddingTop(4).Text(row.Heading).Bold().FontColor("#a84358").FontSize(8);
+                        body.Item().PaddingTop(4).Text(row.Heading).Bold().FontColor("#e60a36").FontSize(8);
                     if (!string.IsNullOrWhiteSpace(row.Description))
                         WriteRichText(body, row.Description);
                 }
@@ -380,11 +332,7 @@ namespace ChemicalSDS.Services
             {
                 var rows = Sec14SubsectionCodec.Parse(Sec14SubsectionCodec.ResolveStoredJson(c));
                 if (rows.Count == 0)
-                {
-                    AddRow(body, "UN number", c.UNNumber);
-                    RenderTransportHazardClassImages(body, c);
                     return;
-                }
                 foreach (var row in rows)
                 {
                     if (string.IsNullOrWhiteSpace(row.Heading) &&
@@ -392,7 +340,7 @@ namespace ChemicalSDS.Services
                         !Sec01SubsectionCodec.HasFieldContent(row))
                         continue;
                     if (ShouldPrintHeading(row.Heading, row.Description))
-                        body.Item().PaddingTop(4).Text(row.Heading).Bold().FontColor("#a84358").FontSize(8);
+                        body.Item().PaddingTop(4).Text(row.Heading).Bold().FontColor("#e60a36").FontSize(8);
                     if (!string.IsNullOrWhiteSpace(row.Description))
                     {
                         if (Sec01SubsectionCodec.LooksLikeRichText(row.Description))
@@ -410,7 +358,6 @@ namespace ChemicalSDS.Services
                         }
                     }
                 }
-                RenderTransportHazardClassImages(body, c);
             });
         }
 
@@ -420,11 +367,7 @@ namespace ChemicalSDS.Services
             {
                 var rows = Sec15SubsectionCodec.Parse(Sec15SubsectionCodec.ResolveStoredJson(c));
                 if (rows.Count == 0)
-                {
-                    if (!string.IsNullOrWhiteSpace(c.USFederalRegulations))
-                        body.Item().Text(c.USFederalRegulations).FontSize(8);
                     return;
-                }
 
                 foreach (var row in rows)
                 {
@@ -433,7 +376,7 @@ namespace ChemicalSDS.Services
                         !Sec01SubsectionCodec.HasFieldContent(row))
                         continue;
                     if (ShouldPrintHeading(row.Heading, row.Description))
-                        body.Item().PaddingTop(4).Text(row.Heading).Bold().FontColor("#a84358").FontSize(8);
+                        body.Item().PaddingTop(4).Text(row.Heading).Bold().FontColor("#e60a36").FontSize(8);
                     if (!string.IsNullOrWhiteSpace(row.Description))
                         WriteRichText(body, row.Description);
                 }
@@ -453,11 +396,11 @@ namespace ChemicalSDS.Services
                         continue;
 
                     if (ShouldPrintHeading(row.Heading, row.Description))
-                        body.Item().PaddingTop(4).Text(row.Heading).Bold().FontColor("#a84358").FontSize(8);
+                        body.Item().PaddingTop(4).Text(row.Heading).Bold().FontColor("#e60a36").FontSize(8);
 
                     if (row.Heading.TrimStart().StartsWith("16.5", StringComparison.OrdinalIgnoreCase))
                     {
-                        var rev = Sec16SubsectionCodec.ComposeRevisionParagraph(c, row);
+                        var rev = Sec16SubsectionCodec.ComposeRevisionParagraph(row);
                         if (!string.IsNullOrWhiteSpace(rev))
                             body.Item().Text(rev).FontSize(8);
                         continue;
@@ -474,10 +417,8 @@ namespace ChemicalSDS.Services
 
         private void RenderGhsPictograms(ColumnDescriptor body, Chemical chem, string? codesCsv = null)
         {
-            var codes = GhsPictogramCatalog.ParseCodes(codesCsv ?? chem.GhsPictogramCodes);
-            var uploadPath = chem.GhsPictogramImagePath;
-            var hasUpload = !string.IsNullOrWhiteSpace(uploadPath);
-            if (codes.Count == 0 && !hasUpload)
+            var codes = GhsPictogramCatalog.ParseCodes(codesCsv);
+            if (codes.Count == 0)
                 return;
 
             body.Item().PaddingTop(4).Text("GHS hazard pictograms").Bold().FontSize(8);
@@ -496,100 +437,6 @@ namespace ChemicalSDS.Services
                         fig.Item().Element(cell => EmbedImage(cell, item.ImagePath, 56));
                         fig.Item().AlignCenter().Text(item.Label).FontSize(6);
                     });
-                }
-
-                if (hasUpload)
-                {
-                    row.ConstantItem(68).Padding(2).Column(fig =>
-                    {
-                        fig.Item().Element(cell => EmbedImage(cell, uploadPath, 56));
-                        fig.Item().AlignCenter().Text("Label image").FontSize(6);
-                    });
-                }
-            });
-        }
-
-        private void RenderTransportHazardClassImages(ColumnDescriptor body, Chemical c)
-        {
-            if (string.IsNullOrWhiteSpace(c.TransportHazardClass))
-                return;
-
-            var classNum = c.TransportHazardClass.Trim().Split(' ')[0];
-            var custom = TransportHazardClassCatalog.ParseCustomImages(c.TransportHazardClassImages);
-            string? rel = null;
-            if (custom.Count > 0)
-                rel = custom.Values.FirstOrDefault();
-            rel ??= TransportHazardClassCatalog.GetImagePath(classNum);
-
-            body.Item().PaddingTop(4).Text("Transport hazard pictogram").Bold().FontSize(8);
-            body.Item().Element(c => EmbedImage(c, rel, 56));
-        }
-
-        private void AddTransportRegulationsTable(ColumnDescriptor body, Chemical c)
-        {
-            var data = c.TransportRegulations;
-            if (string.IsNullOrWhiteSpace(data) || !data.Contains('|'))
-                return;
-
-            var authorities = new[] { "DOT", "TDG", "Mexico", "IMDG", "IATA" };
-            var rows = data.Split('\n', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
-                .Select(l => l.Split('|').Select(x => x.Trim()).ToArray())
-                .Where(r => r.Length > 0 && !string.IsNullOrWhiteSpace(r[0]))
-                .ToList();
-            if (rows.Count == 0)
-                return;
-
-            var customImages = TransportHazardClassCatalog.ParseCustomImages(c.TransportHazardClassImages);
-
-            body.Item().PaddingTop(4).PaddingBottom(2).Text("Transport regulations").Bold().FontSize(8);
-
-            body.Item().PaddingBottom(4).Table(table =>
-            {
-                table.ColumnsDefinition(cols =>
-                {
-                    cols.ConstantColumn(95);
-                    foreach (var _ in authorities)
-                        cols.RelativeColumn();
-                });
-
-                table.Header(header =>
-                {
-                    header.Cell().Background("#fdecef").Border(0.5f).BorderColor("#ccc")
-                        .Padding(3).Text("Field").Bold().FontSize(7);
-                    foreach (var auth in authorities)
-                        header.Cell().Background("#fdecef").Border(0.5f).BorderColor("#ccc")
-                            .Padding(3).Text(auth).Bold().FontSize(7);
-                });
-
-                foreach (var row in rows)
-                {
-                    var field = row[0];
-                    var isHazard = field.Contains("hazard class", StringComparison.OrdinalIgnoreCase);
-
-                    table.Cell().Border(0.5f).BorderColor("#ddd").Padding(3)
-                        .Text(field).Bold().FontSize(7);
-
-                    for (var i = 0; i < authorities.Length; i++)
-                    {
-                        var val = i + 1 < row.Length ? row[i + 1] : "";
-                        var auth = authorities[i];
-
-                        table.Cell().Border(0.5f).BorderColor("#ddd").Padding(3).Column(cell =>
-                        {
-                            if (!string.IsNullOrWhiteSpace(val))
-                                cell.Item().Text(val).FontSize(7);
-
-                            if (isHazard && !string.IsNullOrWhiteSpace(val))
-                            {
-                                var classNum = val.Split(' ')[0];
-                                customImages.TryGetValue(auth, out var customPath);
-                                var rel = !string.IsNullOrWhiteSpace(customPath)
-                                    ? customPath
-                                    : TransportHazardClassCatalog.GetImagePath(classNum);
-                                cell.Item().Element(c => EmbedImage(c, rel, 40));
-                            }
-                        });
-                    }
                 }
             });
         }
@@ -612,7 +459,7 @@ namespace ChemicalSDS.Services
         {
             col.Item().PaddingTop(6).Column(sec =>
             {
-                sec.Item().Background("#c94d66").Padding(6).Text($"Section {num}. {title}")
+                sec.Item().Background("#c4113a").Padding(6).Text($"Section {num}. {title}")
                     .FontSize(10).Bold().FontColor(Colors.White);
                 sec.Item().Border(1).BorderColor("#d0d0d0").Padding(8).Column(buildBody);
             });
@@ -629,7 +476,7 @@ namespace ChemicalSDS.Services
             if (string.IsNullOrWhiteSpace(value)) return;
             body.Item().PaddingBottom(3).Row(r =>
             {
-                r.ConstantItem(155).Text(label).Bold().FontSize(8).FontColor("#a84358");
+                r.ConstantItem(155).Text(label).Bold().FontSize(8).FontColor("#e60a36");
                 r.RelativeItem().Text(value.Replace("\r\n", "\n")).FontSize(8);
             });
         }
@@ -1098,7 +945,7 @@ namespace ChemicalSDS.Services
                 return;
 
             if (ShouldPrintHeading(row.Heading, row.Description))
-                body.Item().PaddingTop(4).Text(row.Heading).Bold().FontColor("#a84358").FontSize(8);
+                body.Item().PaddingTop(4).Text(row.Heading).Bold().FontColor("#e60a36").FontSize(8);
             if (!string.IsNullOrWhiteSpace(row.Description))
                 WriteRichText(body, row.Description);
             if (row.Fields is { Count: > 0 })

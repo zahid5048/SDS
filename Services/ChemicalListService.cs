@@ -32,7 +32,7 @@ namespace ChemicalSDS.Services
 
             sortBy = sortBy.ToLowerInvariant() switch
             {
-                "cas" or "status" or "signal" or "flash" or "storage" or "date" or "deleted" => sortBy,
+                "status" or "date" or "deleted" => sortBy,
                 _ => "product"
             };
 
@@ -59,8 +59,6 @@ namespace ChemicalSDS.Services
             {
                 model.TotalChemicals = await activeQuery.CountAsync();
                 model.DraftCount = await activeQuery.CountAsync(c => c.IsDraft);
-                model.DangerCount = await activeQuery.CountAsync(c => c.SignalWord == "Danger");
-                model.WarningCount = await activeQuery.CountAsync(c => c.SignalWord == "Warning");
                 model.CompletedCount = model.TotalChemicals - model.DraftCount;
             }
 
@@ -70,28 +68,15 @@ namespace ChemicalSDS.Services
             {
                 var term = model.Search;
                 query = query.Where(c =>
-                    (c.ProductIdentifier != null && c.ProductIdentifier.Contains(term)) ||
-                    (c.ChemicalName != null && c.ChemicalName.Contains(term)) ||
-                    (c.CASNumber != null && c.CASNumber.Contains(term)) ||
-                    (c.SignalWord != null && c.SignalWord.Contains(term)) ||
-                    (c.StorageLocation != null && c.StorageLocation.Contains(term)) ||
-                    (c.SDSNumber != null && c.SDSNumber.Contains(term)));
+                    c.ProductIdentifier != null && c.ProductIdentifier.Contains(term));
             }
 
             model.FilteredCount = await query.CountAsync();
 
             query = (sortBy, sortDir) switch
             {
-                ("cas", "desc") => query.OrderByDescending(c => c.CASNumber),
-                ("cas", _) => query.OrderBy(c => c.CASNumber),
                 ("status", "desc") => query.OrderByDescending(c => c.IsDraft).ThenByDescending(c => c.LastCompletedSection),
                 ("status", _) => query.OrderBy(c => c.IsDraft).ThenBy(c => c.LastCompletedSection),
-                ("signal", "desc") => query.OrderByDescending(c => c.SignalWord),
-                ("signal", _) => query.OrderBy(c => c.SignalWord),
-                ("flash", "desc") => query.OrderByDescending(c => c.FlashPoint),
-                ("flash", _) => query.OrderBy(c => c.FlashPoint),
-                ("storage", "desc") => query.OrderByDescending(c => c.StorageLocation),
-                ("storage", _) => query.OrderBy(c => c.StorageLocation),
                 ("date", "desc") => query.OrderByDescending(c => c.CreatedAt),
                 ("date", _) => query.OrderBy(c => c.CreatedAt),
                 ("deleted", "desc") => query.OrderByDescending(c => c.DeletedAt),
@@ -110,13 +95,8 @@ namespace ChemicalSDS.Services
                 {
                     Id = c.Id,
                     ProductIdentifier = c.ProductIdentifier,
-                    ChemicalName = c.ChemicalName,
-                    CASNumber = c.CASNumber,
                     IsDraft = c.IsDraft,
                     LastCompletedSection = c.LastCompletedSection,
-                    SignalWord = c.SignalWord,
-                    FlashPoint = c.FlashPoint,
-                    StorageLocation = c.StorageLocation,
                     DeletedAt = c.DeletedAt,
                     DeletedBy = c.DeletedBy,
                     IsDeleted = c.IsDeleted
@@ -134,7 +114,6 @@ namespace ChemicalSDS.Services
             var slim = activeQuery.Select(c => new
             {
                 c.IsDraft,
-                c.SignalWord,
                 c.LastCompletedSection,
                 c.CreatedAt
             });
@@ -145,8 +124,6 @@ namespace ChemicalSDS.Services
                 {
                     Total = g.Count(),
                     Draft = g.Count(x => x.IsDraft),
-                    Danger = g.Count(x => x.SignalWord == "Danger"),
-                    Warning = g.Count(x => x.SignalWord == "Warning"),
                     NotStarted = g.Count(x => x.IsDraft && x.LastCompletedSection <= 0),
                     MidProgress = g.Count(x => x.IsDraft && x.LastCompletedSection >= 1 && x.LastCompletedSection <= 8),
                     LateProgress = g.Count(x => x.IsDraft && x.LastCompletedSection >= 9 && x.LastCompletedSection <= 15)
@@ -155,15 +132,10 @@ namespace ChemicalSDS.Services
 
             model.TotalChemicals = stats?.Total ?? 0;
             model.DraftCount = stats?.Draft ?? 0;
-            model.DangerCount = stats?.Danger ?? 0;
-            model.WarningCount = stats?.Warning ?? 0;
             model.CompletedCount = model.TotalChemicals - model.DraftCount;
 
             var charts = model.Charts;
             charts.StatusValues = [model.CompletedCount, model.DraftCount];
-
-            var otherSignal = Math.Max(0, model.TotalChemicals - model.DangerCount - model.WarningCount);
-            charts.SignalValues = [model.DangerCount, model.WarningCount, otherSignal];
 
             charts.ProgressValues =
             [

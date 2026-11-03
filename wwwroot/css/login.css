@@ -1,11 +1,11 @@
-/* Login — light red accent theme */
+/* Login — crimson accent theme */
 :root {
-    --login-dark: #7a2e42;
-    --login-mid: #a84358;
-    --login-base: #d16b7f;
-    --login-light: #e895a3;
+    --login-dark: #dc1147;
+    --login-mid: #e60a36;
+    --login-base: #e3082c;
+    --login-light: #cd0d30;
     --login-pale: #fdecef;
-    --login-gold: #c9a227;
+    --login-gold: #c7a277;
 }
 
 .login-page {
@@ -18,7 +18,7 @@
 /* Left brand panel */
 .login-brand {
     flex: 1;
-    background: linear-gradient(165deg, #7a2e42 0%, #a84358 40%, #d16b7f 75%, #e895a3 100%);
+    background: linear-gradient(165deg, #c60944 0%, #bb1436 40%, #c4113a 75%, #db1131 100%);
     color: #fff;
     display: flex;
     flex-direction: column;
@@ -126,9 +126,16 @@
 }
 
 .login-brand-features i {
-    width: 22px;
-    text-align: center;
-    color: var(--login-gold);
+    width: 28px;
+    height: 28px;
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.18);
+    color: #fff;
+    font-size: 0.85rem;
 }
 
 .login-form-panel {
@@ -146,7 +153,7 @@
     background: #fff;
     border-radius: 16px;
     padding: 36px 32px;
-    box-shadow: 0 8px 32px rgba(122, 46, 66, 0.08);
+    box-shadow: 0 8px 32px rgba(220, 17, 71, 0.08);
     border: 1px solid #f0e0e4;
 }
 
@@ -336,13 +343,13 @@
     justify-content: center;
     gap: 10px;
     transition: transform 0.2s, box-shadow 0.2s;
-    box-shadow: 0 4px 14px rgba(122, 46, 66, 0.25);
+    box-shadow: 0 4px 14px rgba(220, 17, 71, 0.25);
 }
 
 .btn-login-submit:hover {
     background: linear-gradient(135deg, var(--login-dark), var(--login-mid));
     transform: translateY(-1px);
-    box-shadow: 0 6px 18px rgba(122, 46, 66, 0.3);
+    box-shadow: 0 6px 18px rgba(220, 17, 71, 0.3);
 }
 
 .btn-login-submit:disabled {

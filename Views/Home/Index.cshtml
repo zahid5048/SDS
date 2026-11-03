@@ -35,7 +35,7 @@
         <div class="card-body">
             <form method="get">
                 <div class="input-group">
-                    <input type="text" name="searchString" class="form-control" placeholder="Search by chemical name or CAS number..." value="@searchString">
+                    <input type="text" name="searchString" class="form-control" placeholder="Search by product name..." value="@searchString">
                     <button type="submit" class="btn btn-primary">🔍 Search</button>
                     @if (!string.IsNullOrEmpty(searchString))
                     {
@@ -56,10 +56,7 @@
                 <table class="table table-striped table-hover">
                     <thead class="table-dark">
                         <tr>
-                            <th>Chemical Name</th>
-                            <th>CAS Number</th>
-                            <th>Signal Word</th>
-                            <th>Flash Point</th>
+                            <th>Chemical</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
@@ -67,19 +64,7 @@
                         @foreach (var chemical in Model)
                         {
                             <tr>
-                                <td><strong>@chemical.ChemicalName</strong></td>
-                                <td>@chemical.CASNumber</td>
-                                <td>
-                                    @if (chemical.SignalWord == "Danger")
-                                    {
-                                        <span class="badge bg-danger">⚠️ Danger</span>
-                                    }
-                                    else
-                                    {
-                                        <span class="badge bg-warning">⚠️ Warning</span>
-                                    }
-                                </td>
-                                <td>@chemical.FlashPoint</td>
+                                <td><strong>@(string.IsNullOrWhiteSpace(chemical.ProductIdentifier) ? "Untitled" : chemical.ProductIdentifier)</strong></td>
                                 <td>
                                     <a href="/Home/Details/@chemical.Id" class="btn btn-sm btn-info">📄 View SDS</a>
                                 </td>

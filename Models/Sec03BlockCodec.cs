@@ -61,7 +61,7 @@ namespace ChemicalSDS.Models
             JsonSerializer.Serialize(blocks.ToList(), JsonOptions);
 
         public static string ResolveStoredJson(Chemical c) =>
-            string.IsNullOrWhiteSpace(c.Sec03Blocks) ? FromLegacy(c) : c.Sec03Blocks!;
+            string.IsNullOrWhiteSpace(c.Sec03Blocks) ? "[]" : c.Sec03Blocks!;
 
         public static List<Sec03Block> DefaultTemplate() =>
         [
@@ -93,48 +93,8 @@ namespace ChemicalSDS.Models
             }
         ];
 
-        public static string FromLegacy(Chemical c)
-        {
-            var blocks = DefaultTemplate();
-            if (!string.IsNullOrWhiteSpace(c.SubstanceMixture))
-                blocks[0].Description = c.SubstanceMixture.Contains("mixture", StringComparison.OrdinalIgnoreCase)
-                    ? "Not applicable — this product is a mixture."
-                    : c.SubstanceMixture;
-            if (!string.IsNullOrWhiteSpace(c.CASNumber) || !string.IsNullOrWhiteSpace(c.IngredientName))
-            {
-                blocks[2].Rows =
-                [
-                    new Sec03MixtureRow
-                    {
-                        Cas = c.CASNumber ?? "",
-                        ChemicalName = c.IngredientName ?? c.ChemicalName ?? "",
-                        Proportion = c.Percentage ?? "",
-                        Classification = "",
-                        Source = "Self-classified"
-                    }
-                ];
-            }
-            return Serialize(blocks);
-        }
+        
 
-        public static void SyncLegacyFields(Chemical target, string? json)
-        {
-            var blocks = Parse(json);
-            if (blocks.Count == 0) return;
-
-            var sec31 = blocks.FirstOrDefault(b => b.Type == "text" && b.Heading.StartsWith("3.1", StringComparison.OrdinalIgnoreCase));
-            if (sec31 != null && !string.IsNullOrWhiteSpace(sec31.Description))
-                target.SubstanceMixture = sec31.Description.Trim();
-
-            var table = blocks.FirstOrDefault(b => b.Type == "mixtureTable");
-            var firstRow = table?.Rows.FirstOrDefault(r =>
-                !string.IsNullOrWhiteSpace(r.Cas) || !string.IsNullOrWhiteSpace(r.ChemicalName));
-            if (firstRow != null)
-            {
-                target.CASNumber = firstRow.Cas;
-                target.IngredientName = firstRow.ChemicalName;
-                target.Percentage = firstRow.Proportion;
-            }
-        }
+        
     }
 }

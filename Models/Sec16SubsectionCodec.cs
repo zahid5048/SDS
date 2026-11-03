@@ -29,7 +29,7 @@ namespace ChemicalSDS.Models
             JsonSerializer.Serialize(items.ToList(), JsonOptions);
 
         public static string ResolveStoredJson(Chemical c) =>
-            string.IsNullOrWhiteSpace(c.Sec16Subsections) ? FromLegacy(c) : c.Sec16Subsections!;
+            string.IsNullOrWhiteSpace(c.Sec16Subsections) ? "[]" : c.Sec16Subsections!;
 
         public static List<Sec01SubsectionItem> DefaultTemplate() =>
         [
@@ -121,87 +121,9 @@ namespace ChemicalSDS.Models
         private static Sec01SubsectionField Field(string label, string description) =>
             new() { Label = label, Description = description };
 
-        public static string FromLegacy(Chemical c)
-        {
-            var items = DefaultTemplate();
+        
 
-            var hLines = ParseMultiline(c.Sec16FullTextHPhrases);
-            if (hLines.Count > 0)
-                items[0].Fields = hLines.Select(ParseColonLine).ToList();
-
-            var ghsLines = ParseMultiline(c.Sec16FullTextGhsClassifications);
-            if (ghsLines.Count > 0)
-                items[1].Fields = ghsLines.Select(ParseEqualsLine).ToList();
-
-            var abbrevLines = ParseMultiline(c.Abbreviations);
-            if (abbrevLines.Count > 0)
-                items[2].Fields = abbrevLines.Select(ParseColonLine).ToList();
-
-            if (!string.IsNullOrWhiteSpace(c.Sec16RecommendedApplications))
-                items[3].Description = c.Sec16RecommendedApplications.Trim();
-
-            var rev = items[4].Fields ?? [];
-            if (rev.Count >= 3)
-            {
-                if (!string.IsNullOrWhiteSpace(c.DateOfRevision))
-                    rev[0].Description = c.DateOfRevision.Trim();
-                if (!string.IsNullOrWhiteSpace(c.Version))
-                    rev[1].Description = c.Version.Trim();
-                if (!string.IsNullOrWhiteSpace(c.Sec16RevisionPreparedFor))
-                    rev[2].Description = c.Sec16RevisionPreparedFor.Trim();
-            }
-
-            return Serialize(items);
-        }
-
-        public static void SyncLegacyFields(Chemical target, string? json)
-        {
-            var rows = Parse(json);
-            if (rows.Count == 0)
-                return;
-
-            static Sec01SubsectionItem? Find(IEnumerable<Sec01SubsectionItem> list, string prefix) =>
-                list.FirstOrDefault(r => r.Heading.TrimStart().StartsWith(prefix, StringComparison.OrdinalIgnoreCase));
-
-            var s161 = Find(rows, "16.1");
-            if (s161?.Fields is { Count: > 0 })
-                target.Sec16FullTextHPhrases = JoinLines(s161.Fields, FormatHPhrase);
-
-            var s162 = Find(rows, "16.2");
-            if (s162?.Fields is { Count: > 0 })
-                target.Sec16FullTextGhsClassifications = JoinLines(s162.Fields, FormatGhs);
-
-            var s163 = Find(rows, "16.3");
-            if (s163?.Fields is { Count: > 0 })
-                target.Abbreviations = JoinLines(s163.Fields, FormatAbbrev);
-
-            var s164 = Find(rows, "16.4");
-            if (!string.IsNullOrWhiteSpace(s164?.Description))
-                target.Sec16RecommendedApplications = s164.Description.Trim();
-
-            var s165 = Find(rows, "16.5");
-            if (s165?.Fields is { Count: > 0 })
-            {
-                string? FieldDesc(string labelPart) =>
-                    s165.Fields.FirstOrDefault(f =>
-                        f.Label.Contains(labelPart, StringComparison.OrdinalIgnoreCase))?.Description?.Trim();
-
-                var date = FieldDesc("Revision date");
-                var rev = FieldDesc("Revision No");
-                var note = FieldDesc("Preparation") ?? FieldDesc("Market");
-
-                if (!string.IsNullOrWhiteSpace(date))
-                    target.DateOfRevision = date;
-                if (!string.IsNullOrWhiteSpace(rev))
-                    target.Version = rev;
-                if (!string.IsNullOrWhiteSpace(note))
-                    target.Sec16RevisionPreparedFor = note;
-            }
-            else if (!string.IsNullOrWhiteSpace(s165?.Description))
-            {
-                target.Sec16RevisionPreparedFor = s165.Description.Trim();
-            }
-        }
+        
 
         public static string FormatHPhrase(Sec01SubsectionField f)
         {
@@ -238,11 +160,11 @@ namespace ChemicalSDS.Models
             return $"• {code}: {text}";
         }
 
-        public static string ComposeRevisionParagraph(Chemical c, Sec01SubsectionItem? s165)
+        public static string ComposeRevisionParagraph(Sec01SubsectionItem? s165)
         {
-            string? date = c.DateOfRevision?.Trim();
-            string? rev = c.Version?.Trim();
-            string? note = c.Sec16RevisionPreparedFor?.Trim();
+            string? date = null;
+            string? rev = null;
+            string? note = null;
 
             if (s165?.Fields is { Count: > 0 })
             {

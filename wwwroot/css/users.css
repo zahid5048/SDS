@@ -27,7 +27,7 @@
     background: #fff;
     border-radius: 18px;
     overflow: hidden;
-    box-shadow: 0 4px 24px rgba(122, 46, 66, 0.08);
+    box-shadow: 0 4px 24px rgba(220, 17, 71, 0.08);
     border: 1px solid #e0ebe3;
 }
 
@@ -36,12 +36,12 @@
     align-items: center;
     gap: 18px;
     padding: 24px 28px;
-    background: linear-gradient(135deg, #7a2e42 0%, #a84358 50%, #d16b7f 100%);
+    background: linear-gradient(135deg, #c60944 0%, #bb1436 50%, #c4113a 100%);
     color: #fff;
 }
 
 .user-form-banner--edit {
-    background: linear-gradient(135deg, #a84358 0%, #d16b7f 60%, #e895a3 100%);
+    background: linear-gradient(135deg, #e60a36 0%, #e3082c 60%, #cd0d30 100%);
 }
 
 .user-form-banner-icon {
@@ -241,7 +241,7 @@
     background: linear-gradient(135deg, var(--fg-mid), var(--fg-base));
     border: none;
     border-radius: 10px;
-    box-shadow: 0 4px 14px rgba(122, 46, 66, 0.25);
+    box-shadow: 0 4px 14px rgba(220, 17, 71, 0.25);
     transition: transform 0.15s, box-shadow 0.2s;
 }
 
@@ -249,7 +249,7 @@
     color: #fff;
     background: linear-gradient(135deg, var(--fg-dark), var(--fg-mid));
     transform: translateY(-1px);
-    box-shadow: 0 6px 18px rgba(122, 46, 66, 0.3);
+    box-shadow: 0 6px 18px rgba(220, 17, 71, 0.3);
 }
 
 .btn-user-secondary {
@@ -282,7 +282,7 @@
     background: linear-gradient(135deg, var(--fg-mid), var(--fg-base));
     color: #fff;
     border: none;
-    box-shadow: 0 4px 14px rgba(122, 46, 66, 0.2);
+    box-shadow: 0 4px 14px rgba(220, 17, 71, 0.2);
 }
 
 .users-index-page .btn-dash-primary:hover {

@@ -7,8 +7,6 @@
     var chartJson = JsonSerializer.Serialize(new {
         statusLabels = Model.Charts.StatusLabels,
         statusValues = Model.Charts.StatusValues,
-        signalLabels = Model.Charts.SignalLabels,
-        signalValues = Model.Charts.SignalValues,
         monthlyLabels = Model.Charts.MonthlyLabels,
         monthlyValues = Model.Charts.MonthlyValues,
         progressLabels = Model.Charts.ProgressLabels,
@@ -34,7 +32,7 @@
 </div>
 
 <div class="row g-3 mb-4">
-    <div class="col-sm-6 col-xl-3">
+    <div class="col-sm-6 col-xl-4">
         <div class="dash-stat-card">
             <div class="dash-stat-icon icon-total"><i class="fas fa-flask"></i></div>
             <div class="dash-stat-body">
@@ -43,7 +41,7 @@
             </div>
         </div>
     </div>
-    <div class="col-sm-6 col-xl-3">
+    <div class="col-sm-6 col-xl-4">
         <div class="dash-stat-card">
             <div class="dash-stat-icon icon-complete"><i class="fas fa-check-circle"></i></div>
             <div class="dash-stat-body">
@@ -52,7 +50,7 @@
             </div>
         </div>
     </div>
-    <div class="col-sm-6 col-xl-3">
+    <div class="col-sm-6 col-xl-4">
         <div class="dash-stat-card">
             <div class="dash-stat-icon icon-pending"><i class="fas fa-hourglass-half"></i></div>
             <div class="dash-stat-body">
@@ -61,19 +59,10 @@
             </div>
         </div>
     </div>
-    <div class="col-sm-6 col-xl-3">
-        <div class="dash-stat-card">
-            <div class="dash-stat-icon icon-danger"><i class="fas fa-exclamation-triangle"></i></div>
-            <div class="dash-stat-body">
-                <span class="dash-stat-value">@Model.DangerCount</span>
-                <span class="dash-stat-label">Danger Level</span>
-            </div>
-        </div>
-    </div>
 </div>
 
 <div class="row g-3 mb-4 dash-charts-row">
-    <div class="col-lg-3 col-md-6">
+    <div class="col-lg-4 col-md-6">
         <div class="dash-chart-card">
             <div class="dash-chart-header">
                 <h5><i class="fas fa-chart-pie"></i> SDS Status</h5>
@@ -84,18 +73,7 @@
             </div>
         </div>
     </div>
-    <div class="col-lg-3 col-md-6">
-        <div class="dash-chart-card">
-            <div class="dash-chart-header">
-                <h5><i class="fas fa-exclamation-triangle"></i> Hazard Signals</h5>
-                <span class="dash-chart-sub">Danger, warning &amp; other</span>
-            </div>
-            <div class="dash-chart-body">
-                <canvas id="chartSignal" aria-label="Hazard signal chart"></canvas>
-            </div>
-        </div>
-    </div>
-    <div class="col-lg-3 col-md-6">
+    <div class="col-lg-4 col-md-6">
         <div class="dash-chart-card">
             <div class="dash-chart-header">
                 <h5><i class="fas fa-tasks"></i> SDS Progress</h5>
@@ -106,7 +84,7 @@
             </div>
         </div>
     </div>
-    <div class="col-lg-3 col-md-6">
+    <div class="col-lg-4 col-md-6">
         <div class="dash-chart-card">
             <div class="dash-chart-header">
                 <h5><i class="fas fa-chart-line"></i> Monthly Trend</h5>
