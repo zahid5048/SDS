@@ -92,9 +92,6 @@ namespace ChemicalSDS.Services
                 case 16:
                     target.Sec16Subsections = source.Sec16Subsections;
                     Sec16SubsectionCodec.SyncLegacyFields(target, source.Sec16Subsections);
-                    target.Quantity = source.Quantity;
-                    target.Unit = source.Unit;
-                    target.StorageLocation = source.StorageLocation;
                     break;
             }
 

@@ -10,11 +10,11 @@
     }
 
     const green = {
-        dark: '#0f3d24',
-        mid: '#1a5c34',
-        base: '#228b4a',
-        light: '#3cb371',
-        pale: '#e8f5e9',
+        dark: '#7a2e42',
+        mid: '#a84358',
+        base: '#d16b7f',
+        light: '#e895a3',
+        pale: '#fdecef',
         gold: '#c9a227'
     };
 
@@ -25,10 +25,9 @@
     Chart.defaults.plugins.legend.labels.usePointStyle = true;
     Chart.defaults.plugins.legend.labels.padding = 14;
 
-    const doughnutOptions = {
+    const pieOptions = {
         responsive: true,
         maintainAspectRatio: false,
-        cutout: '62%',
         plugins: {
             legend: { position: 'bottom' },
             tooltip: {
@@ -38,6 +37,32 @@
             }
         }
     };
+
+    const doughnutOptions = {
+        ...pieOptions,
+        cutout: '62%'
+    };
+
+    /** Chart 1 — full pie; show placeholder when all counts are zero */
+    function pieDataset(labels, values, colors, emptyLabel) {
+        const total = values.reduce((sum, n) => sum + n, 0);
+        if (total === 0) {
+            return {
+                labels: [emptyLabel],
+                data: [1],
+                backgroundColor: ['#e8cdd4'],
+                borderColor: '#fff',
+                placeholder: true
+            };
+        }
+        return {
+            labels,
+            data: values,
+            backgroundColor: colors,
+            borderColor: '#fff',
+            placeholder: false
+        };
+    }
 
     const barOptions = {
         responsive: true,
@@ -58,7 +83,7 @@
             y: {
                 beginAtZero: true,
                 ticks: { stepSize: 1, precision: 0 },
-                grid: { color: 'rgba(34, 139, 74, 0.08)' }
+                grid: { color: 'rgba(122, 46, 66, 0.08)' }
             }
         }
     };
@@ -79,7 +104,7 @@
             y: {
                 beginAtZero: true,
                 ticks: { stepSize: 1, precision: 0 },
-                grid: { color: 'rgba(34, 139, 74, 0.08)' }
+                grid: { color: 'rgba(122, 46, 66, 0.08)' }
             }
         },
         elements: {
@@ -94,19 +119,68 @@
         new Chart(canvas.getContext('2d'), config);
     }
 
+    const statusPie = pieDataset(
+        data.statusLabels,
+        data.statusValues,
+        [green.mid, green.light],
+        'No chemicals yet'
+    );
+
     makeChart('chartStatus', {
-        type: 'doughnut',
+        type: 'pie',
         data: {
-            labels: data.statusLabels,
+            labels: statusPie.labels,
             datasets: [{
-                data: data.statusValues,
-                backgroundColor: [green.base, green.gold],
-                borderColor: '#fff',
+                data: statusPie.data,
+                backgroundColor: statusPie.backgroundColor,
+                borderColor: statusPie.borderColor,
                 borderWidth: 3,
-                hoverOffset: 8
+                hoverOffset: statusPie.placeholder ? 0 : 8
             }]
         },
-        options: doughnutOptions
+        options: {
+            ...pieOptions,
+            plugins: {
+                ...pieOptions.plugins,
+                legend: {
+                    position: 'bottom',
+                    labels: {
+                        usePointStyle: true,
+                        padding: 14,
+                        generateLabels(chart) {
+                            const ds = chart.data.datasets[0];
+                            const total = ds.data.reduce((a, b) => a + b, 0);
+                            return chart.data.labels.map((label, i) => ({
+                                text: statusPie.placeholder
+                                    ? label
+                                    : `${label}: ${ds.data[i]} (${total ? Math.round((ds.data[i] / total) * 100) : 0}%)`,
+                                fillStyle: Array.isArray(ds.backgroundColor)
+                                    ? ds.backgroundColor[i]
+                                    : ds.backgroundColor,
+                                strokeStyle: '#fff',
+                                lineWidth: 1,
+                                hidden: false,
+                                index: i
+                            }));
+                        }
+                    }
+                },
+                tooltip: {
+                    ...pieOptions.plugins.tooltip,
+                    callbacks: {
+                        label(context) {
+                            if (statusPie.placeholder) {
+                                return 'Add an SDS to see status breakdown';
+                            }
+                            const sum = context.dataset.data.reduce((a, b) => a + b, 0);
+                            const value = context.parsed;
+                            const pct = sum ? Math.round((value / sum) * 100) : 0;
+                            return `${context.label}: ${value} (${pct}%)`;
+                        }
+                    }
+                }
+            }
+        }
     });
 
     makeChart('chartSignal', {
@@ -133,7 +207,7 @@
                 backgroundColor: [
                     'rgba(148, 163, 184, 0.85)',
                     'rgba(201, 162, 39, 0.85)',
-                    'rgba(46, 168, 95, 0.85)',
+                    'rgba(168, 67, 88, 0.85)',
                     green.base
                 ],
                 borderRadius: 8,
@@ -150,7 +224,7 @@
             datasets: [{
                 data: data.monthlyValues,
                 borderColor: green.base,
-                backgroundColor: 'rgba(34, 139, 74, 0.12)',
+                backgroundColor: 'rgba(201, 77, 102, 0.15)',
                 fill: true,
                 pointBorderColor: green.base,
                 pointBackgroundColor: '#fff'

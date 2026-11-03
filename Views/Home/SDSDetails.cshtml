@@ -45,11 +45,12 @@
     </script>
 }
 
+<div class="sds-document-center">
 <div class="sds-page-header">
     <div class="sds-page-header-top">
         <div>
             <h1 class="sds-doc-title"><i class="fas fa-file-medical"></i> @product</h1>
-            <p class="sds-doc-sub">Safety Data Sheet &mdash; 16 Sections | C.I.W.C&amp;E, DGLW Govt of Punjab</p>
+            <p class="sds-doc-sub">Safety Data Sheet &mdash; 16 Sections</p>
         </div>
         <div class="sds-toolbar-actions">
             <a asp-action="DownloadSdsPdf" asp-route-id="@Model.Id" class="btn btn-download-pdf btn-sm">
@@ -183,5 +184,6 @@
             <partial name="Partials/Sds/_Sec16SubsectionsDisplay" model="Model" />
         </div>
     </div>
+</div>
 </div>
 

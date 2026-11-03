@@ -63,7 +63,7 @@ namespace ChemicalSDS.Services
             {
                 Username = "admin",
                 FullName = "System Administrator",
-                Email = "admin@ciwce.gov.pk",
+                Email = "admin@chemicalsds.local",
                 PasswordHash = HashPassword("admin123"),
                 Role = "Admin",
                 IsActive = true,

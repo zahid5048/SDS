@@ -16,7 +16,7 @@
         @if (block.Heading.Equals("Signal word", StringComparison.OrdinalIgnoreCase) && !string.IsNullOrWhiteSpace(block.Description))
         {
             var sw = block.Description.Trim();
-            <div class="sds-detail-row">
+            <div class="sds-detail-row sds-detail-row-block">
                 <span class="sds-detail-value">
                     <span class="badge @(sw.Equals("Danger", StringComparison.OrdinalIgnoreCase) ? "bg-danger" : "bg-warning text-dark")">@sw</span>
                 </span>

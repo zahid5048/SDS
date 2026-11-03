@@ -60,8 +60,6 @@
                             <th>CAS Number</th>
                             <th>Signal Word</th>
                             <th>Flash Point</th>
-                            <th>Storage Location</th>
-                            <th>Quantity</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
@@ -82,8 +80,6 @@
                                     }
                                 </td>
                                 <td>@chemical.FlashPoint</td>
-                                <td>@chemical.StorageLocation</td>
-                                <td>@chemical.Quantity @chemical.Unit</td>
                                 <td>
                                     <a href="/Home/Details/@chemical.Id" class="btn btn-sm btn-info">📄 View SDS</a>
                                     <a href="/Home/Emergency/@chemical.Id" class="btn btn-sm btn-danger">🚨 Emergency</a>

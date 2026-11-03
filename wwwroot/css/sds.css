@@ -3,10 +3,18 @@ html {
 }
 
 :root {
-    --sds-green-dark: #0d5c2e;
-    --sds-green: #1b8a4a;
-    --sds-green-light: #e8f5e9;
-    --sds-gradient: linear-gradient(135deg, #0d5c2e 0%, #1b8a4a 50%, #2ea85f 100%);
+    --sds-green-dark: #7a2e42;
+    --sds-green: #d16b7f;
+    --sds-green-light: #fdecef;
+    --sds-gradient: linear-gradient(135deg, #7a2e42 0%, #c94d66 50%, #e895a3 100%);
+}
+
+/* Centred SDS document column */
+.sds-document-center {
+    max-width: 1000px;
+    margin-left: auto;
+    margin-right: auto;
+    width: 100%;
 }
 
 /* Toolbar */
@@ -21,9 +29,10 @@ html {
 
 .sds-page-header-top {
     display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    flex-wrap: wrap;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
     gap: 14px;
     margin-bottom: 16px;
 }
@@ -33,6 +42,7 @@ html {
     font-weight: 700;
     color: var(--sds-green-dark);
     margin: 0;
+    width: 100%;
 }
 
 .sds-doc-title i {
@@ -50,6 +60,7 @@ html {
     display: flex;
     flex-wrap: wrap;
     gap: 8px;
+    justify-content: center;
 }
 
 .sds-toolbar-actions .btn-download-pdf {
@@ -69,6 +80,7 @@ html {
     display: flex;
     gap: 6px;
     overflow-x: auto;
+    justify-content: center;
     padding: 4px 2px 8px;
     scrollbar-width: thin;
     scrollbar-color: var(--sds-green) #f0f0f0;
@@ -243,7 +255,9 @@ html {
     font-weight: 600;
     display: flex;
     align-items: center;
+    justify-content: center;
     gap: 10px;
+    text-align: center;
 }
 
 .section-header h4 i {
@@ -261,11 +275,18 @@ html {
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
 }
 
-.section-body .table th {
+/* Legacy two-column label/value tables only — not SDS field/CAS grids */
+.section-body .table:not(.sds-fields-table):not(.sds-cas-table):not(.sds-oel-table):not(.sds-hmis-table):not(.sds-transport-matrix) th {
     width: 32%;
     background: var(--sds-green-light);
     color: var(--sds-green-dark);
     font-weight: 600;
+    vertical-align: top;
+}
+
+.section-body .table.sds-fields-table th,
+.section-body .table.sds-cas-table th {
+    width: auto;
     vertical-align: top;
 }
 
@@ -324,13 +345,32 @@ html {
     line-height: 1.55;
 }
 
-.sds-detail-row-block {
-    display: block;
+/* Full-width blocks (subsection narrative, tables under a heading) */
+.sds-detail-layout .sds-detail-row.sds-detail-row-block {
+    display: block !important;
+    grid-template-columns: none;
 }
 
-.sds-detail-row-block .sds-detail-label {
+.sds-detail-layout .sds-detail-row.sds-detail-row-block .sds-detail-label {
     display: block;
     margin-bottom: 8px;
+}
+
+.sds-detail-layout .sds-detail-row.sds-detail-row-block .sds-detail-value {
+    display: block;
+    width: 100%;
+    max-width: none;
+}
+
+/* Value-only rows (e.g. signal word) — must not sit in the narrow label column */
+.sds-detail-layout .sds-detail-row:not(:has(.sds-detail-label)) {
+    display: block !important;
+    grid-template-columns: none;
+}
+
+.sds-detail-layout .sds-detail-row:not(:has(.sds-detail-label)) .sds-detail-value {
+    display: block;
+    width: 100%;
 }
 
 .sds-props-grid {
@@ -401,7 +441,7 @@ html {
 }
 
 .sds-transport-matrix .sds-transport-label {
-    background: #f4faf6;
+    background: #fdf5f7;
     font-weight: 700;
     color: var(--sds-green-dark);
 }
@@ -422,7 +462,7 @@ html {
     margin-top: 14px;
     margin-bottom: 6px;
     padding-top: 10px;
-    border-top: 2px solid #e8f5e9;
+    border-top: 2px solid #fdecef;
 }
 
 .sds-regulatory-detail .sds-regulatory-group:first-child {
@@ -438,8 +478,13 @@ html {
     margin-bottom: 4px;
 }
 
+.sds-detail-layout .sds-regulatory-group + .sds-detail-row.sds-detail-row-block,
+.sds-detail-layout .sds-regulatory-group + .table-responsive {
+    width: 100%;
+}
+
 .sds-regulatory-detail .sds-detail-label {
-    color: #1565c0;
+    color: #a84358;
 }
 
 /* Section 16 — HMIS table */
@@ -495,7 +540,7 @@ html {
 }
 
 .sds-nfpa-health {
-    background: #1565c0;
+    background: #a84358;
     color: #fff;
 }
 
@@ -527,7 +572,7 @@ html {
 .sds-sec16-footer {
     margin-top: 20px;
     padding-top: 16px;
-    border-top: 2px solid #e8f5e9;
+    border-top: 2px solid #fdecef;
 }
 
 .sds-sec16-un {
@@ -538,7 +583,7 @@ html {
 
 .sds-sec16-blue-label,
 .sds-sec16-label {
-    color: #1565c0;
+    color: #a84358;
     font-weight: 700;
 }
 
@@ -552,7 +597,7 @@ html {
 }
 
 .sds-sec16-colon {
-    color: #1565c0;
+    color: #a84358;
     font-weight: 700;
 }
 
@@ -618,10 +663,21 @@ html {
     }
 }
 
+.sds-fields-table {
+    width: 100%;
+    table-layout: auto;
+}
+
 .sds-fields-table .sds-fields-table-label {
     font-weight: 600;
-    color: #1565c0;
+    color: #a84358;
     white-space: nowrap;
     vertical-align: top;
-    width: 28%;
+    width: 1%;
+}
+
+.sds-fields-table td:not(.sds-fields-table-label) {
+    width: auto;
+    word-wrap: break-word;
+    overflow-wrap: anywhere;
 }

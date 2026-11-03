@@ -2,7 +2,7 @@
 @{
     var action = Model.ListAction;
     var isTrash = Model.IsDeletedView;
-    var colSpan = isTrash ? 6 : 7;
+    var colSpan = isTrash ? 5 : 6;
 }
 
 @if (TempData["Success"] != null)
@@ -67,7 +67,7 @@
             <div class="dash-search-box">
                 <i class="fas fa-search"></i>
                 <input type="text" name="search" value="@Model.Search" class="form-control live-search-input"
-                       placeholder="Live search — name, CAS, signal, storage..." autocomplete="off" />
+                       placeholder="Live search — name, CAS, signal..." autocomplete="off" />
                 <span class="search-hint d-none"><i class="fas fa-circle-notch fa-spin"></i></span>
             </div>
             @if (!string.IsNullOrEmpty(Model.Search))
@@ -150,13 +150,6 @@
                                 Flash Point <i class="fas @Model.SortIcon("flash")"></i>
                             </a>
                         </th>
-                        <th>
-                            <a class="sort-link @(Model.IsSorted("storage") ? "active" : "")"
-                               asp-action="@action" asp-route-search="@Model.Search" asp-route-page="1"
-                               asp-route-pageSize="@Model.PageSize" asp-route-sortBy="storage" asp-route-sortDir="@Model.NextSortDir("storage")">
-                                Storage <i class="fas @Model.SortIcon("storage")"></i>
-                            </a>
-                        </th>
                     }
                     <th class="text-end">Actions</th>
                 </tr>
@@ -219,7 +212,6 @@
                             @if (!isTrash)
                             {
                                 <td class="text-muted small">@(chemical.FlashPoint ?? "—")</td>
-                                <td class="text-muted small">@(chemical.StorageLocation ?? "—")</td>
                             }
                             <td>
                                 <div class="action-group">
