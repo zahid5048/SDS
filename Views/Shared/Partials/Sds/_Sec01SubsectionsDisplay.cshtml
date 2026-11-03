@@ -8,7 +8,10 @@
     {
         continue;
     }
-    <div class="sds-regulatory-group"><strong class="sds-regulatory-group-title">@row.Heading</strong></div>
+    @if (!Sec01SubsectionCodec.HeadingAlreadyInDescription(row.Heading, row.Description))
+    {
+        <div class="sds-regulatory-group"><strong class="sds-regulatory-group-title">@row.Heading</strong></div>
+    }
     @if (row.Fields is { Count: > 0 })
     {
         var (c1, c2) = SdsSubsectionTableHeaders.ForHeading(row.Heading);

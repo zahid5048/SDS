@@ -1,14 +1,12 @@
 @model ChemicalSDS.Models.Chemical
 @using ChemicalSDS.Models
 @{
-    var sec06Json = Sec06SubsectionCodec.ResolveStoredJson(Model);
+    ViewData["SectionTitle"] = "Section 6: Accidental release measures";
+    ViewData["SectionIcon"] = "fa-biohazard";
+    ViewData["FieldName"] = "Sec06Subsections";
+    ViewData["InputId"] = "Sec06Subsections";
+    ViewData["Heading"] = "6. Accidental release measures";
+    ViewData["Shape"] = "item";
+    ViewData["InitialJson"] = string.IsNullOrWhiteSpace(Model.Sec06Subsections) ? "[]" : Model.Sec06Subsections;
 }
-<h3 class="sds-section-title"><i class="fas fa-biohazard"></i> Section 6: Accidental release measures</h3>
-
-<div class="sec06-subsections-editor" data-initial="@sec06Json">
-    <input type="hidden" asp-for="Sec06Subsections" id="Sec06Subsections" />
-    <div id="sec06SubsectionRows" class="d-flex flex-column gap-3"></div>
-    <button type="button" class="btn btn-outline-primary btn-sm mt-3 sec06-add-subsection">
-        <i class="fas fa-plus"></i> Add subsection
-    </button>
-</div>
+<partial name="_WordSectionDescription" model="Model" />

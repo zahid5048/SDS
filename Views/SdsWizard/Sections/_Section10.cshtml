@@ -1,14 +1,12 @@
 @model ChemicalSDS.Models.Chemical
 @using ChemicalSDS.Models
 @{
-    var sec10Json = Sec10SubsectionCodec.ResolveStoredJson(Model);
+    ViewData["SectionTitle"] = "Section 10: Stability and reactivity";
+    ViewData["SectionIcon"] = "fa-shield-alt";
+    ViewData["FieldName"] = "Sec10Subsections";
+    ViewData["InputId"] = "Sec10Subsections";
+    ViewData["Heading"] = "10. Stability and reactivity";
+    ViewData["Shape"] = "item";
+    ViewData["InitialJson"] = string.IsNullOrWhiteSpace(Model.Sec10Subsections) ? "[]" : Model.Sec10Subsections;
 }
-<h3 class="sds-section-title"><i class="fas fa-shield-alt"></i> Section 10: Stability and reactivity</h3>
-
-<div class="sec10-subsections-editor" data-initial="@sec10Json">
-    <input type="hidden" asp-for="Sec10Subsections" id="Sec10Subsections" />
-    <div id="sec10SubsectionRows" class="d-flex flex-column gap-3"></div>
-    <button type="button" class="btn btn-outline-primary btn-sm mt-3 sec10-add-subsection">
-        <i class="fas fa-plus"></i> Add subsection
-    </button>
-</div>
+<partial name="_WordSectionDescription" model="Model" />

@@ -162,13 +162,18 @@
                         var progress = chemical.IsDraft
                             ? (int)Math.Round(chemical.LastCompletedSection / 16.0 * 100)
                             : 100;
+                        var productLabel = Sec01SubsectionCodec.ShortProductLabel(chemical.ProductIdentifier);
+                        var chemicalLabel = Sec01SubsectionCodec.ShortProductLabel(chemical.ChemicalName);
                         <tr class="@(isTrash ? "row-deleted" : "")">
                             <td>
                                 <div class="chem-name-cell">
                                     <span class="chem-avatar"><i class="fas fa-vial"></i></span>
                                     <div>
-                                        <strong>@chemical.ProductIdentifier</strong>
-                                        <small>@chemical.ChemicalName</small>
+                                        <strong>@(string.IsNullOrEmpty(productLabel) ? "Untitled" : productLabel)</strong>
+                                        @if (!string.IsNullOrEmpty(chemicalLabel) && !string.Equals(chemicalLabel, productLabel, StringComparison.OrdinalIgnoreCase))
+                                        {
+                                            <small>@chemicalLabel</small>
+                                        }
                                     </div>
                                 </div>
                             </td>
@@ -243,7 +248,6 @@
                                         <a asp-action="SDSDetails" asp-route-id="@chemical.Id" class="action-btn btn-view" title="View"><i class="fas fa-eye"></i></a>
                                         <a asp-action="DownloadSdsPdf" asp-route-id="@chemical.Id" class="action-btn btn-pdf" title="PDF"><i class="fas fa-file-pdf"></i></a>
                                         <a asp-controller="SdsWizard" asp-action="Step" asp-route-id="@chemical.Id" asp-route-step="1" class="action-btn btn-edit" title="Edit"><i class="fas fa-pen"></i></a>
-                                        <a asp-action="Emergency" asp-route-id="@chemical.Id" class="action-btn btn-emergency" title="Emergency"><i class="fas fa-bolt"></i></a>
                                         <form asp-action="SoftDelete" method="post" class="d-inline"
                                               onsubmit="return confirm('Move this chemical to deleted? You can restore it later.');">
                                             @Html.AntiForgeryToken()

@@ -158,7 +158,10 @@ namespace ChemicalSDS.Controllers
             if (chemical == null)
                 return NotFound();
 
-            ViewBag.PageTitle = $"{chemical.ProductIdentifier} - SDS";
+            var productLabel = Sec01SubsectionCodec.ShortProductLabel(chemical.ProductIdentifier);
+            if (string.IsNullOrWhiteSpace(productLabel))
+                productLabel = Sec01SubsectionCodec.ShortProductLabel(chemical.ChemicalName);
+            ViewBag.PageTitle = $"{(string.IsNullOrWhiteSpace(productLabel) ? "Chemical" : productLabel)} - SDS";
             ViewBag.PageIcon = "fa-file-alt";
             return View(chemical);
         }
@@ -174,25 +177,13 @@ namespace ChemicalSDS.Controllers
                 return NotFound();
 
             var bytes = _pdfGenerator.Generate(chemical);
-            var name = $"{chemical.ProductIdentifier ?? chemical.ChemicalName ?? "SDS"}_SafetyDataSheet.pdf";
+            var fileLabel = Sec01SubsectionCodec.ShortProductLabel(chemical.ProductIdentifier);
+            if (string.IsNullOrWhiteSpace(fileLabel))
+                fileLabel = Sec01SubsectionCodec.ShortProductLabel(chemical.ChemicalName);
+            var name = $"{(string.IsNullOrWhiteSpace(fileLabel) ? "SDS" : fileLabel)}_SafetyDataSheet.pdf";
             name = string.Join("_", name.Split(Path.GetInvalidFileNameChars()));
 
             return File(bytes, "application/pdf", name);
-        }
-
-        public async Task<IActionResult> Emergency(int id)
-        {
-            var redirect = RequireLogin();
-            if (redirect != null) return redirect;
-
-            var chemical = await _context.Chemicals
-                .FirstOrDefaultAsync(c => c.Id == id && !c.IsDeleted);
-            if (chemical == null)
-                return NotFound();
-
-            ViewBag.PageTitle = $"Emergency - {chemical.ChemicalName}";
-            ViewBag.PageIcon = "fa-exclamation-circle";
-            return View(chemical);
         }
 
         public IActionResult IndustrialContact()

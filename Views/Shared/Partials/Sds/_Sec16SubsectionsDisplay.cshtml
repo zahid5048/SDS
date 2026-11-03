@@ -11,7 +11,10 @@
     {
         continue;
     }
-    <div class="sds-regulatory-group"><strong class="sds-regulatory-group-title">@row.Heading</strong></div>
+    @if (!Sec01SubsectionCodec.HeadingAlreadyInDescription(row.Heading, row.Description))
+    {
+        <div class="sds-regulatory-group"><strong class="sds-regulatory-group-title">@row.Heading</strong></div>
+    }
     @if (row.Fields is { Count: > 0 })
     {
         var heading = row.Heading.TrimStart();

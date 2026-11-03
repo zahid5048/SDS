@@ -1,14 +1,12 @@
 @model ChemicalSDS.Models.Chemical
 @using ChemicalSDS.Models
 @{
-    var sec09Json = Sec09SubsectionCodec.ResolveStoredJson(Model);
+    ViewData["SectionTitle"] = "Section 9: Physical and chemical properties";
+    ViewData["SectionIcon"] = "fa-atom";
+    ViewData["FieldName"] = "Sec09Subsections";
+    ViewData["InputId"] = "Sec09Subsections";
+    ViewData["Heading"] = "9. Physical and chemical properties";
+    ViewData["Shape"] = "item";
+    ViewData["InitialJson"] = string.IsNullOrWhiteSpace(Model.Sec09Subsections) ? "[]" : Model.Sec09Subsections;
 }
-<h3 class="sds-section-title"><i class="fas fa-atom"></i> Section 9: Physical and chemical properties</h3>
-
-<div class="sec09-subsections-editor" data-initial="@sec09Json">
-    <input type="hidden" asp-for="Sec09Subsections" id="Sec09Subsections" />
-    <div id="sec09SubsectionRows" class="d-flex flex-column gap-3"></div>
-    <button type="button" class="btn btn-outline-primary btn-sm mt-3 sec09-add-subsection">
-        <i class="fas fa-plus"></i> Add subsection
-    </button>
-</div>
+<partial name="_WordSectionDescription" model="Model" />

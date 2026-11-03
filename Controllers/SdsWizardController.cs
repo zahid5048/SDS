@@ -65,8 +65,9 @@ namespace ChemicalSDS.Controllers
 
             ViewBag.Step = step;
             ViewBag.ChemicalId = model.Id > 0 ? model.Id : (int?)null;
-            ViewBag.PageTitle = model.Id > 0 && !string.IsNullOrEmpty(model.ProductIdentifier)
-                ? $"Edit SDS — {model.ProductIdentifier}"
+            var productLabel = Sec01SubsectionCodec.ShortProductLabel(model.ProductIdentifier);
+            ViewBag.PageTitle = model.Id > 0 && !string.IsNullOrEmpty(productLabel)
+                ? $"Edit SDS — {productLabel}"
                 : "Add Safety Data Sheet";
             ViewBag.PageIcon = "fa-plus-circle";
             ViewData["Title"] = $"SDS Section {step}";

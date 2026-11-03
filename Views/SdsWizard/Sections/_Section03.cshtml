@@ -1,18 +1,12 @@
 @model ChemicalSDS.Models.Chemical
 @using ChemicalSDS.Models
 @{
-    var sec03Json = Sec03BlockCodec.ResolveStoredJson(Model);
+    ViewData["SectionTitle"] = "Section 3: Composition / information on ingredients";
+    ViewData["SectionIcon"] = "fa-flask";
+    ViewData["FieldName"] = "Sec03Blocks";
+    ViewData["InputId"] = "Sec03Blocks";
+    ViewData["Heading"] = "3. Composition / information on ingredients";
+    ViewData["Shape"] = "block";
+    ViewData["InitialJson"] = string.IsNullOrWhiteSpace(Model.Sec03Blocks) ? "[]" : Model.Sec03Blocks;
 }
-<h3 class="sds-section-title"><i class="fas fa-flask"></i> Section 3: Composition / information on ingredients</h3>
-
-<script type="application/json" id="Sec03BlocksInitial">@Html.Raw(sec03Json)</script>
-
-<div class="sec03-blocks-editor">
-    <input type="hidden" asp-for="Sec03Blocks" id="Sec03Blocks" />
-    <div id="sec03BlocksContainer"></div>
-    <div class="d-flex flex-wrap gap-2 mt-2">
-        <button type="button" class="btn btn-outline-primary btn-sm sec03-add-text"><i class="fas fa-plus"></i> Add text subsection</button>
-        <button type="button" class="btn btn-outline-info btn-sm sec03-add-table"><i class="fas fa-table"></i> Add mixture table</button>
-        <button type="button" class="btn btn-outline-secondary btn-sm sec03-add-footnote"><i class="fas fa-sticky-note"></i> Add footnote</button>
-    </div>
-</div>
+<partial name="_WordSectionDescription" model="Model" />

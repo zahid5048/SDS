@@ -9,8 +9,6 @@
 
 <div class="sec01-subsections-editor" data-initial="@sec01Json">
     <input type="hidden" asp-for="Sec01Subsections" id="Sec01Subsections" />
-    <div id="sec01SubsectionRows" class="d-flex flex-column gap-3"></div>
-    <button type="button" class="btn btn-outline-primary btn-sm mt-3 sec01-add-subsection">
-        <i class="fas fa-plus"></i> Add subsection
-    </button>
+    <label class="form-label small text-muted" for="Sec01Description">Description</label>
+    <textarea id="Sec01Description" class="form-control sec01-description" rows="8" placeholder="Text for this subsection"></textarea>
 </div>

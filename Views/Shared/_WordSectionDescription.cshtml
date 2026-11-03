@@ -1,0 +1,16 @@
+@model ChemicalSDS.Models.Chemical
+@{
+    var title = (string)ViewData["SectionTitle"]!;
+    var icon = (string)ViewData["SectionIcon"]!;
+    var field = (string)ViewData["FieldName"]!;
+    var inputId = (string)ViewData["InputId"]!;
+    var heading = (string)ViewData["Heading"]!;
+    var shape = (string?)ViewData["Shape"] ?? "item";
+    var initial = (string?)ViewData["InitialJson"] ?? "[]";
+}
+<h3 class="sds-section-title"><i class="fas @icon"></i> @title</h3>
+<div class="section-description-editor" data-initial="@initial" data-heading="@heading" data-shape="@shape">
+    <input type="hidden" name="@field" id="@inputId" value="@initial" />
+    <label class="form-label small text-muted">Description</label>
+    <textarea class="form-control section-description" rows="8" placeholder="Text for this subsection"></textarea>
+</div>

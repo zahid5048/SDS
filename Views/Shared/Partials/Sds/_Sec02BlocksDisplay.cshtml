@@ -12,7 +12,10 @@
         {
             continue;
         }
-        <div class="sds-regulatory-group"><strong class="sds-regulatory-group-title">@block.Heading</strong></div>
+        @if (!Sec01SubsectionCodec.HeadingAlreadyInDescription(block.Heading, block.Description))
+        {
+            <div class="sds-regulatory-group"><strong class="sds-regulatory-group-title">@block.Heading</strong></div>
+        }
         @if (block.Heading.Equals("Signal word", StringComparison.OrdinalIgnoreCase) && !string.IsNullOrWhiteSpace(block.Description))
         {
             var sw = block.Description.Trim();

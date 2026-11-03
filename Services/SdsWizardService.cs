@@ -14,7 +14,8 @@ namespace ChemicalSDS.Services
                     if (string.IsNullOrWhiteSpace(target.ProductIdentifier) &&
                         !string.IsNullOrWhiteSpace(source.ProductIdentifier))
                     {
-                        target.ProductIdentifier = source.ProductIdentifier.Trim();
+                        var label = Sec01SubsectionCodec.ShortProductLabel(source.ProductIdentifier);
+                        target.ProductIdentifier = string.IsNullOrWhiteSpace(label) ? null : label;
                     }
                     if (!string.IsNullOrWhiteSpace(target.ProductIdentifier))
                     {

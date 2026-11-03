@@ -1,12 +1,12 @@
 @model ChemicalSDS.Models.Chemical
 @using ChemicalSDS.Models
 @{
-    var sec16Json = Sec16SubsectionCodec.ResolveStoredJson(Model);
+    ViewData["SectionTitle"] = "Section 16: Other information";
+    ViewData["SectionIcon"] = "fa-info-circle";
+    ViewData["FieldName"] = "Sec16Subsections";
+    ViewData["InputId"] = "Sec16Subsections";
+    ViewData["Heading"] = "16. Other information";
+    ViewData["Shape"] = "item";
+    ViewData["InitialJson"] = string.IsNullOrWhiteSpace(Model.Sec16Subsections) ? "[]" : Model.Sec16Subsections;
 }
-<h3 class="sds-section-title"><i class="fas fa-info-circle"></i> Section 16: Other information</h3>
-
-<div class="sec16-subsections-editor" data-initial="@sec16Json">
-    <input type="hidden" asp-for="Sec16Subsections" id="Sec16Subsections" />
-    <div id="sec16Blocks"></div>
-</div>
-
+<partial name="_WordSectionDescription" model="Model" />

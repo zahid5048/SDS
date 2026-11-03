@@ -25,7 +25,7 @@
                 @foreach (var chemical in Model)
                 {
                     <tr>
-                        <td><strong>@chemical.ProductIdentifier</strong></td>
+                        <td><strong>@Sec01SubsectionCodec.ShortProductLabel(chemical.ProductIdentifier)</strong></td>
                         <td>@chemical.Classification</td>
                         <td>
                             @if (chemical.SignalWord == "Danger")

@@ -4,7 +4,8 @@
     var sec01Rows = Sec01SubsectionCodec.Parse(Sec01SubsectionCodec.ResolveStoredJson(Model));
 }
 @{
-    ViewData["Title"] = $"{Model.ProductIdentifier} - Safety Data Sheet";
+    var productLabel = Sec01SubsectionCodec.ShortProductLabel(Model.ProductIdentifier);
+    ViewData["Title"] = $"{(string.IsNullOrEmpty(productLabel) ? "Chemical" : productLabel)} - Safety Data Sheet";
     ViewBag.PageTitle = "Safety Data Sheet";
     ViewBag.PageIcon = "fa-file-alt";
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -12,7 +13,7 @@
 
 <div class="card mb-4">
     <div class="card-header bg-dark text-white">
-        <h3 class="mb-0">📄 @Model.ProductIdentifier (@Model.CASNumber)</h3>
+        <h3 class="mb-0">📄 @(string.IsNullOrEmpty(productLabel) ? "Chemical" : productLabel) (@Model.CASNumber)</h3>
     </div>
     <div class="card-body">
         <div class="alert alert-danger">

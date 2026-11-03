@@ -8,7 +8,10 @@
     if (block.Type == "text")
     {
         if (string.IsNullOrWhiteSpace(block.Heading) && string.IsNullOrWhiteSpace(block.Description)) { continue; }
-        <div class="sds-regulatory-group"><strong class="sds-regulatory-group-title">@block.Heading</strong></div>
+        @if (!Sec01SubsectionCodec.HeadingAlreadyInDescription(block.Heading, block.Description))
+        {
+            <div class="sds-regulatory-group"><strong class="sds-regulatory-group-title">@block.Heading</strong></div>
+        }
         <partial name="Partials/Sds/_SdsDetailBlock" model="@(new SdsDetailRow { Label = "", Value = block.Description })" />
         continue;
     }

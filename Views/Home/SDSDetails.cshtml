@@ -1,8 +1,12 @@
 ﻿@model ChemicalSDS.Models.Chemical
 @using ChemicalSDS.Models
 @{
-    ViewData["Title"] = $"{Model.ProductIdentifier} - Safety Data Sheet";
-    var product = Model.ProductIdentifier ?? Model.ChemicalName ?? "Chemical";
+    var product = Sec01SubsectionCodec.ShortProductLabel(Model.ProductIdentifier);
+    if (string.IsNullOrWhiteSpace(product))
+        product = Sec01SubsectionCodec.ShortProductLabel(Model.ChemicalName);
+    if (string.IsNullOrWhiteSpace(product))
+        product = "Chemical";
+    ViewData["Title"] = $"{product} - Safety Data Sheet";
     var sec01Rows = Sec01SubsectionCodec.Parse(Sec01SubsectionCodec.ResolveStoredJson(Model));
 }
 
@@ -59,9 +63,6 @@
             <a asp-controller="SdsWizard" asp-action="Step" asp-route-id="@Model.Id" asp-route-step="1" class="btn btn-outline-success btn-sm">
                 <i class="fas fa-pen"></i> Edit
             </a>
-            <a asp-action="Emergency" asp-route-id="@Model.Id" class="btn btn-danger btn-sm">
-                <i class="fas fa-exclamation-circle"></i> Emergency
-            </a>
             <a asp-action="Dashboard" class="btn btn-outline-secondary btn-sm">
                 <i class="fas fa-arrow-left"></i> Dashboard
             </a>
@@ -69,8 +70,6 @@
     </div>
     <partial name="Partials/Sds/_SectionNav" />
 </div>
-
-<partial name="Partials/Sds/_HazardCards" model="Model" />
 
 <div class="sds-sections">
     <div id="sec1" class="sds-section">

@@ -345,6 +345,59 @@ html {
     line-height: 1.55;
 }
 
+.sds-rich-text img {
+    max-width: 100%;
+    height: auto;
+    display: inline-block;
+    margin: 6px 0;
+}
+
+.sds-rich-text p {
+    display: block;
+    margin: 0 0 0.35rem;
+}
+
+.sds-rich-text h1,
+.sds-rich-text h2,
+.sds-rich-text h3,
+.sds-rich-text h4 {
+    display: block;
+    color: #1a4f8b;
+    font-weight: 700;
+    margin: 12px 0 2px;
+    font-size: 15px;
+}
+
+.sds-rich-text ul,
+.sds-rich-text ol {
+    margin: 0.2rem 0 0.2rem 1.25rem;
+}
+
+.sds-rich-text table {
+    width: auto;
+    max-width: 100%;
+    border-collapse: collapse;
+    margin: 8px 16px 8px 0;
+    vertical-align: top;
+}
+
+.sds-rich-text th,
+.sds-rich-text td {
+    border: 1px solid #c5c9d1;
+    padding: 4px 8px;
+    vertical-align: top;
+}
+
+.sds-rich-text th {
+    background: #f4f6f8;
+    font-weight: 700;
+}
+
+.sds-rich-text td p,
+.sds-rich-text th p {
+    margin: 0;
+}
+
 /* Full-width blocks (subsection narrative, tables under a heading) */
 .sds-detail-layout .sds-detail-row.sds-detail-row-block {
     display: block !important;
